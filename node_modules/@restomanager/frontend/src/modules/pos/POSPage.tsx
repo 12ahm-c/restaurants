@@ -1,0 +1,496 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useCartStore } from '../../stores/cartStore';
+import { useTableStore } from '../../stores/tableStore';
+import { orderService } from '../../services/order.service';
+import { useUIStore } from '../../stores/uiStore';
+import { ProductDTO, CategoryDTO, CartItem, TableDTO } from '../../types';
+import { Search, Plus, Minus, Trash2, ShoppingBag, MessageSquare, X, ShoppingBasket, Sparkles } from 'lucide-react';
+import { CustomerSearch } from '../../components/pos/CustomerSearch';
+
+export function POSPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { addToast } = useUIStore();
+  const {
+    items,
+    selectedTable,
+    orderType,
+    customerId,
+    notes: orderNotes,
+    addItem,
+    removeItem,
+    updateQuantity,
+    updateItemNotes,
+    setSelectedTable,
+    setOrderType,
+    setCustomerId,
+    setNotes: setOrderNotes,
+    clearCart,
+    getTotal,
+    getItemCount,
+  } = useCartStore();
+  const { tables, fetchTables } = useTableStore();
+
+  const [products, setProducts] = useState<ProductDTO[]>([]);
+  const [categories, setCategories] = useState<CategoryDTO[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [editingItemNotes, setEditingItemNotes] = useState<string | null>(null);
+  const [itemNoteText, setItemNoteText] = useState('');
+  const [showOrderNotes, setShowOrderNotes] = useState(false);
+  const [availability, setAvailability] = useState<Record<string, { inStock: boolean; missingItems: string[] }>>({});
+
+  useEffect(() => {
+    const state = location.state as { selectedTable?: typeof selectedTable } | null;
+    if (state?.selectedTable) {
+      setSelectedTable(state.selectedTable);
+    }
+    fetchTables();
+    loadProducts();
+    loadCategories();
+    loadAvailability();
+  }, []);
+
+  const loadProducts = async (categoryId?: string, search?: string) => {
+    try {
+      const { products: data } = await orderService.getProducts({ categoryId, search });
+      setProducts(data);
+    } catch (error) {
+      console.error('Failed to load products:', error);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      const data = await orderService.getCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to load categories:', error);
+    }
+  };
+
+  const loadAvailability = async () => {
+    try {
+      const data = await orderService.getProductsAvailability();
+      setAvailability(data);
+    } catch (error) {
+      console.error('Failed to load availability:', error);
+    }
+  };
+
+  const handleCategoryChange = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    loadProducts(categoryId || undefined, searchQuery || undefined);
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    loadProducts(selectedCategory || undefined, query || undefined);
+  };
+
+  const handleAddToCart = (product: ProductDTO) => {
+    addItem({
+      productId: product._id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+    });
+  };
+
+  const handleCustomerSelect = (customer: any) => {
+    setSelectedCustomer(customer);
+    setCustomerId(customer._id);
+  };
+
+  const handleCustomerRemove = () => {
+    setSelectedCustomer(null);
+    setCustomerId(undefined);
+  };
+
+  const handleOpenItemNotes = (productId: string, currentNotes?: string) => {
+    setEditingItemNotes(productId);
+    setItemNoteText(currentNotes || '');
+  };
+
+  const handleSaveItemNotes = () => {
+    if (editingItemNotes) {
+      updateItemNotes(editingItemNotes, itemNoteText);
+      setEditingItemNotes(null);
+      setItemNoteText('');
+    }
+  };
+
+  const handleSubmitOrder = async () => {
+    if (orderType === 'dine-in' && !selectedTable) {
+      addToast('error', 'Please select a table for dine-in orders');
+      return;
+    }
+
+    if (items.length === 0) {
+      addToast('error', 'Cart is empty');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const result = await orderService.createOrder({
+        tableId: selectedTable?._id || '',
+        type: orderType,
+        customerId: customerId,
+        items: items.map((item: CartItem) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          variant: item.variant,
+          options: item.options,
+          notes: item.notes,
+        })),
+        notes: orderNotes,
+      });
+
+      const orderNumber = (result as any).order?.orderNumber || result.orderId || 'N/A';
+      const total = getTotal();
+
+      addToast('success', `Order ${orderNumber} created - ${total} MRU`);
+
+      clearCart();
+      setSelectedCustomer(null);
+      setCustomerId(undefined);
+      loadAvailability();
+      navigate('/orders/active');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to create order';
+      addToast('error', message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const isTableRequired = orderType === 'dine-in';
+
+  return (
+    <div className="flex h-[calc(100vh-8rem)] bg-gray-50 rounded-2xl overflow-hidden shadow-card">
+      {/* Products Panel */}
+      <div className="flex-1 overflow-auto p-5">
+        {/* Search */}
+        <div className="relative mb-4">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+          />
+        </div>
+
+        {/* Categories */}
+        <div className="flex gap-2 mb-5 overflow-x-auto pb-2 scrollbar-thin">
+          <button
+            onClick={() => handleCategoryChange('')}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all
+              ${selectedCategory === ''
+                ? 'bg-brand-500 text-white shadow-md'
+                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+          >
+            All
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat._id}
+              onClick={() => handleCategoryChange(cat._id)}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all
+                ${selectedCategory === cat._id
+                  ? 'bg-brand-500 text-white shadow-md'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                }`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Products Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {products.map((product) => {
+            const stock = availability[product._id];
+            const isOutOfStock = stock && !stock.inStock;
+            const isAvailable = product.status === 'available' && !isOutOfStock;
+
+            return (
+              <button
+                key={product._id}
+                onClick={() => handleAddToCart(product)}
+                disabled={!isAvailable}
+                className={`card text-left overflow-hidden transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0`}
+              >
+                {/* Product image or placeholder */}
+                <div className="h-24 bg-gradient-to-br from-brand-50 to-orange-50 flex items-center justify-center">
+                  {product.imageUrl ? (
+                    <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <ShoppingBasket size={32} className="text-brand-300" />
+                  )}
+                </div>
+                
+                <div className="p-3">
+                  {isOutOfStock && (
+                    <span className="inline-flex items-center px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-lg mb-1">
+                      Out of Stock
+                    </span>
+                  )}
+                  {stock?.inStock && stock.missingItems.length === 0 && product.status === 'available' && (
+                    <span className="inline-flex items-center px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-lg mb-1">
+                      In Stock
+                    </span>
+                  )}
+                  <p className="font-semibold text-gray-900 text-sm truncate">{product.name}</p>
+                  <p className="text-xs text-gray-500 truncate mt-0.5">{product.description}</p>
+                  {isOutOfStock && stock.missingItems.length > 0 && (
+                    <p className="text-xs text-red-500 mt-1 truncate">
+                      Missing: {stock.missingItems.join(', ')}
+                    </p>
+                  )}
+                  <p className="text-brand-600 font-bold mt-2">{product.price} MRU</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Cart Sidebar */}
+      <div className="w-96 bg-white border-l border-gray-100 flex flex-col">
+        {/* Order Header */}
+        <div className="p-5 border-b border-gray-100">
+          <h2 className="font-display font-bold text-lg text-gray-900">New Order</h2>
+
+          <div className="mt-4 space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Order Type</label>
+              <select
+                value={orderType}
+                onChange={(e) => {
+                  const newType = e.target.value as 'dine-in' | 'takeaway' | 'delivery';
+                  setOrderType(newType);
+                  if (newType !== 'dine-in') {
+                    setSelectedTable(null);
+                  }
+                }}
+                className="input-field text-sm"
+              >
+                <option value="dine-in">🍽️ Dine-in</option>
+                <option value="takeaway">📦 Takeaway</option>
+                <option value="delivery">🚗 Delivery</option>
+              </select>
+            </div>
+
+            {isTableRequired && (
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+                  Table <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={selectedTable?._id || ''}
+                  onChange={(e) => {
+                    const table = tables.find((t: TableDTO) => t._id === e.target.value);
+                    setSelectedTable(table || null);
+                  }}
+                  className="input-field text-sm"
+                >
+                  <option value="">Select a table</option>
+                  {tables
+                    .filter((t: TableDTO) => t.status === 'free')
+                    .map((table: TableDTO) => (
+                      <option key={table._id} value={table._id}>
+                        {table.name} (Cap: {table.capacity})
+                      </option>
+                    ))}
+                </select>
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Customer (optional)</label>
+              <CustomerSearch
+                onSelect={handleCustomerSelect}
+                selectedCustomer={selectedCustomer}
+                onRemove={handleCustomerRemove}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Cart Items */}
+        <div className="flex-1 overflow-auto p-4">
+          {items.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <ShoppingBag size={28} className="text-gray-300" />
+              </div>
+              <p className="text-gray-500 font-medium">Cart is empty</p>
+              <p className="text-sm text-gray-400 mt-1">Click products to add them</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {items.map((item: CartItem) => (
+                <div key={item.productId} className="bg-gray-50 rounded-xl p-3 transition-all">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-900 text-sm truncate">{item.name}</p>
+                      <p className="text-xs text-gray-500">{item.price} MRU each</p>
+                      {item.notes && (
+                        <p className="text-xs text-brand-600 mt-1 flex items-center gap-1">
+                          <MessageSquare size={10} />
+                          {item.notes}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 ml-2">
+                      <button
+                        onClick={() => handleOpenItemNotes(item.productId, item.notes)}
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+                        title="Add note"
+                      >
+                        <MessageSquare size={14} />
+                      </button>
+                      <button
+                        onClick={() => removeItem(item.productId)}
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200">
+                      <button
+                        onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                        className="p-1.5 rounded-l-lg hover:bg-gray-100 transition-colors"
+                      >
+                        <Minus size={14} className="text-gray-600" />
+                      </button>
+                      <span className="w-8 text-center font-semibold text-sm">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                        className="p-1.5 rounded-r-lg hover:bg-gray-100 transition-colors"
+                      >
+                        <Plus size={14} className="text-gray-600" />
+                      </button>
+                    </div>
+                    <p className="font-bold text-gray-900">{item.price * item.quantity} MRU</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Order Summary */}
+        <div className="p-5 border-t border-gray-100 bg-gray-50">
+          {selectedCustomer && (
+            <div className="mb-3 p-3 bg-blue-50 rounded-xl">
+              <div className="flex justify-between text-sm">
+                <span className="text-blue-600">Customer:</span>
+                <span className="font-semibold text-blue-700">{selectedCustomer.firstName} {selectedCustomer.lastName}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-blue-600">Points:</span>
+                <span className="font-semibold text-blue-700">{selectedCustomer.loyaltyPoints} pts</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-blue-600">To Earn:</span>
+                <span className="font-semibold text-emerald-600">+{Math.floor(getTotal() / 100)} pts</span>
+              </div>
+            </div>
+          )}
+
+          {/* Order Notes */}
+          <div className="mb-3">
+            <button
+              onClick={() => setShowOrderNotes(!showOrderNotes)}
+              className="text-sm text-gray-500 hover:text-brand-600 flex items-center gap-1.5 transition-colors"
+            >
+              <MessageSquare size={14} />
+              {orderNotes ? 'Edit order notes' : 'Add order notes'}
+            </button>
+            {showOrderNotes && (
+              <div className="mt-2">
+                <textarea
+                  value={orderNotes}
+                  onChange={(e) => setOrderNotes(e.target.value)}
+                  placeholder="Special instructions..."
+                  className="input-field text-sm resize-none"
+                  rows={2}
+                />
+              </div>
+            )}
+            {orderNotes && !showOrderNotes && (
+              <p className="text-xs text-gray-500 mt-1.5 truncate">{orderNotes}</p>
+            )}
+          </div>
+
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-gray-600 font-medium">Total ({getItemCount()} items)</span>
+            <span className="text-2xl font-bold text-gray-900">{getTotal()} MRU</span>
+          </div>
+
+          <button
+            onClick={handleSubmitOrder}
+            disabled={isSubmitting || items.length === 0 || (isTableRequired && !selectedTable)}
+            className="btn-primary w-full flex items-center justify-center gap-2"
+          >
+            {isSubmitting ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <Sparkles size={18} />
+                Create Order - {getTotal()} MRU
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Item Notes Modal */}
+      {editingItemNotes && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md card p-6 animate-scale-in">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-display font-bold text-gray-900">Item Notes</h3>
+              <button onClick={() => setEditingItemNotes(null)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                <X size={18} />
+              </button>
+            </div>
+            <textarea
+              value={itemNoteText}
+              onChange={(e) => setItemNoteText(e.target.value)}
+              placeholder="e.g., No onions, extra spicy, well done..."
+              className="input-field resize-none"
+              rows={3}
+              autoFocus
+            />
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => setEditingItemNotes(null)}
+                className="btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveItemNotes}
+                className="btn-primary"
+              >
+                Save Note
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

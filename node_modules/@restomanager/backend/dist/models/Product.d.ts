@@ -1,0 +1,25 @@
+import mongoose, { Document } from 'mongoose';
+export type ProductStatus = 'available' | 'unavailable' | 'discontinued';
+export interface IRecipeItem {
+    inventoryId: mongoose.Types.ObjectId;
+    quantity: number;
+}
+export interface IProduct extends Document {
+    _id: mongoose.Types.ObjectId;
+    name: string;
+    description?: string;
+    imageUrl?: string;
+    categoryId: mongoose.Types.ObjectId;
+    price: number;
+    prepTime: number;
+    status: ProductStatus;
+    recipe: IRecipeItem[];
+    createdAt: Date;
+    updatedAt: Date;
+}
+export declare const Product: mongoose.Model<IProduct, {}, {}, {}, mongoose.Document<unknown, {}, IProduct, {}, {}> & IProduct & Required<{
+    _id: mongoose.Types.ObjectId;
+}> & {
+    __v: number;
+}, any>;
+//# sourceMappingURL=Product.d.ts.map
