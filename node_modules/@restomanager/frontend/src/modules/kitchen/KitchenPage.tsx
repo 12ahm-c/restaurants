@@ -153,7 +153,7 @@ export function KitchenPage() {
 
       {/* Queue */}
       {filteredQueue.length === 0 ? (
-        <div className="card p-12 text-center">
+        <div className="card bg-white p-12 text-center">
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <ChefHat size={32} className="text-gray-300" />
           </div>

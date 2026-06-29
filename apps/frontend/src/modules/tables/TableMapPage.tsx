@@ -104,35 +104,35 @@ export function TableMapPage() {
       {/* Status Summary */}
       {statusSummary && (
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <div className="card p-4 text-center">
+          <div className="card bg-white p-4 text-center">
             <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center mx-auto mb-2">
               <div className="w-3 h-3 bg-emerald-500 rounded-full" />
             </div>
             <p className="text-2xl font-bold text-emerald-600">{statusSummary.free}</p>
             <p className="text-xs text-gray-500 font-medium">Free</p>
           </div>
-          <div className="card p-4 text-center">
+          <div className="card bg-white p-4 text-center">
             <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-2">
               <div className="w-3 h-3 bg-red-500 rounded-full" />
             </div>
             <p className="text-2xl font-bold text-red-600">{statusSummary.occupied}</p>
             <p className="text-xs text-gray-500 font-medium">Occupied</p>
           </div>
-          <div className="card p-4 text-center">
+          <div className="card bg-white p-4 text-center">
             <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-2">
               <div className="w-3 h-3 bg-amber-500 rounded-full" />
             </div>
             <p className="text-2xl font-bold text-amber-600">{statusSummary.reserved}</p>
             <p className="text-xs text-gray-500 font-medium">Reserved</p>
           </div>
-          <div className="card p-4 text-center">
+          <div className="card bg-white p-4 text-center">
             <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
               <div className="w-3 h-3 bg-blue-500 rounded-full" />
             </div>
             <p className="text-2xl font-bold text-blue-600">{statusSummary.inService}</p>
             <p className="text-xs text-gray-500 font-medium">In Service</p>
           </div>
-          <div className="card p-4 text-center">
+          <div className="card bg-white p-4 text-center">
             <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-2">
               <Table2 size={20} className="text-gray-500" />
             </div>
@@ -158,7 +158,7 @@ export function TableMapPage() {
       </div>
 
       {/* Tables Grid */}
-      <div className="card p-6">
+      <div className="card bg-white p-6">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {filteredTables.map((table) => {
             const status = statusConfig[table.status] || statusConfig.free;

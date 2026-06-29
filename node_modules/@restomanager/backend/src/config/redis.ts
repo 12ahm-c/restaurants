@@ -7,14 +7,14 @@ let redisAvailable = false;
 export const redis = new Redis(env.REDIS_URL, {
   maxRetriesPerRequest: 3,
   retryStrategy(times) {
-    if (times > 10) {
-      logger.warn('Redis: Max retries reached, running without cache');
-      return null; // Stop retrying
+    if (times > 3) {
+      return null; // Stop retrying silently
     }
-    const delay = Math.min(times * 50, 2000);
+    const delay = Math.min(times * 100, 2000);
     return delay;
   },
   enableOfflineQueue: false,
+  lazyConnect: true,
 });
 
 redis.on('connect', () => {
@@ -22,13 +22,17 @@ redis.on('connect', () => {
   logger.info('Connected to Redis');
 });
 
-redis.on('error', (error: Error) => {
+redis.on('error', () => {
   redisAvailable = false;
-  logger.warn({ err: error.message }, 'Redis unavailable - running without cache');
 });
 
-redis.on('reconnecting', () => {
-  logger.warn('Redis reconnecting');
+redis.on('close', () => {
+  redisAvailable = false;
+});
+
+// Try to connect, but don't crash if Redis is unavailable
+redis.connect().catch(() => {
+  logger.warn('Redis unavailable - running without cache');
 });
 
 export function isRedisAvailable(): boolean {
@@ -37,5 +41,4 @@ export function isRedisAvailable(): boolean {
 
 export async function disconnectRedis(): Promise<void> {
   await redis.quit();
-  logger.info('Disconnected from Redis');
 }

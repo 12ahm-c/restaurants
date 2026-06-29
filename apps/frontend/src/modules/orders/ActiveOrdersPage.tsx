@@ -115,7 +115,7 @@ export function ActiveOrdersPage() {
         </div>
 
         {orders.length === 0 ? (
-          <div className="card p-12 text-center">
+          <div className="card bg-white p-12 text-center">
             <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Package size={32} className="text-gray-300" />
             </div>
@@ -127,7 +127,7 @@ export function ActiveOrdersPage() {
             {orders.map((order) => {
               const status = statusConfig[order.status] || statusConfig.new;
               return (
-                <div key={order._id} className="card overflow-hidden hover:shadow-card-hover transition-all animate-slide-up">
+                <div key={order._id} className="card bg-white overflow-hidden hover:shadow-card-hover transition-all animate-slide-up">
                   {/* Status bar */}
                   <div className={`h-1 ${status.dot}`} />
                   
@@ -201,14 +201,14 @@ export function ActiveOrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="card p-12 text-center">
+        <div className="card bg-white p-12 text-center">
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Package size={32} className="text-gray-300" />
           </div>
           <p className="text-gray-500 font-medium">No active orders</p>
         </div>
       ) : (
-        <div className="card overflow-hidden">
+        <div className="card bg-white overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>

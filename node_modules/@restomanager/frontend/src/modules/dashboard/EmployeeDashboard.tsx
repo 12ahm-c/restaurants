@@ -159,7 +159,7 @@ export const EmployeeDashboard: React.FC = () => {
 
       {/* Order Status */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card p-4 hover:shadow-card-hover transition-all">
+        <div className="card bg-white p-4 hover:shadow-card-hover transition-all">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl text-white shadow-md">
               <Flame size={20} />
@@ -171,7 +171,7 @@ export const EmployeeDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="card p-4 hover:shadow-card-hover transition-all">
+        <div className="card bg-white p-4 hover:shadow-card-hover transition-all">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl text-white shadow-md">
               <ChefHat size={20} />
@@ -183,7 +183,7 @@ export const EmployeeDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="card p-4 hover:shadow-card-hover transition-all">
+        <div className="card bg-white p-4 hover:shadow-card-hover transition-all">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl text-white shadow-md">
               <CheckCircle size={20} />
@@ -195,7 +195,7 @@ export const EmployeeDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="card p-4 hover:shadow-card-hover transition-all">
+        <div className="card bg-white p-4 hover:shadow-card-hover transition-all">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl text-white shadow-md">
               <Truck size={20} />
@@ -212,7 +212,7 @@ export const EmployeeDashboard: React.FC = () => {
       {!isCashier && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Daily Profit */}
-          <div className="card p-6">
+          <div className="card bg-white p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className={`p-2.5 rounded-xl ${employeeKPIs.todayProfit >= 0 ? 'bg-emerald-100' : 'bg-red-100'}`}>
                 {employeeKPIs.todayProfit >= 0 
@@ -228,7 +228,7 @@ export const EmployeeDashboard: React.FC = () => {
           </div>
 
           {/* Top Products */}
-          <div className="card p-6">
+          <div className="card bg-white p-6">
             <h3 className="font-semibold text-gray-900 mb-4">Top Selling Items</h3>
             {employeeKPIs.topProducts.length === 0 ? (
               <p className="text-sm text-gray-500">No sales today</p>
@@ -251,7 +251,7 @@ export const EmployeeDashboard: React.FC = () => {
           </div>
 
           {/* Stock Alerts */}
-          <div className="card p-6">
+          <div className="card bg-white p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2.5 bg-amber-100 rounded-xl">
                 <AlertTriangle size={20} className="text-amber-600" />

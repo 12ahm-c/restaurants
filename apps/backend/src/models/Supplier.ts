@@ -22,7 +22,6 @@ const supplierSchema = new Schema<ISupplier>(
   { timestamps: true }
 );
 
-supplierSchema.index({ name: 1 });
 supplierSchema.index({ isActive: 1 });
 
 export const Supplier = mongoose.model<ISupplier>('Supplier', supplierSchema);
