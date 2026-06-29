@@ -1,27 +1,9 @@
 import { Router } from 'express';
-import rateLimit from 'express-rate-limit';
 import { AuthController } from './auth.controller';
 import { authenticate } from '../../middlewares/auth';
-import { env } from '../../config/env';
 import { User } from '../../models/User';
 
 const router = Router();
-
-const loginLimiter = rateLimit({
-  windowMs: env.LOGIN_RATE_LIMIT_WINDOW_MS,
-  max: env.LOGIN_RATE_LIMIT_MAX,
-  message: {
-    success: false,
-    data: null,
-    error: {
-      code: 'RATE_LIMIT_EXCEEDED',
-      message: 'Too many login attempts, please try again later',
-    },
-    meta: null,
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
 
 // Setup: Create first admin user (only if no users exist)
 router.post('/setup', async (_req, res) => {
@@ -62,7 +44,7 @@ router.post('/setup', async (_req, res) => {
   }
 });
 
-router.post('/login', loginLimiter, AuthController.login);
+router.post('/login', AuthController.login);
 router.post('/refresh', AuthController.refresh);
 router.post('/logout', AuthController.logout);
 router.get('/me', authenticate, AuthController.me);
