@@ -22,7 +22,7 @@ let io: SocketIOServer;
 export function initSocketIO(httpServer: HTTPServer): SocketIOServer {
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: env.CORS_ORIGIN,
+      origin: env.CORS_ORIGINS,
       credentials: true,
     },
     path: '/socket.io',

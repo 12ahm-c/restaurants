@@ -33,7 +33,7 @@ const httpServer = createServer(app);
 const io = initSocketIO(httpServer);
 
 app.use(helmet());
-app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+app.use(cors({ origin: env.CORS_ORIGINS, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 

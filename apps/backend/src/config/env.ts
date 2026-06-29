@@ -33,4 +33,5 @@ export const env = {
   RATE_LIMIT_MAX: parseInt(parsed.data.RATE_LIMIT_MAX, 10),
   LOGIN_RATE_LIMIT_MAX: parseInt(parsed.data.LOGIN_RATE_LIMIT_MAX, 10),
   LOGIN_RATE_LIMIT_WINDOW_MS: parseInt(parsed.data.LOGIN_RATE_LIMIT_WINDOW_MS, 10),
+  CORS_ORIGINS: parsed.data.CORS_ORIGIN.split(',').map((s) => s.trim()),
 };
