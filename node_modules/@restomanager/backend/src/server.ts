@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import rateLimit from 'express-rate-limit';
 import { createServer } from 'http';
 import { env } from './config/env';
 import { connectMongoDB } from './config/db';
@@ -37,6 +38,14 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/uploads', express.static('uploads'));
+
+const limiter = rateLimit({
+  windowMs: env.RATE_LIMIT_WINDOW_MS,
+  max: env.RATE_LIMIT_MAX,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 
 // Request counting middleware
 app.use((_req, _res, next) => {
