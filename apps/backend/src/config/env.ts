@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const envSchema = z.object({
   PORT: z.string().default('3001'),
@@ -10,6 +13,10 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRY: z.string().default('15m'),
   JWT_REFRESH_EXPIRY: z.string().default('30d'),
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
+  RATE_LIMIT_WINDOW_MS: z.string().default('900000'),
+  RATE_LIMIT_MAX: z.string().default('100'),
+  LOGIN_RATE_LIMIT_MAX: z.string().default('5'),
+  LOGIN_RATE_LIMIT_WINDOW_MS: z.string().default('900000'),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -22,4 +29,8 @@ if (!parsed.success) {
 export const env = {
   ...parsed.data,
   PORT: parseInt(parsed.data.PORT, 10),
+  RATE_LIMIT_WINDOW_MS: parseInt(parsed.data.RATE_LIMIT_WINDOW_MS, 10),
+  RATE_LIMIT_MAX: parseInt(parsed.data.RATE_LIMIT_MAX, 10),
+  LOGIN_RATE_LIMIT_MAX: parseInt(parsed.data.LOGIN_RATE_LIMIT_MAX, 10),
+  LOGIN_RATE_LIMIT_WINDOW_MS: parseInt(parsed.data.LOGIN_RATE_LIMIT_WINDOW_MS, 10),
 };
