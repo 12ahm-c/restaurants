@@ -37,7 +37,7 @@ export function validateProduct(data: unknown): {
   }
 
   const errors: Record<string, string> = {};
-  result.error.errors.forEach((err) => {
+  result.error.issues.forEach((err) => {
     const field = err.path.join('.');
     errors[field] = err.message;
   });
@@ -57,7 +57,7 @@ export function validateCategory(data: unknown): {
   }
 
   const errors: Record<string, string> = {};
-  result.error.errors.forEach((err) => {
+  result.error.issues.forEach((err) => {
     const field = err.path.join('.');
     errors[field] = err.message;
   });
