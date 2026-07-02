@@ -97,10 +97,11 @@ export function EmployeeLayout() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full z-50 transition-all duration-300 ease-in-out
+        className={`fixed left-0 h-full z-50 transition-all duration-300 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           ${collapsed ? 'w-[72px]' : 'w-64'}
           bg-white border-r border-gray-100 shadow-xl lg:shadow-none`}
+        style={{ top: 'env(safe-area-inset-top)' }}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
@@ -180,22 +181,24 @@ export function EmployeeLayout() {
       {/* Main content */}
       <div className={`transition-all duration-300 ${collapsed ? 'lg:ml-[72px]' : 'lg:ml-64'}`}>
         {/* Top bar */}
-        <header className="sticky top-0 z-30 h-16 glass border-b border-gray-100">
-          <div className="flex items-center justify-between h-full px-4 sm:px-6">
-            <div className="flex items-center gap-4">
+        <header className="sticky top-0 z-30 glass border-b border-gray-100" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+          <div className="flex items-center justify-between h-16 px-4 sm:px-6">
+            <div className="flex items-center gap-3">
               <button
                 onClick={toggleSidebar}
                 className="lg:hidden p-2 rounded-xl hover:bg-gray-100 transition-colors"
               >
                 <Menu size={20} className="text-gray-600" />
               </button>
-              <div className="hidden sm:block">
-                <h2 className="text-sm font-medium text-gray-500">Welcome back,</h2>
-                <p className="text-base font-semibold text-gray-900">{user?.name}</p>
+              <div className="flex items-center gap-2.5">
+                <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${roleGradient} flex items-center justify-center shadow-md`}>
+                  <Utensils size={16} className="text-white" />
+                </div>
+                <span className="text-base font-display font-bold text-gray-900 hidden sm:inline">{companyName}</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <NotificationBadge />
               <Link
                 to="/profile"
