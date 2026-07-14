@@ -4,8 +4,8 @@
   "description": "Système de gestion de restaurant",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#E53935",
+  "background_color": "#F9FAFB",
+  "theme_color": "#F97316",
   "orientation": "any",
   "icons": [
     {

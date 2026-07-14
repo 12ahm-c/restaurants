@@ -8,6 +8,12 @@
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    height: 100%;
+    overflow: hidden;
   }
 
   body {
@@ -15,11 +21,24 @@
     color: #111827;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #root {
+    height: 100%;
+    overflow: hidden;
   }
 
   ::selection {
     background-color: #FED7AA;
     color: #7C2D12;
+  }
+
+  input, textarea, select {
+    font-size: 16px !important;
   }
 }
 
@@ -211,6 +230,57 @@
   }
   .table-row:hover {
     background-color: rgba(249,250,251,0.5);
+  }
+
+  .mobile-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+    transition: all 0.2s;
+  }
+
+  .mobile-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  .bottom-sheet {
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+  }
+
+  .mobile-fab {
+    position: fixed;
+    bottom: calc(5rem + env(safe-area-inset-bottom));
+    right: 1rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #F97316, #EA580C);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
+    z-index: 30;
+    transition: all 0.2s;
+  }
+
+  .mobile-fab:active {
+    transform: scale(0.92);
+  }
+
+  .safe-bottom {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+
+  .swipe-indicator {
+    width: 2.5rem;
+    height: 0.25rem;
+    background: #D1D5DB;
+    border-radius: 9999px;
+    margin: 0 auto;
   }
 }
 

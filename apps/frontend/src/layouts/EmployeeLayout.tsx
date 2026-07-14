@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useSettingsStore } from '../stores/settingsStore';
-import { 
-  LogOut, User, Menu, X, LayoutDashboard, ShoppingCart, Table2, 
+import {
+  LogOut, User, X, LayoutDashboard, ShoppingCart, Table2,
   ChefHat, UtensilsCrossed, Users, DollarSign, FileText, Settings,
-  ClipboardList, ChevronLeft, Utensils
+  ClipboardList, Utensils, MoreHorizontal
 } from 'lucide-react';
-import { useUIStore } from '../stores/uiStore';
 import { NotificationBadge } from '../components/notifications/NotificationBadge';
 import { UserRole } from '../types';
 
@@ -64,17 +63,22 @@ const ROLE_COLORS: Record<string, string> = {
   stock_manager: 'from-purple-500 to-violet-500',
 };
 
+const BOTTOM_TAB_COUNT = 4;
+
 export function EmployeeLayout() {
   const { user, logout } = useAuthStore();
   const { settings, fetchSettings } = useSettingsStore();
-  const { sidebarOpen, toggleSidebar } = useUIStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     fetchSettings();
   }, [fetchSettings]);
+
+  useEffect(() => {
+    setMoreOpen(false);
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     await logout();
@@ -85,139 +89,174 @@ export function EmployeeLayout() {
   const companyName = settings?.company_name || 'RestoManager';
   const roleGradient = ROLE_COLORS[user?.role || 'owner'];
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
-          onClick={toggleSidebar}
-        />
-      )}
+  const bottomTabs = navItems.slice(0, BOTTOM_TAB_COUNT);
+  const moreItems = navItems.slice(BOTTOM_TAB_COUNT);
 
-      {/* Sidebar */}
-      <aside
-        className={`fixed left-0 h-full z-50 transition-all duration-300 ease-in-out
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          ${collapsed ? 'w-[72px]' : 'w-64'}
-          bg-white border-r border-gray-100 shadow-xl lg:shadow-none`}
-        style={{ top: 'env(safe-area-inset-top)' }}
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Top App Bar */}
+      <header
+        className="sticky top-0 z-30 glass border-b border-gray-100"
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
-        <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-100">
-            <div className="flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${roleGradient} flex items-center justify-center shadow-lg`}>
-                <Utensils size={18} className="text-white" />
-              </div>
-              {!collapsed && (
-                <span className="text-lg font-display font-bold text-gray-900">{companyName}</span>
-              )}
+        <div className="flex items-center justify-between h-14 px-4">
+          <div className="flex items-center gap-2.5">
+            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${roleGradient} flex items-center justify-center shadow-md`}>
+              <Utensils size={16} className="text-white" />
             </div>
-            <button
-              onClick={() => setCollapsed(!collapsed)}
-              className="hidden lg:flex p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <ChevronLeft size={18} className={`text-gray-400 transition-transform ${collapsed ? 'rotate-180' : ''}`} />
-            </button>
-            <button
-              onClick={toggleSidebar}
-              className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100"
-            >
-              <X size={18} className="text-gray-400" />
-            </button>
+            <span className="text-base font-display font-bold text-gray-900">{companyName}</span>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-            {navItems.map((item) => {
-              const isActive = location.pathname.startsWith(item.path);
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => sidebarOpen && toggleSidebar()}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
-                    ${isActive 
-                      ? 'bg-gradient-to-r from-brand-50 to-orange-50 text-brand-600 shadow-sm' 
-                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
-                  title={collapsed ? item.label : undefined}
-                >
-                  <Icon size={20} className={isActive ? 'text-brand-500' : 'text-gray-400'} />
-                  {!collapsed && <span>{item.label}</span>}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* User section */}
-          <div className="p-3 border-t border-gray-100">
-            <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gray-50`}>
-              <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${roleGradient} flex items-center justify-center text-white text-sm font-semibold shadow-md`}>
+          <div className="flex items-center gap-1">
+            <NotificationBadge />
+            <Link
+              to="/profile"
+              className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
+            >
+              <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${roleGradient} flex items-center justify-center text-white text-xs font-semibold`}>
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
-              {!collapsed && (
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{user?.name}</p>
-                  <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Page content */}
+      <main className="flex-1 pb-20" role="main">
+        <div className="p-4">
+          <Outlet />
+        </div>
+      </main>
+
+      {/* Bottom Navigation Bar */}
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-40 glass border-t border-gray-100"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <div className="flex items-center justify-around h-16 px-2">
+          {bottomTabs.map((item) => {
+            const isActive = location.pathname.startsWith(item.path);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="flex flex-col items-center justify-center gap-0.5 min-w-[64px] py-1 rounded-xl transition-all duration-200"
+              >
+                <div className={`p-1.5 rounded-xl transition-all duration-200 ${
+                  isActive
+                    ? 'bg-brand-50 text-brand-600'
+                    : 'text-gray-400'
+                }`}>
+                  <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                 </div>
-              )}
-              {!collapsed && (
+                <span className={`text-[10px] font-semibold leading-tight ${
+                  isActive ? 'text-brand-600' : 'text-gray-400'
+                }`}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+
+          {moreItems.length > 0 && (
+            <button
+              onClick={() => setMoreOpen(true)}
+              className="flex flex-col items-center justify-center gap-0.5 min-w-[64px] py-1 rounded-xl transition-all duration-200"
+            >
+              <div className={`p-1.5 rounded-xl transition-all duration-200 ${
+                moreOpen
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-gray-400'
+              }`}>
+                <MoreHorizontal size={22} strokeWidth={2} />
+              </div>
+              <span className={`text-[10px] font-semibold leading-tight ${
+                moreOpen ? 'text-brand-600' : 'text-gray-400'
+              }`}>
+                More
+              </span>
+            </button>
+          )}
+        </div>
+      </nav>
+
+      {/* More Items Bottom Sheet Overlay */}
+      {moreOpen && (
+        <div className="fixed inset-0 z-50" style={{ bottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setMoreOpen(false)}
+          />
+          <div className="absolute bottom-0 left-0 right-0 animate-slide-up">
+            <div className="bg-white rounded-t-3xl shadow-2xl border border-gray-100 max-h-[70vh] overflow-hidden">
+              {/* Handle */}
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-10 h-1 bg-gray-200 rounded-full" />
+              </div>
+
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 pb-3 border-b border-gray-100">
+                <h3 className="text-lg font-display font-bold text-gray-900">More</h3>
                 <button
-                  onClick={handleLogout}
-                  className="p-2 rounded-lg hover:bg-gray-200 transition-colors"
-                  title="Logout"
+                  onClick={() => setMoreOpen(false)}
+                  className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
                 >
-                  <LogOut size={16} className="text-gray-400" />
+                  <X size={20} className="text-gray-400" />
                 </button>
-              )}
+              </div>
+
+              {/* Items grid */}
+              <div className="p-4 overflow-y-auto max-h-[55vh]">
+                <div className="grid grid-cols-3 gap-3">
+                  {moreItems.map((item) => {
+                    const isActive = location.pathname.startsWith(item.path);
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all duration-200 ${
+                          isActive
+                            ? 'bg-brand-50 text-brand-600 shadow-sm'
+                            : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                        }`}
+                      >
+                        <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+                        <span className="text-xs font-semibold text-center leading-tight">
+                          {item.label}
+                        </span>
+                      </Link>
+                    );
+                  })}
+
+                  {/* Profile */}
+                  <Link
+                    to="/profile"
+                    className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all duration-200"
+                  >
+                    <User size={24} strokeWidth={2} />
+                    <span className="text-xs font-semibold text-center leading-tight">
+                      Profile
+                    </span>
+                  </Link>
+
+                  {/* Logout */}
+                  <button
+                    onClick={handleLogout}
+                    className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-red-50 text-red-500 hover:bg-red-100 transition-all duration-200"
+                  >
+                    <LogOut size={24} strokeWidth={2} />
+                    <span className="text-xs font-semibold text-center leading-tight">
+                      Logout
+                    </span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </aside>
-
-      {/* Main content */}
-      <div className={`transition-all duration-300 ${collapsed ? 'lg:ml-[72px]' : 'lg:ml-64'}`}>
-        {/* Top bar */}
-        <header className="sticky top-0 z-30 glass border-b border-gray-100" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-          <div className="flex items-center justify-between h-16 px-4 sm:px-6">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={toggleSidebar}
-                className="lg:hidden p-2 rounded-xl hover:bg-gray-100 transition-colors"
-              >
-                <Menu size={20} className="text-gray-600" />
-              </button>
-              <div className="flex items-center gap-2.5">
-                <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${roleGradient} flex items-center justify-center shadow-md`}>
-                  <Utensils size={16} className="text-white" />
-                </div>
-                <span className="text-base font-display font-bold text-gray-900 hidden sm:inline">{companyName}</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <NotificationBadge />
-              <Link
-                to="/profile"
-                className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-100 transition-colors"
-              >
-                <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${roleGradient} flex items-center justify-center text-white text-xs font-semibold`}>
-                  {user?.name?.charAt(0).toUpperCase()}
-                </div>
-                <span className="hidden sm:inline text-sm font-medium text-gray-700">{user?.name}</span>
-              </Link>
-            </div>
-          </div>
-        </header>
-
-        {/* Page content */}
-        <main className="p-4 sm:p-6 lg:p-8" role="main">
-          <Outlet />
-        </main>
-      </div>
+      )}
     </div>
   );
 }
