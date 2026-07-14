@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { useAuthStore } from './stores/authStore';
 import { getAccessToken } from './services/api-client';
 
@@ -27,7 +28,9 @@ if ('serviceWorker' in navigator) {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <AppInit />
+      <ThemeProvider>
+        <AppInit />
+      </ThemeProvider>
     </ErrorBoundary>
   </React.StrictMode>
 );

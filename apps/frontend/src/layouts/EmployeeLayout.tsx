@@ -4,11 +4,12 @@ import { useAuthStore } from '../stores/authStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useNotificationStore } from '../stores/notificationStore';
 import { useI18n } from '../i18n/I18nContext';
+import { useTheme } from '../contexts/ThemeContext';
 import {
   LogOut, User, X, LayoutDashboard, ShoppingCart, Table2,
   ChefHat, UtensilsCrossed, Users, DollarSign, FileText, Settings,
   ClipboardList, Utensils, MoreHorizontal, Bell, CheckCheck, ChevronRight,
-  Search
+  Search, Sun, Moon
 } from 'lucide-react';
 import { UserRole } from '../types';
 
@@ -83,6 +84,7 @@ export function EmployeeLayout() {
   const { settings, fetchSettings } = useSettingsStore();
   const { notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead } = useNotificationStore();
   const { t } = useI18n();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -171,6 +173,15 @@ export function EmployeeLayout() {
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
+            </button>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl hover:bg-white/5 transition-colors text-surface-400 hover:text-white"
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
             {/* Profile */}
@@ -294,9 +305,10 @@ export function EmployeeLayout() {
 
       {/* Bottom Navigation Bar */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 glass border-t border-white/5"
+        className="fixed bottom-0 left-0 right-0 z-40 glass border-t border-white/5 shrink-0"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
-        <div className="flex items-center justify-around h-[60px] px-1" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="flex items-center justify-around h-[60px] px-1">
           {bottomTabs.map((item) => {
             const isActive = location.pathname.startsWith(item.path);
             const Icon = item.icon;
