@@ -7,6 +7,7 @@ export interface Settings {
   taxRate: number;
   currency: string;
   company_name: string;
+  logo: string;
   createdAt: string;
   updatedAt: string;
 }

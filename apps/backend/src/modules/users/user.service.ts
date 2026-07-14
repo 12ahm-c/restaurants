@@ -156,4 +156,20 @@ export class UserService {
 
     return AuthService.toUserDTO(user);
   }
+
+  static async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
+    const user = await User.findById(userId).select('+passwordHash');
+
+    if (!user) {
+      throw new AppError(404, 'NOT_FOUND', 'User not found');
+    }
+
+    const isPasswordValid = await user.comparePassword(currentPassword);
+    if (!isPasswordValid) {
+      throw new AppError(401, 'AUTH_REQUIRED', 'Current password is incorrect');
+    }
+
+    user.passwordHash = newPassword;
+    await user.save();
+  }
 }

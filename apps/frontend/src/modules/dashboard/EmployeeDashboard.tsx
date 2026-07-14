@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDashboardStore } from '../../stores/dashboardStore';
 import { useAuthStore } from '../../stores/authStore';
+import { useI18n } from '../../i18n/I18nContext';
 import { useSocket } from '../../hooks/useSocket';
 import {
   DollarSign,
@@ -22,6 +23,7 @@ import {
 export const EmployeeDashboard: React.FC = () => {
   const { employeeKPIs, fetchEmployeeKPIs, isLoading, error } = useDashboardStore();
   const { user } = useAuthStore();
+  const { t } = useI18n();
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const { socket } = useSocket();
 
@@ -48,7 +50,7 @@ export const EmployeeDashboard: React.FC = () => {
       <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-3 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">Loading dashboard...</p>
+          <p className="text-sm text-gray-500">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -73,16 +75,16 @@ export const EmployeeDashboard: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-display font-bold text-gray-900">
-            {isCashier ? "Today's Summary" : 'Dashboard'}
+            {isCashier ? t('dashboard.title') : t('dashboard.title')}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             <Clock size={14} className="inline mr-1" />
-            Updated: {lastUpdated.toLocaleTimeString()}
+            {lastUpdated.toLocaleTimeString()}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse-soft" />
-          <span className="text-sm text-emerald-600 font-medium">Live</span>
+          <span className="text-sm text-emerald-600 font-medium">{t('common.active')}</span>
         </div>
       </div>
 
@@ -97,11 +99,11 @@ export const EmployeeDashboard: React.FC = () => {
               </div>
               <span className="flex items-center gap-1 text-sm font-medium bg-white/20 px-2 py-1 rounded-lg">
                 <ArrowUpRight size={14} />
-                Today
+                {t('dashboard.title')}
               </span>
             </div>
             <p className="text-3xl font-bold mb-1">{formatCurrency(employeeKPIs.todaySales)}</p>
-            <p className="text-white/70 text-sm">Total Sales</p>
+            <p className="text-white/70 text-sm">{t('dashboard.revenue')}</p>
           </div>
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
         </div>
@@ -115,11 +117,11 @@ export const EmployeeDashboard: React.FC = () => {
               </div>
               <span className="flex items-center gap-1 text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">
                 <Activity size={14} />
-                Live
+                {t('common.active')}
               </span>
             </div>
             <p className="text-3xl font-bold text-gray-900 mb-1">{employeeKPIs.totalOrders}</p>
-            <p className="text-gray-500 text-sm">Total Orders</p>
+            <p className="text-gray-500 text-sm">{t('dashboard.totalOrders')}</p>
           </div>
           <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -translate-y-12 translate-x-12" />
         </div>
@@ -135,7 +137,7 @@ export const EmployeeDashboard: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-3xl font-bold text-gray-900 mb-1">{employeeKPIs.totalCustomers}</p>
-                <p className="text-gray-500 text-sm">Customers</p>
+                <p className="text-gray-500 text-sm">{t('dashboard.customers')}</p>
               </div>
               <div className="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-full -translate-y-12 translate-x-12" />
             </div>
@@ -149,7 +151,7 @@ export const EmployeeDashboard: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-3xl font-bold text-gray-900 mb-1">{employeeKPIs.occupiedTables}</p>
-                <p className="text-gray-500 text-sm">Occupied Tables</p>
+                <p className="text-gray-500 text-sm">{t('tables.occupied')}</p>
               </div>
               <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full -translate-y-12 translate-x-12" />
             </div>
@@ -166,7 +168,7 @@ export const EmployeeDashboard: React.FC = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">{employeeKPIs.newOrders}</p>
-              <p className="text-xs text-gray-500 font-medium">New Orders</p>
+              <p className="text-xs text-gray-500 font-medium">{t('orders.new')}</p>
             </div>
           </div>
         </div>
@@ -178,7 +180,7 @@ export const EmployeeDashboard: React.FC = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">{employeeKPIs.preparingOrders}</p>
-              <p className="text-xs text-gray-500 font-medium">Preparing</p>
+              <p className="text-xs text-gray-500 font-medium">{t('orders.preparing')}</p>
             </div>
           </div>
         </div>
@@ -190,7 +192,7 @@ export const EmployeeDashboard: React.FC = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">{employeeKPIs.readyOrders}</p>
-              <p className="text-xs text-gray-500 font-medium">Ready</p>
+              <p className="text-xs text-gray-500 font-medium">{t('orders.ready')}</p>
             </div>
           </div>
         </div>
@@ -202,7 +204,7 @@ export const EmployeeDashboard: React.FC = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">{employeeKPIs.deliveryOrders}</p>
-              <p className="text-xs text-gray-500 font-medium">Delivery</p>
+              <p className="text-xs text-gray-500 font-medium">{t('nav.orders')}</p>
             </div>
           </div>
         </div>
@@ -220,7 +222,7 @@ export const EmployeeDashboard: React.FC = () => {
                   : <TrendingDown size={20} className="text-red-600" />
                 }
               </div>
-              <h3 className="font-semibold text-gray-900">Daily Profit</h3>
+              <h3 className="font-semibold text-gray-900">{t('finance.profit')}</h3>
             </div>
             <p className={`text-3xl font-bold ${employeeKPIs.todayProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               {formatCurrency(employeeKPIs.todayProfit)}
@@ -229,9 +231,9 @@ export const EmployeeDashboard: React.FC = () => {
 
           {/* Top Products */}
           <div className="card bg-white p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Top Selling Items</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">{t('nav.menu')}</h3>
             {employeeKPIs.topProducts.length === 0 ? (
-              <p className="text-sm text-gray-500">No sales today</p>
+              <p className="text-sm text-gray-500">{t('common.noData')}</p>
             ) : (
               <div className="space-y-3">
                 {employeeKPIs.topProducts.map((product, index) => (
@@ -256,12 +258,12 @@ export const EmployeeDashboard: React.FC = () => {
               <div className="p-2.5 bg-amber-100 rounded-xl">
                 <AlertTriangle size={20} className="text-amber-600" />
               </div>
-              <h3 className="font-semibold text-gray-900">Stock Alerts</h3>
+              <h3 className="font-semibold text-gray-900">{t('nav.kitchen')}</h3>
             </div>
             {employeeKPIs.stockAlerts.length === 0 ? (
               <div className="text-center py-4">
                 <CheckCircle size={32} className="mx-auto text-emerald-400 mb-2" />
-                <p className="text-sm text-gray-500">All stock levels OK</p>
+                <p className="text-sm text-gray-500">{t('common.noData')}</p>
               </div>
             ) : (
               <div className="space-y-3">

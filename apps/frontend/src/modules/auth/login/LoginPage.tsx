@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../stores/authStore';
+import { useI18n } from '../../../i18n/I18nContext';
 import { Utensils, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export function LoginPage() {
@@ -8,6 +9,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading, error, clearError } = useAuthStore();
+  const { t } = useI18n();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,8 +71,8 @@ export function LoginPage() {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-display font-bold text-gray-900 mb-2">Welcome back</h2>
-            <p className="text-gray-500">Sign in to your account to continue</p>
+            <h2 className="text-2xl font-display font-bold text-gray-900 mb-2">{t('auth.login')}</h2>
+            <p className="text-gray-500">{t('auth.phoneNumber')}</p>
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
@@ -90,7 +92,7 @@ export function LoginPage() {
 
             <div className="space-y-2">
               <label htmlFor="phone" className="block text-sm font-semibold text-gray-700">
-                Phone number
+                {t('auth.phoneNumber')}
               </label>
               <input
                 id="phone"
@@ -101,13 +103,13 @@ export function LoginPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="input-field"
-                placeholder="Enter your phone number"
+                placeholder={t('auth.phoneNumber')}
               />
             </div>
 
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
-                Password
+                {t('auth.password')}
               </label>
               <div className="relative">
                 <input
@@ -119,7 +121,7 @@ export function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="input-field pr-12"
-                  placeholder="Enter your password"
+                  placeholder={t('auth.password')}
                 />
                 <button
                   type="button"
@@ -140,7 +142,7 @@ export function LoginPage() {
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  Sign in
+                  {t('auth.loginButton')}
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </>
               )}

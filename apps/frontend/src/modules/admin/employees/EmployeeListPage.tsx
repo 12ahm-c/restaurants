@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { authService } from '../../../services/auth.service';
+import { useI18n } from '../../../i18n/I18nContext';
 import { UserDTO } from '../../../types';
 import { Plus, Edit, Search } from 'lucide-react';
 
@@ -11,6 +12,7 @@ export function EmployeeListPage() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useI18n();
 
   const fetchEmployees = async () => {
     setIsLoading(true);
@@ -49,13 +51,13 @@ export function EmployeeListPage() {
   return (
     <div className="animate-fade-in">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-display font-bold text-gray-900">Employees</h1>
+        <h1 className="text-xl font-display font-bold text-gray-900">{t('employees.title')}</h1>
         <Link
           to="/admin/employees/new"
           className="btn-primary flex items-center gap-2 text-sm"
         >
           <Plus size={18} />
-          <span className="hidden sm:inline">Add</span>
+          <span className="hidden sm:inline">{t('common.create')}</span>
         </Link>
       </div>
 
@@ -65,7 +67,7 @@ export function EmployeeListPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
             type="text"
-            placeholder="Search by name or phone..."
+            placeholder={t('employees.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
@@ -76,7 +78,7 @@ export function EmployeeListPage() {
           onChange={(e) => setRoleFilter(e.target.value)}
           className="px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
         >
-          <option value="">All Roles</option>
+          <option value="">{t('employees.title')}</option>
           {Object.entries(roleLabels).map(([value, label]) => (
             <option key={value} value={value}>{label}</option>
           ))}
@@ -89,7 +91,7 @@ export function EmployeeListPage() {
         </div>
       ) : filteredEmployees.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-12 text-center">
-          <p className="text-gray-500 font-medium">No employees found</p>
+          <p className="text-gray-500 font-medium">{t('employees.noEmployees')}</p>
         </div>
       ) : (
         <>
@@ -118,7 +120,7 @@ export function EmployeeListPage() {
                     className="text-xs font-semibold text-brand-600 flex items-center gap-1"
                   >
                     <Edit size={14} />
-                    Edit
+                    {t('common.edit')}
                   </Link>
                 </div>
               </div>
@@ -130,10 +132,10 @@ export function EmployeeListPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100">
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Name</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Phone</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Role</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Status</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">{t('common.name')}</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">{t('common.phone')}</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">{t('employees.role')}</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">{t('employees.status')}</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase"></th>
                 </tr>
               </thead>
@@ -153,7 +155,7 @@ export function EmployeeListPage() {
                       <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
                         employee.isActive ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
                       }`}>
-                        {employee.isActive ? 'Active' : 'Inactive'}
+                        {employee.isActive ? t('employees.active') : t('employees.inactive')}
                       </span>
                     </td>
                     <td className="px-5 py-3">
@@ -162,7 +164,7 @@ export function EmployeeListPage() {
                         className="text-sm font-semibold text-brand-600 hover:text-brand-700 inline-flex items-center gap-1"
                       >
                         <Edit size={14} />
-                        Edit
+                        {t('common.edit')}
                       </Link>
                     </td>
                   </tr>
@@ -182,14 +184,14 @@ export function EmployeeListPage() {
                   disabled={page === 1}
                   className="btn-secondary text-xs px-3 py-1.5 disabled:opacity-50"
                 >
-                  Prev
+                  {t('common.previous')}
                 </button>
                 <button
                   onClick={() => setPage((p) => p + 1)}
                   disabled={page * 20 >= total}
                   className="btn-secondary text-xs px-3 py-1.5 disabled:opacity-50"
                 >
-                  Next
+                  {t('common.next')}
                 </button>
               </div>
             </div>

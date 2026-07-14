@@ -4,6 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { EmployeeLayout } from './layouts/EmployeeLayout';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { SocketProvider } from './contexts/SocketContext';
+import { I18nProvider } from './i18n/I18nContext';
 
 const LoginPage = lazy(() => import('./modules/auth/login/LoginPage').then(m => ({ default: m.LoginPage })));
 const ProfilePage = lazy(() => import('./modules/auth/profile/ProfilePage').then(m => ({ default: m.ProfilePage })));
@@ -33,11 +34,12 @@ const LogsPage = lazy(() => import('./modules/admin/logs/LogsPage').then(m => ({
 
 function App() {
   return (
-    <SocketProvider>
-      <BrowserRouter>
-        <Suspense fallback={<LoadingSpinner message="Loading..." />}>
-          <Routes>
-          <Route path="/login" element={<LoginPage />} />
+    <I18nProvider>
+      <SocketProvider>
+        <BrowserRouter>
+          <Suspense fallback={<LoadingSpinner message="Loading..." />}>
+            <Routes>
+            <Route path="/login" element={<LoginPage />} />
 
           <Route
             path="/"
@@ -259,6 +261,7 @@ function App() {
         </Suspense>
       </BrowserRouter>
     </SocketProvider>
+    </I18nProvider>
   );
 }
 

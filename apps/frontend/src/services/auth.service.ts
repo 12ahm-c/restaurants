@@ -61,6 +61,17 @@ export const authService = {
     return response.data.data;
   },
 
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    const response = await apiClient.post<ApiResponse<{ message: string }>>('/users/me/change-password', {
+      currentPassword,
+      newPassword,
+    });
+
+    if (!response.data.success) {
+      throw new Error(response.data.error?.message || 'Failed to change password');
+    }
+  },
+
   async getEmployees(
     page: number = 1,
     limit: number = 20,

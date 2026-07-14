@@ -115,4 +115,28 @@ export class UserController {
       handleError(res, error);
     }
   }
+
+  static async changePassword(req: Request, res: Response): Promise<void> {
+    const schema = z.object({
+      currentPassword: z.string().min(1, 'Current password is required'),
+      newPassword: z.string().min(6, 'New password must be at least 6 characters'),
+    });
+
+    const result = schema.safeParse(req.body);
+    if (!result.success) {
+      const fields: Record<string, string> = {};
+      result.error.errors.forEach((e) => {
+        fields[e.path.join('.')] = e.message;
+      });
+      sendError(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
+      return;
+    }
+
+    try {
+      await UserService.changePassword(req.user!.sub, result.data.currentPassword, result.data.newPassword);
+      sendSuccess(res, { message: 'Password changed successfully' });
+    } catch (error) {
+      handleError(res, error);
+    }
+  }
 }

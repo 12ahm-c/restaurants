@@ -2,20 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../../../stores/authStore';
 import { authService } from '../../../services/auth.service';
 import { useUIStore } from '../../../stores/uiStore';
+import { useI18n } from '../../../i18n/I18nContext';
 
 export function ProfilePage() {
   const { user, updateUser } = useAuthStore();
   const { addToast } = useUIStore();
+  const { t, locale, setLocale } = useI18n();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [language, setLanguage] = useState('fr');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
       setName(user.name);
       setPhone(user.phone || '');
-      setLanguage(user.language);
     }
   }, [user]);
 
@@ -24,11 +24,11 @@ export function ProfilePage() {
     setIsLoading(true);
 
     try {
-      const updatedUser = await authService.updateProfile({ name, phone, language });
+      const updatedUser = await authService.updateProfile({ name, phone, language: locale });
       updateUser(updatedUser);
-      addToast('success', 'Profile updated successfully');
+      addToast('success', t('profile.updated'));
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to update profile';
+      const message = error instanceof Error ? error.message : t('profile.updateFailed');
       addToast('error', message);
     } finally {
       setIsLoading(false);
@@ -45,12 +45,12 @@ export function ProfilePage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-display font-bold text-gray-900 mb-4">Profile</h1>
+      <h1 className="text-xl font-display font-bold text-gray-900 mb-4">{t('profile.title')}</h1>
 
-      <div className="max-w-lg">
+      <div className="max-w-lg space-y-4">
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Name</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('profile.name')}</label>
             <input
               type="text"
               value={name}
@@ -60,27 +60,14 @@ export function ProfilePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Phone</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('profile.phone')}</label>
             <input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="input-field"
-              placeholder="Your phone number"
+              placeholder={t('auth.phoneNumber')}
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Language</label>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="input-field"
-            >
-              <option value="fr">Francais</option>
-              <option value="en">English</option>
-              <option value="ar">العربية</option>
-            </select>
           </div>
 
           <div className="flex justify-end pt-2">
@@ -89,10 +76,30 @@ export function ProfilePage() {
               disabled={isLoading}
               className="btn-primary"
             >
-              {isLoading ? 'Saving...' : 'Save Changes'}
+              {isLoading ? t('profile.saving') : t('profile.saveChanges')}
             </button>
           </div>
         </form>
+
+        {/* Language Selector */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-3">
+          <h2 className="text-sm font-semibold text-gray-700">{t('profile.language')}</h2>
+          <div className="flex gap-2">
+            {(['fr', 'en', 'ar'] as const).map((lang) => (
+              <button
+                key={lang}
+                onClick={() => setLocale(lang)}
+                className={`flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold transition-all ${
+                  locale === lang
+                    ? 'bg-brand-500 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {t(`lang.${lang}`)}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

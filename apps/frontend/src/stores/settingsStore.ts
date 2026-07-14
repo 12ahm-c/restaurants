@@ -27,6 +27,7 @@ interface SettingsState {
   getTaxRate: () => number;
   getLoyaltyRate: () => number;
   getCompanyName: () => string;
+  getLogo: () => string;
 }
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
@@ -60,4 +61,5 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   getTaxRate: () => get().settings?.taxRate || 0,
   getLoyaltyRate: () => get().settings?.loyalty_points_per_100_mru || 1,
   getCompanyName: () => get().settings?.company_name || 'RestoManager',
+  getLogo: () => get().settings?.logo || '',
 }));

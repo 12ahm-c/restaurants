@@ -1,14 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useKitchenStore } from '../../stores/kitchenStore';
+import { useI18n } from '../../i18n/I18nContext';
 import { useSocket } from '../../hooks/useSocket';
 import { useUIStore } from '../../stores/uiStore';
 import { Clock, CheckCircle, AlertCircle, Flame, RefreshCw, ChefHat, UtensilsCrossed } from 'lucide-react';
-
-const statusConfig: Record<string, { bg: string; text: string; dot: string; label: string; gradient: string }> = {
-  pending: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', label: 'Pending', gradient: 'from-blue-400 to-indigo-500' },
-  preparing: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500', label: 'Preparing', gradient: 'from-amber-400 to-orange-500' },
-  ready: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', label: 'Ready', gradient: 'from-emerald-400 to-green-500' },
-};
 
 export function KitchenPage() {
   const [activeFilter, setActiveFilter] = useState<string>('');
@@ -25,6 +20,13 @@ export function KitchenPage() {
   } = useKitchenStore();
   const { addToast } = useUIStore();
   const { socket, isConnected } = useSocket();
+  const { t } = useI18n();
+
+  const statusConfig: Record<string, { bg: string; text: string; dot: string; label: string; gradient: string }> = {
+    pending: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', label: t('orders.pending'), gradient: 'from-blue-400 to-indigo-500' },
+    preparing: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500', label: t('orders.preparing'), gradient: 'from-amber-400 to-orange-500' },
+    ready: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', label: t('orders.ready'), gradient: 'from-emerald-400 to-green-500' },
+  };
 
   useEffect(() => {
     fetchQueue();
@@ -35,7 +37,7 @@ export function KitchenPage() {
 
     socket.on('order:new', (data) => {
       useKitchenStore.getState().updateFromSocket('order:new', data);
-      addToast('info', 'New order received');
+      addToast('info', t('orders.new'));
     });
 
     socket.on('order:status-update', (data) => {
@@ -56,18 +58,18 @@ export function KitchenPage() {
   const handleStartPreparation = async (id: string) => {
     try {
       await startPreparation(id);
-      addToast('success', 'Preparation started');
+      addToast('success', t('orders.preparing'));
     } catch (error) {
-      addToast('error', error instanceof Error ? error.message : 'Failed to start preparation');
+      addToast('error', error instanceof Error ? error.message : t('common.error'));
     }
   };
 
   const handleMarkReady = async (id: string) => {
     try {
       await markReady(id);
-      addToast('success', 'Order marked as ready');
+      addToast('success', t('orders.ready'));
     } catch (error) {
-      addToast('error', error instanceof Error ? error.message : 'Failed to mark as ready');
+      addToast('error', error instanceof Error ? error.message : t('common.error'));
     }
   };
 
@@ -90,7 +92,7 @@ export function KitchenPage() {
       <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-3 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">Loading kitchen queue...</p>
+          <p className="text-sm text-gray-500">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -108,10 +110,10 @@ export function KitchenPage() {
   }
 
   const filters = [
-    { key: '', label: 'All', count: queue.length, color: 'bg-gray-100 text-gray-700' },
-    { key: 'pending', label: 'Pending', count: pendingCount(), color: 'bg-blue-100 text-blue-700' },
-    { key: 'preparing', label: 'Preparing', count: preparingCount(), color: 'bg-amber-100 text-amber-700' },
-    { key: 'ready', label: 'Ready', count: readyCount(), color: 'bg-emerald-100 text-emerald-700' },
+    { key: '', label: t('kitchen.title'), count: queue.length, color: 'bg-gray-100 text-gray-700' },
+    { key: 'pending', label: t('orders.pending'), count: pendingCount(), color: 'bg-blue-100 text-blue-700' },
+    { key: 'preparing', label: t('orders.preparing'), count: preparingCount(), color: 'bg-amber-100 text-amber-700' },
+    { key: 'ready', label: t('orders.ready'), count: readyCount(), color: 'bg-emerald-100 text-emerald-700' },
   ];
 
   return (
@@ -119,15 +121,15 @@ export function KitchenPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-gray-900">Kitchen Queue</h1>
+          <h1 className="text-2xl font-display font-bold text-gray-900">{t('kitchen.title')}</h1>
           <div className="flex items-center gap-2 mt-1">
             <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-red-500'}`} />
-            <span className="text-sm text-gray-500">{isConnected ? 'Connected' : 'Disconnected'}</span>
+            <span className="text-sm text-gray-500">{isConnected ? t('common.active') : t('common.inactive')}</span>
           </div>
         </div>
         <button onClick={() => fetchQueue(activeFilter ? { status: activeFilter } : undefined)} className="btn-secondary flex items-center gap-2">
           <RefreshCw size={16} />
-          Refresh
+          {t('common.next')}
         </button>
       </div>
 
@@ -157,8 +159,8 @@ export function KitchenPage() {
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <ChefHat size={32} className="text-gray-300" />
           </div>
-          <p className="text-gray-500 font-medium">No orders in queue</p>
-          <p className="text-sm text-gray-400 mt-1">New orders will appear here</p>
+          <p className="text-gray-500 font-medium">{t('kitchen.noOrders')}</p>
+          <p className="text-sm text-gray-400 mt-1">{t('orders.new')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -181,7 +183,7 @@ export function KitchenPage() {
                       </p>
                       <p className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
                         <UtensilsCrossed size={12} />
-                        {item.table?.name || 'No table'}
+                        {item.table?.name || t('orders.table')}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -205,7 +207,7 @@ export function KitchenPage() {
 
                   {item.items && item.items.length > 0 && (
                     <div className="mb-4 p-3 bg-gray-50 rounded-xl">
-                      <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Items</p>
+                      <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{t('orders.items')}</p>
                       <div className="space-y-1.5">
                         {item.items.map((orderItem, index) => (
                           <div key={index} className="flex justify-between text-sm">
@@ -235,7 +237,7 @@ export function KitchenPage() {
                       className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all shadow-md"
                     >
                       <Flame size={18} />
-                      Start Preparation
+                      {t('orders.preparing')}
                     </button>
                   )}
                   {item.status === 'preparing' && (
@@ -244,12 +246,12 @@ export function KitchenPage() {
                       className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-green-600 transition-all shadow-md"
                     >
                       <CheckCircle size={18} />
-                      Mark Ready
+                      {t('orders.ready')}
                     </button>
                   )}
                   {item.status === 'ready' && (
                     <div className="text-center py-3 bg-emerald-50 text-emerald-700 font-semibold rounded-xl">
-                      Ready for pickup
+                      {t('orders.ready')}
                     </div>
                   )}
                 </div>

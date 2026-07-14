@@ -1,16 +1,34 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSettingsStore } from '../../../stores/settingsStore';
+import { useAuthStore } from '../../../stores/authStore';
+import { useUIStore } from '../../../stores/uiStore';
+import { useI18n } from '../../../i18n/I18nContext';
+import { authService } from '../../../services/auth.service';
 
 export function SettingsPage() {
-  const { settings, fetchSettings, updateSettings, isLoading, isSaving, error } = useSettingsStore();
-  const [formData, setFormData] = useState({
-    loyalty_points_per_100_mru: 1,
-    loyalty_redeem_rate: 1,
-    taxRate: 0,
-    currency: 'MRU',
-    company_name: 'RestoManager',
-  });
-  const [success, setSuccess] = useState(false);
+  const { settings, isLoading, isSaving, fetchSettings, updateSettings } = useSettingsStore();
+  const { user, updateUser } = useAuthStore();
+  const { addToast } = useUIStore();
+  const { t } = useI18n();
+
+  const [companyName, setCompanyName] = useState('');
+  const [currency, setCurrency] = useState('');
+  const [taxRate, setTaxRate] = useState(0);
+  const [loyaltyPoints, setLoyaltyPoints] = useState(1);
+  const [loyaltyRedeem, setLoyaltyRedeem] = useState(1);
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const [profileName, setProfileName] = useState('');
+  const [profilePhone, setProfilePhone] = useState('');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+  const [logoPreview, setLogoPreview] = useState<string>('');
+  const [isSavingLogo, setIsSavingLogo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchSettings();
@@ -18,131 +36,304 @@ export function SettingsPage() {
 
   useEffect(() => {
     if (settings) {
-      setFormData({
-        loyalty_points_per_100_mru: settings.loyalty_points_per_100_mru,
-        loyalty_redeem_rate: settings.loyalty_redeem_rate,
-        taxRate: settings.taxRate,
-        currency: settings.currency,
-        company_name: settings.company_name,
-      });
+      setCompanyName(settings.company_name);
+      setCurrency(settings.currency);
+      setTaxRate(settings.taxRate);
+      setLoyaltyPoints(settings.loyalty_points_per_100_mru);
+      setLoyaltyRedeem(settings.loyalty_redeem_rate);
+      setLogoPreview(settings.logo || '');
     }
   }, [settings]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      setProfileName(user.name);
+      setProfilePhone(user.phone || '');
+    }
+  }, [user]);
+
+  const handleSaveGeneral = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccess(false);
     try {
-      await updateSettings(formData);
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (err) {
-      // Error handled by store
+      await updateSettings({
+        company_name: companyName,
+        currency,
+        taxRate,
+        loyalty_points_per_100_mru: loyaltyPoints,
+        loyalty_redeem_rate: loyaltyRedeem,
+      });
+      addToast('success', t('settings.settingsSaved'));
+    } catch {
+      addToast('error', t('settings.settingsSaveError'));
+    }
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      addToast('error', t('settings.logoSizeError'));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64 = reader.result as string;
+      setLogoPreview(base64);
+      setIsSavingLogo(true);
+      try {
+        await updateSettings({ logo: base64 });
+        addToast('success', t('settings.logoSaved'));
+      } catch {
+        addToast('error', t('settings.settingsSaveError'));
+      } finally {
+        setIsSavingLogo(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveLogo = async () => {
+    setLogoPreview('');
+    setIsSavingLogo(true);
+    try {
+      await updateSettings({ logo: '' });
+      addToast('success', t('settings.logoRemoved'));
+    } catch {
+      addToast('error', t('settings.settingsSaveError'));
+    } finally {
+      setIsSavingLogo(false);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      addToast('error', t('settings.passwordMismatch'));
+      return;
+    }
+    if (newPassword.length < 6) {
+      addToast('error', t('settings.passwordTooShort'));
+      return;
+    }
+    setIsChangingPassword(true);
+    try {
+      await authService.changePassword(currentPassword, newPassword);
+      addToast('success', t('settings.passwordChanged'));
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      addToast('error', err.message || t('settings.settingsSaveError'));
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingProfile(true);
+    try {
+      const updatedUser = await authService.updateProfile({ name: profileName, phone: profilePhone });
+      updateUser(updatedUser);
+      addToast('success', t('settings.profileUpdated'));
+    } catch (err: any) {
+      addToast('error', err.message || t('settings.settingsSaveError'));
+    } finally {
+      setIsSavingProfile(false);
     }
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      <div className="flex items-center justify-center py-12">
+        <div className="w-8 h-8 border-2 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
+    <div className="p-4 space-y-4 pb-8">
+      <h1 className="text-xl font-display font-bold text-gray-900">{t('settings.title')}</h1>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4">{error}</div>
-      )}
-
-      {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md mb-4">
-          Settings saved successfully! Changes are now active across the app.
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Company */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Company</h2>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Restaurant Name</label>
-            <input
-              type="text"
-              value={formData.company_name}
-              onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-              required
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-            <p className="text-xs text-gray-500 mt-1">This name appears in the navbar and exported reports.</p>
+      {/* Logo */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900">{t('settings.restaurantLogo')}</h2>
+        <div className="flex items-center gap-4">
+          <div
+            className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden bg-gray-50 cursor-pointer hover:border-brand-300 transition-colors"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {logoPreview ? (
+              <img src={logoPreview} alt="Logo" className="w-full h-full object-contain" />
+            ) : (
+              <svg className="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            )}
           </div>
-        </div>
-
-        {/* Financial */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Financial</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Tax Rate (%)</label>
-              <input
-                type="number"
-                value={formData.taxRate}
-                onChange={(e) => setFormData({ ...formData, taxRate: parseFloat(e.target.value) || 0 })}
-                min="0"
-                max="100"
-                step="0.01"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Currency</label>
-              <input
-                type="text"
-                value={formData.currency}
-                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
+          <div className="flex-1 space-y-2">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-sm font-medium text-brand-600 hover:text-brand-700"
+              disabled={isSavingLogo}
+            >
+              {logoPreview ? t('settings.changeLogo') : t('settings.uploadLogo')}
+            </button>
+            {logoPreview && (
+              <button
+                type="button"
+                onClick={handleRemoveLogo}
+                className="block text-sm font-medium text-red-500 hover:text-red-600"
+                disabled={isSavingLogo}
+              >
+                {t('settings.removeLogo')}
+              </button>
+            )}
+            <p className="text-xs text-gray-400">{t('settings.pngJpgUpTo2Mb')}</p>
           </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleLogoUpload}
+            className="hidden"
+          />
         </div>
+      </div>
 
-        {/* Loyalty */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Loyalty Program</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Points per 100 MRU</label>
-              <input
-                type="number"
-                value={formData.loyalty_points_per_100_mru}
-                onChange={(e) => setFormData({ ...formData, loyalty_points_per_100_mru: parseFloat(e.target.value) || 0 })}
-                min="0"
-                step="0.1"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Redeem Rate (1 point = X MRU)</label>
-              <input
-                type="number"
-                value={formData.loyalty_redeem_rate}
-                onChange={(e) => setFormData({ ...formData, loyalty_redeem_rate: parseFloat(e.target.value) || 0 })}
-                min="0"
-                step="0.1"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-          </div>
+      {/* Profile */}
+      <form onSubmit={handleSaveProfile} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900">{t('settings.yourProfile')}</h2>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.name')}</label>
+          <input
+            type="text"
+            value={profileName}
+            onChange={(e) => setProfileName(e.target.value)}
+            className="input-field"
+          />
         </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.phone')}</label>
+          <input
+            type="tel"
+            value={profilePhone}
+            onChange={(e) => setProfilePhone(e.target.value)}
+            className="input-field"
+          />
+        </div>
+        <div className="flex justify-end">
+          <button type="submit" disabled={isSavingProfile} className="btn-primary">
+            {isSavingProfile ? t('common.saving') : t('settings.saveProfile')}
+          </button>
+        </div>
+      </form>
 
-        <button
-          type="submit"
-          disabled={isSaving}
-          className="w-full bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 disabled:opacity-50 font-medium"
-        >
-          {isSaving ? 'Saving...' : 'Save Settings'}
-        </button>
+      {/* Change Password */}
+      <form onSubmit={handleChangePassword} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900">{t('settings.changePassword')}</h2>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.currentPassword')}</label>
+          <input
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="input-field"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.newPassword')}</label>
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="input-field"
+            minLength={6}
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.confirmPassword')}</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="input-field"
+            minLength={6}
+            required
+          />
+        </div>
+        <div className="flex justify-end">
+          <button type="submit" disabled={isChangingPassword} className="btn-primary">
+            {isChangingPassword ? t('settings.changingPassword') : t('settings.changePasswordButton')}
+          </button>
+        </div>
+      </form>
+
+      {/* General Settings */}
+      <form onSubmit={handleSaveGeneral} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900">{t('settings.restaurant')}</h2>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.restaurantName')}</label>
+          <input
+            type="text"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            className="input-field"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.currency')}</label>
+          <input
+            type="text"
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
+            className="input-field"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.taxRate')}</label>
+          <input
+            type="number"
+            value={taxRate}
+            onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)}
+            className="input-field"
+            min="0"
+            max="100"
+            step="0.5"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.loyaltyPoints')}</label>
+          <input
+            type="number"
+            value={loyaltyPoints}
+            onChange={(e) => setLoyaltyPoints(parseFloat(e.target.value) || 0)}
+            className="input-field"
+            min="0"
+            step="0.5"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.loyaltyRedeem')}</label>
+          <input
+            type="number"
+            value={loyaltyRedeem}
+            onChange={(e) => setLoyaltyRedeem(parseFloat(e.target.value) || 0)}
+            className="input-field"
+            min="0"
+            step="0.5"
+          />
+        </div>
+        <div className="flex justify-end">
+          <button type="submit" disabled={isSaving} className="btn-primary">
+            {isSaving ? t('common.saving') : t('settings.saveSettings')}
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -3,56 +3,13 @@ import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useNotificationStore } from '../stores/notificationStore';
+import { useI18n } from '../i18n/I18nContext';
 import {
   LogOut, User, X, LayoutDashboard, ShoppingCart, Table2,
   ChefHat, UtensilsCrossed, Users, DollarSign, FileText, Settings,
   ClipboardList, Utensils, MoreHorizontal, Bell, CheckCheck, ChevronRight
 } from 'lucide-react';
 import { UserRole } from '../types';
-
-const NAV_CONFIG: Record<UserRole, { path: string; label: string; icon: any }[]> = {
-  owner: [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/orders/active', label: 'Orders', icon: ClipboardList },
-    { path: '/tables', label: 'Tables', icon: Table2 },
-    { path: '/kitchen', label: 'Kitchen', icon: ChefHat },
-    { path: '/menu/products', label: 'Menu', icon: UtensilsCrossed },
-    { path: '/customers', label: 'Customers', icon: Users },
-    { path: '/finance', label: 'Finance', icon: DollarSign },
-    { path: '/admin/employees', label: 'Employees', icon: User },
-    { path: '/reports', label: 'Reports', icon: FileText },
-    { path: '/admin/settings', label: 'Settings', icon: Settings },
-  ],
-  manager: [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/orders/active', label: 'Orders', icon: ClipboardList },
-    { path: '/tables', label: 'Tables', icon: Table2 },
-    { path: '/kitchen', label: 'Kitchen', icon: ChefHat },
-    { path: '/menu/products', label: 'Menu', icon: UtensilsCrossed },
-    { path: '/customers', label: 'Customers', icon: Users },
-    { path: '/finance', label: 'Finance', icon: DollarSign },
-    { path: '/admin/employees', label: 'Employees', icon: User },
-    { path: '/reports', label: 'Reports', icon: FileText },
-  ],
-  cashier: [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/pos', label: 'POS', icon: ShoppingCart },
-    { path: '/orders/active', label: 'Orders', icon: ClipboardList },
-    { path: '/customers', label: 'Customers', icon: Users },
-  ],
-  server: [
-    { path: '/tables', label: 'Tables', icon: Table2 },
-    { path: '/orders/active', label: 'Orders', icon: ClipboardList },
-    { path: '/customers', label: 'Customers', icon: Users },
-  ],
-  chef: [
-    { path: '/kitchen', label: 'Kitchen', icon: ChefHat },
-    { path: '/menu/products', label: 'Menu', icon: UtensilsCrossed },
-  ],
-  stock_manager: [
-    { path: '/kitchen', label: 'Kitchen', icon: ChefHat },
-  ],
-};
 
 const ROLE_COLORS: Record<string, string> = {
   owner: 'from-brand-500 to-orange-600',
@@ -63,12 +20,59 @@ const ROLE_COLORS: Record<string, string> = {
   stock_manager: 'from-purple-500 to-violet-500',
 };
 
+function getNavConfig(t: (key: string) => string): Record<UserRole, { path: string; label: string; icon: any }[]> {
+  return {
+    owner: [
+      { path: '/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
+      { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList },
+      { path: '/tables', label: t('nav.tables'), icon: Table2 },
+      { path: '/kitchen', label: t('nav.kitchen'), icon: ChefHat },
+      { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed },
+      { path: '/customers', label: t('nav.customers'), icon: Users },
+      { path: '/finance', label: t('nav.finance'), icon: DollarSign },
+      { path: '/admin/employees', label: t('nav.employees'), icon: User },
+      { path: '/reports', label: t('nav.reports'), icon: FileText },
+      { path: '/admin/settings', label: t('nav.settings'), icon: Settings },
+    ],
+    manager: [
+      { path: '/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
+      { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList },
+      { path: '/tables', label: t('nav.tables'), icon: Table2 },
+      { path: '/kitchen', label: t('nav.kitchen'), icon: ChefHat },
+      { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed },
+      { path: '/customers', label: t('nav.customers'), icon: Users },
+      { path: '/finance', label: t('nav.finance'), icon: DollarSign },
+      { path: '/admin/employees', label: t('nav.employees'), icon: User },
+      { path: '/reports', label: t('nav.reports'), icon: FileText },
+    ],
+    cashier: [
+      { path: '/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
+      { path: '/pos', label: t('nav.pos'), icon: ShoppingCart },
+      { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList },
+      { path: '/customers', label: t('nav.customers'), icon: Users },
+    ],
+    server: [
+      { path: '/tables', label: t('nav.tables'), icon: Table2 },
+      { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList },
+      { path: '/customers', label: t('nav.customers'), icon: Users },
+    ],
+    chef: [
+      { path: '/kitchen', label: t('nav.kitchen'), icon: ChefHat },
+      { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed },
+    ],
+    stock_manager: [
+      { path: '/kitchen', label: t('nav.kitchen'), icon: ChefHat },
+    ],
+  };
+}
+
 const BOTTOM_TAB_COUNT = 3;
 
 export function EmployeeLayout() {
   const { user, logout } = useAuthStore();
   const { settings, fetchSettings } = useSettingsStore();
   const { notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead } = useNotificationStore();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -92,7 +96,7 @@ export function EmployeeLayout() {
     navigate('/login');
   };
 
-  const navItems = user ? NAV_CONFIG[user.role] || [] : [];
+  const navItems = user ? getNavConfig(t)[user.role] || [] : [];
   const companyName = settings?.company_name || 'RestoManager';
   const roleGradient = ROLE_COLORS[user?.role || 'owner'];
 
@@ -131,11 +135,19 @@ export function EmployeeLayout() {
             <Link
               to="/profile"
               className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
+              title="Profile"
             >
               <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${roleGradient} flex items-center justify-center text-white text-xs font-semibold`}>
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
             </Link>
+            <button
+              onClick={handleLogout}
+              className="p-2 rounded-xl hover:bg-gray-100 transition-colors text-gray-500 hover:text-red-500"
+              title="Logout"
+            >
+              <LogOut size={20} />
+            </button>
           </div>
         </div>
       </header>
@@ -149,7 +161,7 @@ export function EmployeeLayout() {
           />
           <div className="relative mx-3 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-slide-down max-h-[60vh] flex flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-gray-900">Notifications</h3>
+              <h3 className="text-sm font-bold text-gray-900">{t('notifications.title')}</h3>
               <div className="flex items-center gap-2">
                 {unreadCount > 0 && (
                   <button
@@ -157,7 +169,7 @@ export function EmployeeLayout() {
                     className="text-xs text-brand-600 font-semibold flex items-center gap-1"
                   >
                     <CheckCheck size={14} />
-                    Mark all read
+                    {t('notifications.markAllRead')}
                   </button>
                 )}
                 <button
@@ -173,7 +185,7 @@ export function EmployeeLayout() {
               {recentNotifications.length === 0 ? (
                 <div className="py-12 text-center">
                   <Bell size={32} className="text-gray-200 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400">No notifications</p>
+                  <p className="text-sm text-gray-400">{t('notifications.noNotifications')}</p>
                 </div>
               ) : (
                 recentNotifications.map((notif) => (
@@ -207,7 +219,7 @@ export function EmployeeLayout() {
               onClick={() => setNotifOpen(false)}
               className="flex items-center justify-center gap-1 py-3 text-sm font-semibold text-brand-600 border-t border-gray-100 hover:bg-gray-50"
             >
-              View all notifications
+              {t('notifications.viewAll')}
               <ChevronRight size={16} />
             </Link>
           </div>
@@ -260,7 +272,7 @@ export function EmployeeLayout() {
                 <MoreHorizontal size={21} strokeWidth={2} />
               </div>
               <span className="text-[10px] font-semibold leading-tight text-gray-400">
-                More
+                {t('nav.more')}
               </span>
             </button>
           ) : (
@@ -294,7 +306,7 @@ export function EmployeeLayout() {
 
               <div className="flex items-center justify-between px-5 pb-3 border-b border-gray-100">
                 <h3 className="text-lg font-display font-bold text-gray-900">
-                  {moreItems.length > 0 ? 'More' : 'Menu'}
+                  {moreItems.length > 0 ? t('nav.more') : t('nav.profile')}
                 </h3>
                 <button
                   onClick={() => setMoreOpen(false)}
@@ -326,26 +338,6 @@ export function EmployeeLayout() {
                       </Link>
                     );
                   })}
-
-                  <Link
-                    to="/profile"
-                    className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all duration-200"
-                  >
-                    <User size={24} strokeWidth={2} />
-                    <span className="text-xs font-semibold text-center leading-tight">
-                      Profile
-                    </span>
-                  </Link>
-
-                  <button
-                    onClick={handleLogout}
-                    className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-red-50 text-red-500 hover:bg-red-100 transition-all duration-200"
-                  >
-                    <LogOut size={24} strokeWidth={2} />
-                    <span className="text-xs font-semibold text-center leading-tight">
-                      Logout
-                    </span>
-                  </button>
                 </div>
               </div>
             </div>

@@ -1,20 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { orderService } from '../../services/order.service';
+import { useI18n } from '../../i18n/I18nContext';
 import { OrderDTO } from '../../types';
 import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
 import { useTableStore } from '../../stores/tableStore';
 import { useSocket } from '../../hooks/useSocket';
 import { Clock, CheckCircle, Trash2, RefreshCw, Package } from 'lucide-react';
-
-const statusConfig: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  new: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', label: 'New' },
-  preparing: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500', label: 'Preparing' },
-  ready: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', label: 'Ready' },
-  served: { bg: 'bg-gray-100', text: 'text-gray-700', dot: 'bg-gray-400', label: 'Served' },
-  cancelled: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500', label: 'Cancelled' },
-  completed: { bg: 'bg-purple-50', text: 'text-purple-700', dot: 'bg-purple-500', label: 'Completed' },
-};
 
 export function ActiveOrdersPage() {
   const [orders, setOrders] = useState<OrderDTO[]>([]);
@@ -23,6 +15,16 @@ export function ActiveOrdersPage() {
   const { user } = useAuthStore();
   const { clearTable } = useTableStore();
   const { socket } = useSocket();
+  const { t } = useI18n();
+
+  const statusConfig: Record<string, { bg: string; text: string; dot: string; label: string }> = {
+    new: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', label: t('orders.new') },
+    preparing: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500', label: t('orders.preparing') },
+    ready: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', label: t('orders.ready') },
+    served: { bg: 'bg-gray-100', text: 'text-gray-700', dot: 'bg-gray-400', label: t('orders.served') },
+    cancelled: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500', label: t('orders.cancelled') },
+    completed: { bg: 'bg-purple-50', text: 'text-purple-700', dot: 'bg-purple-500', label: t('orders.paid') },
+  };
 
   const isAdmin = user?.role === 'owner' || user?.role === 'manager' || user?.role === 'cashier';
   const isServer = user?.role === 'server';
@@ -68,10 +70,10 @@ export function ActiveOrdersPage() {
   const handleMarkAsServed = async (orderId: string) => {
     try {
       await orderService.updateOrderStatus(orderId, 'served');
-      addToast('success', 'Order marked as served');
+      addToast('success', t('orders.served'));
       loadOrders();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to update status';
+      const message = error instanceof Error ? error.message : t('common.error');
       addToast('error', message);
     }
   };
@@ -80,10 +82,10 @@ export function ActiveOrdersPage() {
     try {
       await orderService.updateOrderStatus(orderId, 'completed');
       await clearTable(tableId);
-      addToast('success', 'Table cleared successfully');
+      addToast('success', t('tables.available'));
       setOrders((prev) => prev.filter((o) => o._id !== orderId));
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to clear table';
+      const message = error instanceof Error ? error.message : t('common.error');
       addToast('error', message);
     }
   };
@@ -93,7 +95,7 @@ export function ActiveOrdersPage() {
       <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-3 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">Loading orders...</p>
+          <p className="text-sm text-gray-500">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -105,12 +107,12 @@ export function ActiveOrdersPage() {
       <div className="space-y-6 animate-fade-in">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-display font-bold text-gray-900">Ready for Delivery</h1>
-            <p className="text-sm text-gray-500 mt-1">{orders.length} orders pending</p>
+            <h1 className="text-2xl font-display font-bold text-gray-900">{t('orders.ready')}</h1>
+            <p className="text-sm text-gray-500 mt-1">{orders.length} {t('orders.pending').toLowerCase()}</p>
           </div>
           <button onClick={loadOrders} className="btn-secondary flex items-center gap-2">
             <RefreshCw size={16} />
-            Refresh
+            {t('common.next')}
           </button>
         </div>
 
@@ -119,8 +121,8 @@ export function ActiveOrdersPage() {
             <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Package size={32} className="text-gray-300" />
             </div>
-            <p className="text-gray-500 font-medium">No orders ready for delivery</p>
-            <p className="text-sm text-gray-400 mt-1">New orders will appear here</p>
+            <p className="text-gray-500 font-medium">{t('kitchen.noOrders')}</p>
+            <p className="text-sm text-gray-400 mt-1">{t('orders.new')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -138,7 +140,7 @@ export function ActiveOrdersPage() {
                           #{order._id.slice(-6).toUpperCase()}
                         </p>
                         <p className="text-sm text-gray-500">
-                          Table: {(order.tableId as unknown as { name: string })?.name || 'N/A'}
+                          {t('orders.table')}: {(order.tableId as unknown as { name: string })?.name || 'N/A'}
                         </p>
                       </div>
                       <span className={`badge ${status.bg} ${status.text}`}>
@@ -163,7 +165,7 @@ export function ActiveOrdersPage() {
                           className="btn-primary w-full flex items-center justify-center gap-2"
                         >
                           <CheckCircle size={18} />
-                          Mark as Served
+                          {t('orders.served')}
                         </button>
                       )}
                       {order.status === 'served' && (order.tableId as unknown as { _id: string })?._id && (
@@ -172,7 +174,7 @@ export function ActiveOrdersPage() {
                           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
                         >
                           <Trash2 size={18} />
-                          Table Empty - Clear
+                          {t('tables.available')}
                         </button>
                       )}
                     </div>
@@ -191,12 +193,12 @@ export function ActiveOrdersPage() {
     <div className="space-y-4 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-gray-900">All Orders</h1>
-          <p className="text-sm text-gray-500 mt-1">{orders.length} active orders</p>
+          <h1 className="text-2xl font-display font-bold text-gray-900">{t('orders.active')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{orders.length} {t('orders.active').toLowerCase()}</p>
         </div>
         <button onClick={loadOrders} className="btn-secondary flex items-center gap-2">
           <RefreshCw size={16} />
-          Refresh
+          {t('common.next')}
         </button>
       </div>
 
@@ -205,7 +207,7 @@ export function ActiveOrdersPage() {
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Package size={32} className="text-gray-300" />
           </div>
-          <p className="text-gray-500 font-medium">No active orders</p>
+          <p className="text-gray-500 font-medium">{t('orders.noOrders')}</p>
         </div>
       ) : (
         <>
@@ -229,7 +231,7 @@ export function ActiveOrdersPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 text-xs text-gray-500">
-                      <span>T: {(order.tableId as unknown as { name: string })?.name || 'N/A'}</span>
+                      <span>{t('orders.table')}: {(order.tableId as unknown as { name: string })?.name || 'N/A'}</span>
                       <span className="flex items-center gap-1">
                         <Clock size={12} />
                         {new Date(order.createdAt).toLocaleTimeString()}
@@ -247,12 +249,11 @@ export function ActiveOrdersPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100">
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Order</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Table</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Time</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('orders.active')}</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('orders.table')}</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('common.status')}</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('common.amount')}</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('common.time')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -268,14 +269,13 @@ export function ActiveOrdersPage() {
                       <td className="px-6 py-4 text-sm text-gray-700">
                         {(order.tableId as unknown as { name: string })?.name || 'N/A'}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 capitalize">{order.type}</td>
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">{order.totalTTC} MRU</td>
                       <td className="px-6 py-4">
                         <span className={`badge ${status.bg} ${status.text}`}>
                           <span className={`w-1.5 h-1.5 rounded-full ${status.dot} mr-1.5`} />
                           {status.label}
                         </span>
                       </td>
+                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">{order.totalTTC} MRU</td>
                       <td className="px-6 py-4 text-sm text-gray-500">
                         {new Date(order.createdAt).toLocaleTimeString()}
                       </td>

@@ -7,6 +7,7 @@ export interface ISettings extends Document {
   taxRate: number;
   currency: string;
   company_name: string;
+  logo: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,6 +19,7 @@ const settingsSchema = new Schema<ISettings>(
     taxRate: { type: Number, default: 0, min: 0, max: 100 },
     currency: { type: String, default: 'MRU' },
     company_name: { type: String, default: 'RestoManager' },
+    logo: { type: String, default: '' },
   },
   { timestamps: true }
 );
