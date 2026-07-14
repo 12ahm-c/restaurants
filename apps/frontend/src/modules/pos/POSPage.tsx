@@ -4,14 +4,16 @@ import { useCartStore } from '../../stores/cartStore';
 import { useTableStore } from '../../stores/tableStore';
 import { orderService } from '../../services/order.service';
 import { useUIStore } from '../../stores/uiStore';
+import { useI18n } from '../../i18n/I18nContext';
 import { ProductDTO, CategoryDTO, CartItem, TableDTO } from '../../types';
-import { Search, Plus, Minus, Trash2, ShoppingBag, MessageSquare, X, ShoppingBasket, Sparkles } from 'lucide-react';
+import { Search, Plus, Minus, Trash2, ShoppingBag, MessageSquare, X, ShoppingBasket, Sparkles, ArrowLeft } from 'lucide-react';
 import { CustomerSearch } from '../../components/pos/CustomerSearch';
 
 export function POSPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useUIStore();
+  const { t } = useI18n();
   const {
     items,
     selectedTable,
@@ -41,6 +43,7 @@ export function POSPage() {
   const [editingItemNotes, setEditingItemNotes] = useState<string | null>(null);
   const [itemNoteText, setItemNoteText] = useState('');
   const [showOrderNotes, setShowOrderNotes] = useState(false);
+  const [showCart, setShowCart] = useState(false);
   const [availability, setAvailability] = useState<Record<string, { inStock: boolean; missingItems: string[] }>>({});
 
   useEffect(() => {
@@ -98,6 +101,7 @@ export function POSPage() {
       price: product.price,
       quantity: 1,
     });
+    setShowCart(true);
   };
 
   const handleCustomerSelect = (customer: any) => {
@@ -125,12 +129,12 @@ export function POSPage() {
 
   const handleSubmitOrder = async () => {
     if (orderType === 'dine-in' && !selectedTable) {
-      addToast('error', 'Please select a table for dine-in orders');
+      addToast('error', t('pos.selectTable'));
       return;
     }
 
     if (items.length === 0) {
-      addToast('error', 'Cart is empty');
+      addToast('error', t('pos.cartEmpty'));
       return;
     }
 
@@ -154,15 +158,16 @@ export function POSPage() {
       const orderNumber = (result as any).order?.orderNumber || result.orderId || 'N/A';
       const total = getTotal();
 
-      addToast('success', `Order ${orderNumber} created - ${total} MRU`);
+      addToast('success', `${t('pos.orderCreated')} ${orderNumber} - ${total} MRU`);
 
       clearCart();
       setSelectedCustomer(null);
       setCustomerId(undefined);
+      setShowCart(false);
       loadAvailability();
       navigate('/orders/active');
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to create order';
+      const message = error instanceof Error ? error.message : t('common.error');
       addToast('error', message);
     } finally {
       setIsSubmitting(false);
@@ -172,15 +177,15 @@ export function POSPage() {
   const isTableRequired = orderType === 'dine-in';
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] bg-gray-50 rounded-2xl overflow-hidden shadow-card">
+    <div className="flex h-[calc(100dvh-8rem)] md:h-[calc(100vh-8rem)] bg-gray-50 rounded-2xl overflow-hidden shadow-card">
       {/* Products Panel */}
-      <div className="flex-1 overflow-auto p-5">
+      <div className={`flex-1 overflow-auto p-3 md:p-5 ${showCart ? 'hidden md:block' : 'block'}`}>
         {/* Search */}
         <div className="relative mb-4">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder={t('pos.searchProducts')}
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
             className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
@@ -197,7 +202,7 @@ export function POSPage() {
                 : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
           >
-            All
+            {t('pos.all')}
           </button>
           {categories.map((cat) => (
             <button
@@ -228,34 +233,33 @@ export function POSPage() {
                 disabled={!isAvailable}
                 className={`card text-left overflow-hidden transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0`}
               >
-                {/* Product image or placeholder */}
-                <div className="h-24 bg-gradient-to-br from-brand-50 to-orange-50 flex items-center justify-center">
+                <div className="h-20 md:h-24 bg-gradient-to-br from-brand-50 to-orange-50 flex items-center justify-center">
                   {product.imageUrl ? (
                     <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
                   ) : (
-                    <ShoppingBasket size={32} className="text-brand-300" />
+                    <ShoppingBasket size={28} className="text-brand-300" />
                   )}
                 </div>
                 
-                <div className="p-3">
+                <div className="p-2 md:p-3">
                   {isOutOfStock && (
-                    <span className="inline-flex items-center px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-lg mb-1">
-                      Out of Stock
+                    <span className="inline-flex items-center px-2 py-0.5 bg-red-100 text-red-700 text-[10px] md:text-xs font-semibold rounded-lg mb-1">
+                      {t('pos.outOfStock')}
                     </span>
                   )}
                   {stock?.inStock && stock.missingItems.length === 0 && product.status === 'available' && (
-                    <span className="inline-flex items-center px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-lg mb-1">
-                      In Stock
+                    <span className="inline-flex items-center px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] md:text-xs font-semibold rounded-lg mb-1">
+                      {t('pos.inStock')}
                     </span>
                   )}
-                  <p className="font-semibold text-gray-900 text-sm truncate">{product.name}</p>
-                  <p className="text-xs text-gray-500 truncate mt-0.5">{product.description}</p>
+                  <p className="font-semibold text-gray-900 text-xs md:text-sm truncate">{product.name}</p>
+                  <p className="text-[10px] md:text-xs text-gray-500 truncate mt-0.5">{product.description}</p>
                   {isOutOfStock && stock.missingItems.length > 0 && (
-                    <p className="text-xs text-red-500 mt-1 truncate">
+                    <p className="text-[10px] md:text-xs text-red-500 mt-1 truncate">
                       Missing: {stock.missingItems.join(', ')}
                     </p>
                   )}
-                  <p className="text-brand-600 font-bold mt-2">{product.price} MRU</p>
+                  <p className="text-brand-600 font-bold mt-1 md:mt-2 text-sm md:text-base">{product.price} MRU</p>
                 </div>
               </button>
             );
@@ -263,36 +267,40 @@ export function POSPage() {
         </div>
       </div>
 
-      {/* Cart Sidebar */}
-      <div className="w-96 bg-white border-l border-gray-100 flex flex-col">
+      {/* Cart Sidebar - Desktop */}
+      <div className={`w-full md:w-96 bg-white border-l border-gray-100 flex flex-col ${showCart ? 'block' : 'hidden md:flex'}`}>
         {/* Order Header */}
-        <div className="p-5 border-b border-gray-100">
-          <h2 className="font-display font-bold text-lg text-gray-900">New Order</h2>
+        <div className="p-4 md:p-5 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <button onClick={() => setShowCart(false)} className="md:hidden p-1 rounded-lg hover:bg-gray-100">
+              <ArrowLeft size={20} className="text-gray-600" />
+            </button>
+            <h2 className="font-display font-bold text-lg text-gray-900">{t('pos.newOrder')}</h2>
+            <div className="w-8" />
+          </div>
 
           <div className="mt-4 space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Order Type</label>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{t('pos.orderType')}</label>
               <select
                 value={orderType}
                 onChange={(e) => {
                   const newType = e.target.value as 'dine-in' | 'takeaway' | 'delivery';
                   setOrderType(newType);
-                  if (newType !== 'dine-in') {
-                    setSelectedTable(null);
-                  }
+                  if (newType !== 'dine-in') setSelectedTable(null);
                 }}
                 className="input-field text-sm"
               >
-                <option value="dine-in">🍽️ Dine-in</option>
-                <option value="takeaway">📦 Takeaway</option>
-                <option value="delivery">🚗 Delivery</option>
+                <option value="dine-in">{t('pos.dineIn')}</option>
+                <option value="takeaway">{t('pos.takeaway')}</option>
+                <option value="delivery">{t('pos.delivery')}</option>
               </select>
             </div>
 
             {isTableRequired && (
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  Table <span className="text-red-500">*</span>
+                  {t('pos.selectTable')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={selectedTable?._id || ''}
@@ -302,25 +310,17 @@ export function POSPage() {
                   }}
                   className="input-field text-sm"
                 >
-                  <option value="">Select a table</option>
-                  {tables
-                    .filter((t: TableDTO) => t.status === 'free')
-                    .map((table: TableDTO) => (
-                      <option key={table._id} value={table._id}>
-                        {table.name} (Cap: {table.capacity})
-                      </option>
-                    ))}
+                  <option value="">{t('pos.selectTable')}</option>
+                  {tables.filter((t: TableDTO) => t.status === 'free').map((table: TableDTO) => (
+                    <option key={table._id} value={table._id}>{table.name} (Cap: {table.capacity})</option>
+                  ))}
                 </select>
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Customer (optional)</label>
-              <CustomerSearch
-                onSelect={handleCustomerSelect}
-                selectedCustomer={selectedCustomer}
-                onRemove={handleCustomerRemove}
-              />
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{t('pos.customer')}</label>
+              <CustomerSearch onSelect={handleCustomerSelect} selectedCustomer={selectedCustomer} onRemove={handleCustomerRemove} />
             </div>
           </div>
         </div>
@@ -332,8 +332,8 @@ export function POSPage() {
               <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <ShoppingBag size={28} className="text-gray-300" />
               </div>
-              <p className="text-gray-500 font-medium">Cart is empty</p>
-              <p className="text-sm text-gray-400 mt-1">Click products to add them</p>
+              <p className="text-gray-500 font-medium">{t('pos.cartEmpty')}</p>
+              <p className="text-sm text-gray-400 mt-1">{t('pos.cartEmptyHint')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -351,34 +351,21 @@ export function POSPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-1 ml-2">
-                      <button
-                        onClick={() => handleOpenItemNotes(item.productId, item.notes)}
-                        className="p-1.5 rounded-lg text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
-                        title="Add note"
-                      >
+                      <button onClick={() => handleOpenItemNotes(item.productId, item.notes)} className="p-1.5 rounded-lg text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors">
                         <MessageSquare size={14} />
                       </button>
-                      <button
-                        onClick={() => removeItem(item.productId)}
-                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                      >
+                      <button onClick={() => removeItem(item.productId)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors">
                         <Trash2 size={14} />
                       </button>
                     </div>
                   </div>
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200">
-                      <button
-                        onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                        className="p-1.5 rounded-l-lg hover:bg-gray-100 transition-colors"
-                      >
+                      <button onClick={() => updateQuantity(item.productId, item.quantity - 1)} className="p-1.5 rounded-l-lg hover:bg-gray-100 transition-colors">
                         <Minus size={14} className="text-gray-600" />
                       </button>
                       <span className="w-8 text-center font-semibold text-sm">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                        className="p-1.5 rounded-r-lg hover:bg-gray-100 transition-colors"
-                      >
+                      <button onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="p-1.5 rounded-r-lg hover:bg-gray-100 transition-colors">
                         <Plus size={14} className="text-gray-600" />
                       </button>
                     </div>
@@ -391,11 +378,11 @@ export function POSPage() {
         </div>
 
         {/* Order Summary */}
-        <div className="p-5 border-t border-gray-100 bg-gray-50">
+        <div className="p-4 md:p-5 border-t border-gray-100 bg-gray-50">
           {selectedCustomer && (
             <div className="mb-3 p-3 bg-blue-50 rounded-xl">
               <div className="flex justify-between text-sm">
-                <span className="text-blue-600">Customer:</span>
+                <span className="text-blue-600">{t('pos.customer')}:</span>
                 <span className="font-semibold text-blue-700">{selectedCustomer.firstName} {selectedCustomer.lastName}</span>
               </div>
               <div className="flex justify-between text-sm">
@@ -409,33 +396,21 @@ export function POSPage() {
             </div>
           )}
 
-          {/* Order Notes */}
           <div className="mb-3">
-            <button
-              onClick={() => setShowOrderNotes(!showOrderNotes)}
-              className="text-sm text-gray-500 hover:text-brand-600 flex items-center gap-1.5 transition-colors"
-            >
+            <button onClick={() => setShowOrderNotes(!showOrderNotes)} className="text-sm text-gray-500 hover:text-brand-600 flex items-center gap-1.5 transition-colors">
               <MessageSquare size={14} />
-              {orderNotes ? 'Edit order notes' : 'Add order notes'}
+              {orderNotes ? t('pos.editOrderNotes') : t('pos.addOrderNotes')}
             </button>
             {showOrderNotes && (
               <div className="mt-2">
-                <textarea
-                  value={orderNotes}
-                  onChange={(e) => setOrderNotes(e.target.value)}
-                  placeholder="Special instructions..."
-                  className="input-field text-sm resize-none"
-                  rows={2}
-                />
+                <textarea value={orderNotes} onChange={(e) => setOrderNotes(e.target.value)} placeholder={t('pos.specialInstructions')} className="input-field text-sm resize-none" rows={2} />
               </div>
             )}
-            {orderNotes && !showOrderNotes && (
-              <p className="text-xs text-gray-500 mt-1.5 truncate">{orderNotes}</p>
-            )}
+            {orderNotes && !showOrderNotes && <p className="text-xs text-gray-500 mt-1.5 truncate">{orderNotes}</p>}
           </div>
 
           <div className="flex justify-between items-center mb-4">
-            <span className="text-gray-600 font-medium">Total ({getItemCount()} items)</span>
+            <span className="text-gray-600 font-medium">{t('pos.total')} ({getItemCount()} {t('pos.items')})</span>
             <span className="text-2xl font-bold text-gray-900">{getTotal()} MRU</span>
           </div>
 
@@ -449,44 +424,42 @@ export function POSPage() {
             ) : (
               <>
                 <Sparkles size={18} />
-                Create Order - {getTotal()} MRU
+                {t('pos.createOrder')} - {getTotal()} MRU
               </>
             )}
           </button>
         </div>
       </div>
 
+      {/* Mobile Cart Toggle Button */}
+      {items.length > 0 && !showCart && (
+        <button
+          onClick={() => setShowCart(true)}
+          className="md:hidden fixed bottom-24 right-4 z-30 bg-brand-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center"
+        >
+          <div className="relative">
+            <ShoppingBag size={24} />
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              {getItemCount()}
+            </span>
+          </div>
+        </button>
+      )}
+
       {/* Item Notes Modal */}
       {editingItemNotes && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-md card p-6 animate-scale-in">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-display font-bold text-gray-900">Item Notes</h3>
+              <h3 className="text-lg font-display font-bold text-gray-900">{t('pos.itemNotes')}</h3>
               <button onClick={() => setEditingItemNotes(null)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
                 <X size={18} />
               </button>
             </div>
-            <textarea
-              value={itemNoteText}
-              onChange={(e) => setItemNoteText(e.target.value)}
-              placeholder="e.g., No onions, extra spicy, well done..."
-              className="input-field resize-none"
-              rows={3}
-              autoFocus
-            />
+            <textarea value={itemNoteText} onChange={(e) => setItemNoteText(e.target.value)} placeholder={t('pos.specialInstructions')} className="input-field resize-none" rows={3} autoFocus />
             <div className="flex justify-end gap-3 mt-4">
-              <button
-                onClick={() => setEditingItemNotes(null)}
-                className="btn-secondary"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveItemNotes}
-                className="btn-primary"
-              >
-                Save Note
-              </button>
+              <button onClick={() => setEditingItemNotes(null)} className="btn-secondary">{t('common.cancel')}</button>
+              <button onClick={handleSaveItemNotes} className="btn-primary">{t('pos.saveNote')}</button>
             </div>
           </div>
         </div>

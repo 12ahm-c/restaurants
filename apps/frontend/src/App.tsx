@@ -146,7 +146,7 @@ function App() {
             <Route
               path="customers/new"
               element={
-                <ProtectedRoute allowedRoles={['owner', 'manager', 'cashier']}>
+                <ProtectedRoute allowedRoles={['owner', 'manager', 'cashier', 'server']}>
                   <CustomerCreatePage />
                 </ProtectedRoute>
               }

@@ -263,7 +263,7 @@ export function EmployeeLayout() {
             );
           })}
 
-          {moreItems.length > 0 ? (
+          {moreItems.length > 0 && (
             <button
               onClick={() => { setMoreOpen(true); setNotifOpen(false); }}
               className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1"
@@ -273,18 +273,6 @@ export function EmployeeLayout() {
               </div>
               <span className="text-[10px] font-semibold leading-tight text-gray-400">
                 {t('nav.more')}
-              </span>
-            </button>
-          ) : (
-            <button
-              onClick={() => setMoreOpen(true)}
-              className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1"
-            >
-              <div className="p-1.5 rounded-xl text-gray-400">
-                <User size={21} strokeWidth={2} />
-              </div>
-              <span className="text-[10px] font-semibold leading-tight text-gray-400">
-                Profile
               </span>
             </button>
           )}
