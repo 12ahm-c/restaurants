@@ -5,7 +5,7 @@ import { useUIStore } from '../../../stores/uiStore';
 
 export function EmployeeCreatePage() {
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('server');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +17,7 @@ export function EmployeeCreatePage() {
     setIsLoading(true);
 
     try {
-      await authService.createEmployee({ name, email, password, role });
+      await authService.createEmployee({ name, phone, password, role });
       addToast('success', 'Employee created successfully');
       navigate('/admin/employees');
     } catch (error) {
@@ -37,88 +37,89 @@ export function EmployeeCreatePage() {
   ];
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Create Employee</h1>
+    <div className="p-4">
+      <div className="mb-4">
+        <button
+          onClick={() => navigate('/admin/employees')}
+          className="text-brand-600 hover:text-brand-700 text-sm font-medium"
+        >
+          &larr; Back
+        </button>
+        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">Add Employee</h1>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Name
-          </label>
-          <input
-            id="name"
-            type="text"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+      <div className="max-w-lg">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Name</label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="input-field"
+              placeholder="Full name"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Phone</label>
+            <input
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="input-field"
+              placeholder="Phone number (used for login)"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
+            <input
+              type="password"
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-field"
+              placeholder="Min 6 characters"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-            Role
-          </label>
-          <select
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            {roleOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="input-field"
+            >
+              {roleOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={() => navigate('/admin/employees')}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {isLoading ? 'Creating...' : 'Create Employee'}
-          </button>
-        </div>
-      </form>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => navigate('/admin/employees')}
+              className="btn-secondary flex-1"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="btn-primary flex-1"
+            >
+              {isLoading ? 'Creating...' : 'Create Employee'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

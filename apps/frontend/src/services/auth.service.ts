@@ -2,9 +2,9 @@ import { apiClient, setTokens, clearTokens } from './api-client';
 import { AuthResponse, TokenResponse, UserDTO, ApiResponse } from '../types';
 
 export const authService = {
-  async login(email: string, password: string): Promise<AuthResponse> {
+  async login(phone: string, password: string): Promise<AuthResponse> {
     const response = await apiClient.post<ApiResponse<AuthResponse>>('/auth/login', {
-      email,
+      phone,
       password,
     });
 
@@ -51,7 +51,7 @@ export const authService = {
     return response.data.data;
   },
 
-  async updateProfile(data: { name?: string; email?: string; language?: string }): Promise<UserDTO> {
+  async updateProfile(data: { name?: string; phone?: string; language?: string }): Promise<UserDTO> {
     const response = await apiClient.patch<ApiResponse<UserDTO>>('/users/me', data);
 
     if (!response.data.success || !response.data.data) {
@@ -86,7 +86,7 @@ export const authService = {
 
   async createEmployee(data: {
     name: string;
-    email: string;
+    phone: string;
     password: string;
     role: string;
   }): Promise<UserDTO> {
@@ -101,7 +101,7 @@ export const authService = {
 
   async updateEmployee(
     id: string,
-    data: { name?: string; email?: string; role?: string; isActive?: boolean; password?: string }
+    data: { name?: string; phone?: string; role?: string; isActive?: boolean; password?: string }
   ): Promise<UserDTO> {
     const response = await apiClient.patch<ApiResponse<UserDTO>>(`/admin/employees/${id}`, data);
 

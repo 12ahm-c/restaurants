@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCustomerStore } from '../../stores/customerStore';
 import { useDebounce } from '../../hooks/useDebounce';
+import { Search, Plus, Users } from 'lucide-react';
 
 export function CustomerListPage() {
   const {
@@ -34,126 +35,143 @@ export function CustomerListPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Customer Management</h1>
-        <p className="text-gray-600">Manage your customers and loyalty program</p>
+    <div className="animate-fade-in">
+      <div className="mb-4">
+        <h1 className="text-xl font-display font-bold text-gray-900">Customers</h1>
+        <p className="text-sm text-gray-500 mt-0.5">{total} customers</p>
       </div>
 
-      <div className="mb-6 flex items-center justify-between">
-        <div className="w-96">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+      {/* Search + Add row */}
+      <div className="flex gap-3 mb-4">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, phone, or email..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            placeholder="Search by name or phone..."
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
           />
         </div>
         <Link
           to="/customers/new"
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          className="btn-primary flex items-center gap-2 shrink-0 text-sm"
         >
-          Add Customer
+          <Plus size={18} />
+          <span className="hidden sm:inline">Add</span>
         </Link>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-md bg-red-50 p-4 text-red-700">{error}</div>
+        <div className="mb-4 p-3 bg-red-50 rounded-xl text-sm text-red-600">{error}</div>
       )}
 
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Phone
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Loyalty Points
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-            {loading ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                  Loading...
-                </td>
-              </tr>
-            ) : customers.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                  No customers found
-                </td>
-              </tr>
-            ) : (
-              customers.map((customer) => (
-                <tr key={customer._id}>
-                  <td className="whitespace-nowrap px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">
-                      {customer.firstName} {customer.lastName}
-                    </div>
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                    {customer.phone}
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                    {customer.email || '-'}
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4">
-                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 text-xs font-semibold text-blue-800">
-                      {customer.loyaltyPoints} pts
-                    </span>
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
-                    <Link
-                      to={`/customers/${customer._id}`}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      View Details
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {total > limit && (
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-sm text-gray-700">
-            Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, total)} of{' '}
-            {total} customers
-          </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => handlePageChange(page - 1)}
-              disabled={page === 1}
-              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => handlePageChange(page + 1)}
-              disabled={page * limit >= total}
-              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+      {/* Customer list - cards on mobile */}
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="w-8 h-8 border-2 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
         </div>
+      ) : customers.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-12 text-center">
+          <Users size={40} className="text-gray-200 mx-auto mb-3" />
+          <p className="text-gray-500 font-medium">No customers found</p>
+          <Link to="/customers/new" className="btn-primary inline-flex items-center gap-2 mt-4 text-sm">
+            <Plus size={16} />
+            Add Customer
+          </Link>
+        </div>
+      ) : (
+        <>
+          {/* Mobile: Card view */}
+          <div className="md:hidden space-y-2">
+            {customers.map((customer) => (
+              <Link
+                key={customer._id}
+                to={`/customers/${customer._id}`}
+                className="block bg-white rounded-xl border border-gray-100 shadow-sm p-4 active:scale-[0.98] transition-transform"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-sm shrink-0">
+                    {customer.firstName?.charAt(0)}{customer.lastName?.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm truncate">
+                      {customer.firstName} {customer.lastName}
+                    </p>
+                    <p className="text-xs text-gray-500">{customer.phone}</p>
+                  </div>
+                  <span className="text-xs font-semibold text-brand-600 bg-brand-50 px-2 py-1 rounded-full shrink-0">
+                    {customer.loyaltyPoints} pts
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Desktop: Table view */}
+          <div className="hidden md:block bg-white rounded-2xl border border-gray-100 shadow-card overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-100">
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Name</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Phone</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Points</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {customers.map((customer) => (
+                  <tr key={customer._id} className="table-row">
+                    <td className="px-5 py-3">
+                      <span className="font-semibold text-sm text-gray-900">
+                        {customer.firstName} {customer.lastName}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-sm text-gray-500">{customer.phone}</td>
+                    <td className="px-5 py-3">
+                      <span className="text-xs font-semibold text-brand-600 bg-brand-50 px-2 py-1 rounded-full">
+                        {customer.loyaltyPoints} pts
+                      </span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <Link
+                        to={`/customers/${customer._id}`}
+                        className="text-sm font-semibold text-brand-600 hover:text-brand-700"
+                      >
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {total > limit && (
+            <div className="mt-4 flex items-center justify-between">
+              <span className="text-xs text-gray-500">
+                {((page - 1) * limit) + 1}-{Math.min(page * limit, total)} of {total}
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 1}
+                  className="btn-secondary text-xs px-3 py-1.5 disabled:opacity-50"
+                >
+                  Prev
+                </button>
+                <button
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page * limit >= total}
+                  className="btn-secondary text-xs px-3 py-1.5 disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

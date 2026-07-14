@@ -4,7 +4,7 @@ import { useAuthStore } from '../../../stores/authStore';
 import { Utensils, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading, error, clearError } = useAuthStore();
@@ -13,7 +13,7 @@ export function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      await login(phone, password);
       navigate('/dashboard');
     } catch {
       // Error is handled by the store
@@ -24,14 +24,12 @@ export function LoginPage() {
     <div className="min-h-screen flex">
       {/* Left side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-brand-500 via-brand-600 to-orange-700">
-        {/* Decorative elements */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-radial from-white/5 to-transparent rounded-full" />
         </div>
         
-        {/* Content */}
         <div className="relative z-10 flex flex-col justify-center px-16 text-white">
           <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-8">
             <Utensils size={32} />
@@ -85,25 +83,25 @@ export function LoginPage() {
                   onClick={clearError}
                   className="text-red-400 hover:text-red-600"
                 >
-                  ×
+                  x
                 </button>
               </div>
             )}
 
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
-                Email address
+              <label htmlFor="phone" className="block text-sm font-semibold text-gray-700">
+                Phone number
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
+                id="phone"
+                name="phone"
+                type="tel"
+                autoComplete="tel"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 className="input-field"
-                placeholder="admin@restomanager.mr"
+                placeholder="Enter your phone number"
               />
             </div>
 
@@ -121,7 +119,7 @@ export function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="input-field pr-12"
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                 />
                 <button
                   type="button"

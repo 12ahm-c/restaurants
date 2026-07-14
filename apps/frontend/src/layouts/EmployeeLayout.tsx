@@ -216,17 +216,16 @@ export function EmployeeLayout() {
 
       {/* Page content - scrollable */}
       <main className="flex-1 overflow-y-auto" role="main">
-        <div className="p-4 pb-24">
+        <div className="p-4 pb-20">
           <Outlet />
         </div>
       </main>
 
       {/* Bottom Navigation Bar */}
       <nav
-        className="shrink-0 z-40 glass border-t border-gray-200"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+        className="fixed bottom-0 left-0 right-0 z-40 glass border-t border-gray-200"
       >
-        <div className="flex items-center justify-around h-[60px] px-1">
+        <div className="flex items-center justify-around h-[56px] px-1" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           {bottomTabs.map((item) => {
             const isActive = location.pathname.startsWith(item.path);
             const Icon = item.icon;

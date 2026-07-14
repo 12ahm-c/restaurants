@@ -8,7 +8,7 @@ export function EmployeeEditPage() {
   const { id } = useParams<{ id: string }>();
   const [employee, setEmployee] = useState<UserDTO | null>(null);
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [role, setRole] = useState('');
   const [isActive, setIsActive] = useState(true);
   const [password, setPassword] = useState('');
@@ -25,7 +25,7 @@ export function EmployeeEditPage() {
         if (found) {
           setEmployee(found);
           setName(found.name);
-          setEmail(found.email);
+          setPhone(found.phone || '');
           setRole(found.role);
           setIsActive(found.isActive);
         }
@@ -47,9 +47,9 @@ export function EmployeeEditPage() {
     setIsSaving(true);
 
     try {
-      const updateData: { name?: string; email?: string; role?: string; isActive?: boolean; password?: string } = {
+      const updateData: { name?: string; phone?: string; role?: string; isActive?: boolean; password?: string } = {
         name,
-        email,
+        phone,
         role,
         isActive,
       };
@@ -79,115 +79,115 @@ export function EmployeeEditPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      <div className="flex items-center justify-center py-12">
+        <div className="w-8 h-8 border-2 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!employee) {
     return (
-      <div className="text-center py-8">
+      <div className="text-center py-12">
         <p className="text-gray-500">Employee not found</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Edit Employee</h1>
+    <div className="p-4">
+      <div className="mb-4">
+        <button
+          onClick={() => navigate('/admin/employees')}
+          className="text-brand-600 hover:text-brand-700 text-sm font-medium"
+        >
+          &larr; Back
+        </button>
+        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">Edit Employee</h1>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Name
-          </label>
-          <input
-            id="name"
-            type="text"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+      <div className="max-w-lg">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Name</label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="input-field"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Phone</label>
+            <input
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="input-field"
+              placeholder="Phone number (used for login)"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-            Role
-          </label>
-          <select
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            {roleOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="input-field"
+            >
+              {roleOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="flex items-center">
-          <input
-            id="isActive"
-            type="checkbox"
-            checked={isActive}
-            onChange={(e) => setIsActive(e.target.checked)}
-            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-          />
-          <label htmlFor="isActive" className="ml-2 block text-sm text-gray-900">
-            Active
-          </label>
-        </div>
+          <div className="flex items-center gap-2">
+            <input
+              id="isActive"
+              type="checkbox"
+              checked={isActive}
+              onChange={(e) => setIsActive(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+            />
+            <label htmlFor="isActive" className="text-sm font-medium text-gray-700">Active</label>
+          </div>
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            New Password (leave blank to keep current)
-          </label>
-          <input
-            id="password"
-            type="password"
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+              New Password <span className="text-gray-400 font-normal">(leave blank to keep)</span>
+            </label>
+            <input
+              type="password"
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-field"
+              placeholder="New password"
+            />
+          </div>
 
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={() => navigate('/admin/employees')}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {isSaving ? 'Saving...' : 'Save Changes'}
-          </button>
-        </div>
-      </form>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => navigate('/admin/employees')}
+              className="btn-secondary flex-1"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="btn-primary flex-1"
+            >
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

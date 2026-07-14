@@ -7,14 +7,14 @@ export function ProfilePage() {
   const { user, updateUser } = useAuthStore();
   const { addToast } = useUIStore();
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [language, setLanguage] = useState('fr');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
       setName(user.name);
-      setEmail(user.email);
+      setPhone(user.phone || '');
       setLanguage(user.language);
     }
   }, [user]);
@@ -24,7 +24,7 @@ export function ProfilePage() {
     setIsLoading(true);
 
     try {
-      const updatedUser = await authService.updateProfile({ name, email, language });
+      const updatedUser = await authService.updateProfile({ name, phone, language });
       updateUser(updatedUser);
       addToast('success', 'Profile updated successfully');
     } catch (error) {
@@ -37,69 +37,63 @@ export function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      <div className="flex items-center justify-center py-12">
+        <div className="w-8 h-8 border-2 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Profile</h1>
+    <div className="p-4">
+      <h1 className="text-xl font-display font-bold text-gray-900 mb-4">Profile</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Name
-          </label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+      <div className="max-w-lg">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="input-field"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Phone</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="input-field"
+              placeholder="Your phone number"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="language" className="block text-sm font-medium text-gray-700">
-            Language
-          </label>
-          <select
-            id="language"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="fr">Français</option>
-            <option value="en">English</option>
-            <option value="ar">العربية</option>
-          </select>
-        </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Language</label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="input-field"
+            >
+              <option value="fr">Francais</option>
+              <option value="en">English</option>
+              <option value="ar">العربية</option>
+            </select>
+          </div>
 
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-          >
-            {isLoading ? 'Saving...' : 'Save Changes'}
-          </button>
-        </div>
-      </form>
+          <div className="flex justify-end pt-2">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="btn-primary"
+            >
+              {isLoading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

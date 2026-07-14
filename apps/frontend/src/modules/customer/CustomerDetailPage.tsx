@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCustomerStore } from '../../stores/customerStore';
 import { RedemptionModal } from '../../components/customers/RedemptionModal';
+import { Edit, ArrowLeft, Phone, Star, ShoppingCart, Calendar } from 'lucide-react';
 
 export function CustomerDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -40,34 +41,17 @@ export function CustomerDetailPage() {
 
   if (loading && !selectedCustomer) {
     return (
-      <div className="p-6">
-        <div className="text-center text-gray-500">Loading...</div>
+      <div className="flex items-center justify-center py-12">
+        <div className="w-8 h-8 border-2 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
       </div>
     );
   }
 
-  if (error) {
+  if (error || !selectedCustomer) {
     return (
-      <div className="p-6">
-        <div className="rounded-md bg-red-50 p-4 text-red-700">{error}</div>
-        <button
-          onClick={() => navigate('/customers')}
-          className="mt-4 text-blue-600 hover:text-blue-800"
-        >
-          Back to Customers
-        </button>
-      </div>
-    );
-  }
-
-  if (!selectedCustomer) {
-    return (
-      <div className="p-6">
-        <div className="text-center text-gray-500">Customer not found</div>
-        <button
-          onClick={() => navigate('/customers')}
-          className="mt-4 text-blue-600 hover:text-blue-800"
-        >
+      <div className="p-4">
+        <div className="p-3 bg-red-50 rounded-xl text-sm text-red-600">{error || 'Customer not found'}</div>
+        <button onClick={() => navigate('/customers')} className="mt-3 text-brand-600 text-sm font-medium">
           Back to Customers
         </button>
       </div>
@@ -75,176 +59,117 @@ export function CustomerDetailPage() {
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <button
-          onClick={() => navigate('/customers')}
-          className="text-blue-600 hover:text-blue-800"
-        >
-          &larr; Back to Customers
+    <div className="p-4 animate-fade-in">
+      <div className="flex items-center justify-between mb-4">
+        <button onClick={() => navigate('/customers')} className="text-brand-600 text-sm font-medium flex items-center gap-1">
+          <ArrowLeft size={16} />
+          Back
         </button>
-        <h1 className="mt-2 text-2xl font-bold text-gray-900">
-          {selectedCustomer.firstName} {selectedCustomer.lastName}
-        </h1>
+        <Link
+          to={`/customers/${selectedCustomer._id}/edit`}
+          className="btn-secondary flex items-center gap-1.5 text-sm"
+        >
+          <Edit size={14} />
+          Edit
+        </Link>
       </div>
 
-      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Customer Information</h2>
-          <dl className="space-y-4">
-            <div>
-              <dt className="text-sm font-medium text-gray-500">Phone</dt>
-              <dd className="mt-1 text-sm text-gray-900">{selectedCustomer.phone}</dd>
+      {/* Customer header */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 mb-4">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-xl shrink-0">
+            {selectedCustomer.firstName?.charAt(0)}{selectedCustomer.lastName?.charAt(0)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg font-display font-bold text-gray-900 truncate">
+              {selectedCustomer.firstName} {selectedCustomer.lastName}
+            </h1>
+            <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-0.5">
+              <Phone size={14} />
+              {selectedCustomer.phone}
             </div>
-            {selectedCustomer.email && (
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Email</dt>
-                <dd className="mt-1 text-sm text-gray-900">{selectedCustomer.email}</dd>
-              </div>
-            )}
-            {selectedCustomer.address && (
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Address</dt>
-                <dd className="mt-1 text-sm text-gray-900">{selectedCustomer.address}</dd>
-              </div>
-            )}
-            {selectedCustomer.preferences && (
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Preferences</dt>
-                <dd className="mt-1 text-sm text-gray-900">{selectedCustomer.preferences}</dd>
-              </div>
-            )}
-            {selectedCustomer.birthDate && (
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Birth Date</dt>
-                <dd className="mt-1 text-sm text-gray-900">
-                  {new Date(selectedCustomer.birthDate).toLocaleDateString()}
-                </dd>
-              </div>
-            )}
-          </dl>
-          <div className="mt-6 flex space-x-3">
-            <Link
-              to={`/customers/${selectedCustomer._id}/edit`}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              Edit Customer
-            </Link>
           </div>
         </div>
 
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Loyalty & Purchase Info</h2>
-          <div className="mb-4">
-            <span className="text-3xl font-bold text-blue-600">
-              {selectedCustomer.loyaltyPoints}
-            </span>
-            <span className="ml-2 text-gray-600">points</span>
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-3 mt-5">
+          <div className="text-center p-3 bg-brand-50 rounded-xl">
+            <Star size={18} className="text-brand-500 mx-auto mb-1" />
+            <p className="text-lg font-bold text-brand-600">{selectedCustomer.loyaltyPoints}</p>
+            <p className="text-[10px] text-gray-500 font-medium">Points</p>
           </div>
-          <dl className="space-y-3">
-            <div className="flex justify-between">
-              <dt className="text-sm text-gray-500">Total Spent</dt>
-              <dd className="text-sm font-medium text-gray-900">${totalSpent.toFixed(2)}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-sm text-gray-500">Total Orders</dt>
-              <dd className="text-sm font-medium text-gray-900">{totalOrders}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-sm text-gray-500">Last Purchase</dt>
-              <dd className="text-sm font-medium text-gray-900">
-                {lastPurchaseAt ? new Date(lastPurchaseAt).toLocaleDateString() : 'Never'}
-              </dd>
-            </div>
-          </dl>
-          <p className="mt-4 text-xs text-gray-500">
-            Earn 1 point per 100 MRU spent. 1 point = 1 MRU discount.
-          </p>
-          <div className="mt-4">
-            <button
-              onClick={() => setShowRedeemModal(true)}
-              disabled={selectedCustomer.loyaltyPoints === 0}
-              className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
-            >
-              Redeem Points
-            </button>
+          <div className="text-center p-3 bg-blue-50 rounded-xl">
+            <ShoppingCart size={18} className="text-blue-500 mx-auto mb-1" />
+            <p className="text-lg font-bold text-blue-600">{totalOrders}</p>
+            <p className="text-[10px] text-gray-500 font-medium">Orders</p>
           </div>
+          <div className="text-center p-3 bg-emerald-50 rounded-xl">
+            <p className="text-lg font-bold text-emerald-600 mt-1">{totalSpent.toFixed(0)}</p>
+            <p className="text-[10px] text-gray-500 font-medium">MRU Spent</p>
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
+          <span className="flex items-center gap-1">
+            <Calendar size={12} />
+            Last purchase: {lastPurchaseAt ? new Date(lastPurchaseAt).toLocaleDateString() : 'Never'}
+          </span>
+          <button
+            onClick={() => setShowRedeemModal(true)}
+            disabled={selectedCustomer.loyaltyPoints === 0}
+            className="btn-primary text-xs px-3 py-1.5 disabled:opacity-50"
+          >
+            Redeem Points
+          </button>
         </div>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Loyalty History</h2>
-        <div className="overflow-hidden rounded-lg border border-gray-200">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Points
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Description
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {loyaltyHistory.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-                    No loyalty history
-                  </td>
-                </tr>
-              ) : (
-                loyaltyHistory.map((transaction) => (
-                  <tr key={transaction._id}>
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                          transaction.type === 'earn'
-                            ? 'bg-green-100 text-green-800'
-                            : transaction.type === 'redeem'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-blue-100 text-blue-800'
-                        }`}
-                      >
-                        {transaction.type}
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                      {transaction.type === 'earn' ? '+' : '-'}{transaction.points}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{transaction.description}</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                      {new Date(transaction.timestamp).toLocaleString()}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+      {/* Loyalty History */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
+        <h2 className="text-sm font-bold text-gray-900 mb-3">Loyalty History</h2>
+        {loyaltyHistory.length === 0 ? (
+          <p className="text-sm text-gray-400 text-center py-6">No loyalty history</p>
+        ) : (
+          <div className="space-y-2">
+            {loyaltyHistory.map((transaction) => (
+              <div key={transaction._id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${
+                    transaction.type === 'earn' ? 'bg-green-400' :
+                    transaction.type === 'redeem' ? 'bg-red-400' : 'bg-blue-400'
+                  }`} />
+                  <div>
+                    <p className="text-sm text-gray-700">{transaction.description}</p>
+                    <p className="text-xs text-gray-400">{new Date(transaction.timestamp).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <span className={`text-sm font-bold ${
+                  transaction.type === 'earn' ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {transaction.type === 'earn' ? '+' : '-'}{transaction.points}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {loyaltyHistoryTotal > 10 && (
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-gray-700">
-              Page {loyaltyPage} of {Math.ceil(loyaltyHistoryTotal / 10)}
-            </div>
-            <div className="flex space-x-2">
+          <div className="mt-3 flex items-center justify-between">
+            <span className="text-xs text-gray-500">
+              {loyaltyPage} / {Math.ceil(loyaltyHistoryTotal / 10)}
+            </span>
+            <div className="flex gap-2">
               <button
                 onClick={() => handleLoyaltyPageChange(loyaltyPage - 1)}
                 disabled={loyaltyPage === 1}
-                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="btn-secondary text-xs px-3 py-1 disabled:opacity-50"
               >
-                Previous
+                Prev
               </button>
               <button
                 onClick={() => handleLoyaltyPageChange(loyaltyPage + 1)}
                 disabled={loyaltyPage * 10 >= loyaltyHistoryTotal}
-                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="btn-secondary text-xs px-3 py-1 disabled:opacity-50"
               >
                 Next
               </button>

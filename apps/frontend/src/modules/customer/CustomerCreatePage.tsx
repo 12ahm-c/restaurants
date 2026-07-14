@@ -7,16 +7,11 @@ export function CustomerCreatePage() {
   const { createCustomer, loading } = useCustomerStore();
   const [formData, setFormData] = useState({
     firstName: '',
-    lastName: '',
     phone: '',
-    email: '',
-    address: '',
-    preferences: '',
-    birthDate: '',
   });
   const [error, setError] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -27,20 +22,16 @@ export function CustomerCreatePage() {
     e.preventDefault();
     setError('');
 
-    if (!formData.firstName || !formData.lastName || !formData.phone) {
-      setError('First name, last name, and phone are required');
+    if (!formData.firstName || !formData.phone) {
+      setError('Name and phone are required');
       return;
     }
 
     try {
       await createCustomer({
         firstName: formData.firstName,
-        lastName: formData.lastName,
+        lastName: '',
         phone: formData.phone,
-        email: formData.email || undefined,
-        address: formData.address || undefined,
-        preferences: formData.preferences || undefined,
-        birthDate: formData.birthDate || undefined,
       });
       navigate('/customers');
     } catch (err: any) {
@@ -49,54 +40,40 @@ export function CustomerCreatePage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
+    <div className="p-4">
+      <div className="mb-4">
         <button
           onClick={() => navigate('/customers')}
-          className="text-blue-600 hover:text-blue-800"
+          className="text-brand-600 hover:text-brand-700 text-sm font-medium"
         >
-          &larr; Back to Customers
+          &larr; Back
         </button>
-        <h1 className="mt-2 text-2xl font-bold text-gray-900">Add New Customer</h1>
+        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">Add Customer</h1>
       </div>
 
-      <div className="max-w-2xl">
-        <form onSubmit={handleSubmit} className="rounded-lg border border-gray-200 bg-white p-6 shadow">
+      <div className="max-w-lg">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
           {error && (
-            <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>
+            <div className="mb-4 p-3 bg-red-50 rounded-xl text-sm text-red-600">{error}</div>
           )}
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                First Name <span className="text-red-500">*</span>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="Enter first name"
+                className="input-field"
+                placeholder="Customer name"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Last Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="Enter last name"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                 Phone <span className="text-red-500">*</span>
               </label>
               <input
@@ -104,73 +81,26 @@ export function CustomerCreatePage() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="Enter phone number"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="Enter email address"
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="Enter address"
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Preferences</label>
-              <textarea
-                name="preferences"
-                value={formData.preferences}
-                onChange={handleChange}
-                rows={3}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="Enter customer preferences"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Birth Date</label>
-              <input
-                type="date"
-                name="birthDate"
-                value={formData.birthDate}
-                onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="input-field"
+                placeholder="Phone number"
               />
             </div>
           </div>
 
-          <div className="mt-6 flex justify-end space-x-3">
+          <div className="mt-6 flex gap-3">
             <button
               type="button"
               onClick={() => navigate('/customers')}
-              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="btn-secondary flex-1"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="btn-primary flex-1"
             >
-              {loading ? 'Creating...' : 'Create Customer'}
+              {loading ? 'Saving...' : 'Add Customer'}
             </button>
           </div>
         </form>

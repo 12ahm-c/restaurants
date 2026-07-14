@@ -269,7 +269,11 @@
   }
 
   .safe-bottom {
-    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom));
+  }
+
+  .mobile-nav-height {
+    height: calc(56px + env(safe-area-inset-bottom));
   }
 
   .swipe-indicator {
