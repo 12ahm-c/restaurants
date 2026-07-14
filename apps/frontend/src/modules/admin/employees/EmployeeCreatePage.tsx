@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../../services/auth.service';
 import { useUIStore } from '../../../stores/uiStore';
+import { useI18n } from '../../../i18n/I18nContext';
 
 export function EmployeeCreatePage() {
   const [name, setName] = useState('');
@@ -11,6 +12,7 @@ export function EmployeeCreatePage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { addToast } = useUIStore();
+  const { t } = useI18n();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,10 +20,10 @@ export function EmployeeCreatePage() {
 
     try {
       await authService.createEmployee({ name, phone, password, role });
-      addToast('success', 'Employee created successfully');
+      addToast('success', t('common.success'));
       navigate('/admin/employees');
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to create employee';
+      const message = error instanceof Error ? error.message : t('common.error');
       addToast('error', message);
     } finally {
       setIsLoading(false);
@@ -29,11 +31,11 @@ export function EmployeeCreatePage() {
   };
 
   const roleOptions = [
-    { value: 'server', label: 'Server' },
-    { value: 'cashier', label: 'Cashier' },
-    { value: 'chef', label: 'Chef' },
-    { value: 'stock_manager', label: 'Stock Manager' },
-    { value: 'manager', label: 'Manager' },
+    { value: 'server', label: t('role.server') },
+    { value: 'cashier', label: t('role.cashier') },
+    { value: 'chef', label: t('role.chef') },
+    { value: 'stock_manager', label: t('role.stock_manager') },
+    { value: 'manager', label: t('role.manager') },
   ];
 
   return (
@@ -43,39 +45,39 @@ export function EmployeeCreatePage() {
           onClick={() => navigate('/admin/employees')}
           className="text-brand-600 hover:text-brand-700 text-sm font-medium"
         >
-          &larr; Back
+          &larr; {t('common.back')}
         </button>
-        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">Add Employee</h1>
+        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">{t('employees.add')}</h1>
       </div>
 
       <div className="max-w-lg">
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Name</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.name')}</label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="input-field"
-              placeholder="Full name"
+              placeholder={t('form.fullName')}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Phone</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.phone')}</label>
             <input
               type="tel"
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="input-field"
-              placeholder="Phone number (used for login)"
+              placeholder={t('form.phoneNumber')}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.password')}</label>
             <input
               type="password"
               required
@@ -83,12 +85,12 @@ export function EmployeeCreatePage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="input-field"
-              placeholder="Min 6 characters"
+              placeholder={t('form.minCharacters')}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Role</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('employees.role')}</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
@@ -108,14 +110,14 @@ export function EmployeeCreatePage() {
               onClick={() => navigate('/admin/employees')}
               className="btn-secondary flex-1"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
               disabled={isLoading}
               className="btn-primary flex-1"
             >
-              {isLoading ? 'Creating...' : 'Create Employee'}
+              {isLoading ? t('common.loading') : t('common.create')}
             </button>
           </div>
         </form>

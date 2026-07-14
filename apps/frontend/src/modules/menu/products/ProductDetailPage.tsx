@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { menuService, ProductWithRecipe } from '../../../services/menu.service';
 import { useUIStore } from '../../../stores/uiStore';
+import { useI18n } from '../../../i18n/I18nContext';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 
 const statusColors: Record<string, string> = {
@@ -11,6 +12,7 @@ const statusColors: Record<string, string> = {
 };
 
 export function ProductDetailPage() {
+  const { t } = useI18n();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToast } = useUIStore();
@@ -28,7 +30,7 @@ export function ProductDetailPage() {
       const data = await menuService.getProductById(id);
       setProductData(data);
     } catch (error) {
-      addToast('error', error instanceof Error ? error.message : 'Failed to load product');
+      addToast('error', error instanceof Error ? error.message : t('common.error'));
     } finally {
       setIsLoading(false);
     }
@@ -38,10 +40,10 @@ export function ProductDetailPage() {
     if (!id) return;
     try {
       await menuService.deleteProduct(id);
-      addToast('success', 'Product deleted successfully');
+      addToast('success', t('common.success'));
       navigate('/menu/products');
     } catch (error) {
-      addToast('error', error instanceof Error ? error.message : 'Failed to delete product');
+      addToast('error', error instanceof Error ? error.message : t('common.error'));
     }
   };
 
@@ -51,9 +53,9 @@ export function ProductDetailPage() {
     try {
       const updated = await menuService.updateProductStatus(id, newStatus);
       setProductData({ ...productData, product: updated });
-      addToast('success', `Product status updated to ${newStatus}`);
+      addToast('success', t('common.success'));
     } catch (error) {
-      addToast('error', error instanceof Error ? error.message : 'Failed to update status');
+      addToast('error', error instanceof Error ? error.message : t('common.error'));
     }
   };
 
@@ -68,7 +70,7 @@ export function ProductDetailPage() {
   if (!productData) {
     return (
       <div className="bg-white rounded-lg shadow p-8 text-center">
-        <p className="text-gray-500">Product not found</p>
+        <p className="text-gray-500">{t('common.noData')}</p>
       </div>
     );
   }
@@ -93,21 +95,21 @@ export function ProductDetailPage() {
                     : 'bg-green-100 text-green-700 hover:bg-green-200'
                 }`}
               >
-                {product.status === 'available' ? 'Mark Unavailable' : 'Mark Available'}
+                {product.status === 'available' ? t('form.markUnavailable') : t('form.markAvailable')}
               </button>
               <Link
                 to={`/menu/products/${id}/edit`}
                 className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
               >
                 <Edit size={18} />
-                <span>Edit</span>
+                <span>{t('common.edit')}</span>
               </Link>
               <button
                 onClick={() => setShowDeleteModal(true)}
                 className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
               >
                 <Trash2 size={18} />
-                <span>Delete</span>
+                <span>{t('common.delete')}</span>
               </button>
             </>
           )}
@@ -127,35 +129,35 @@ export function ProductDetailPage() {
           )}
           {!product.imageUrl && (
             <div className="mb-6 w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-              <span className="text-gray-400 text-sm">No image</span>
+              <span className="text-gray-400 text-sm">{t('form.noImage')}</span>
             </div>
           )}
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Product Details</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">{t('form.productDetails')}</h2>
           <dl className="grid grid-cols-2 gap-4">
             <div>
-              <dt className="text-sm text-gray-500">Name</dt>
+              <dt className="text-sm text-gray-500">{t('common.name')}</dt>
               <dd className="text-sm text-gray-900">{product.name}</dd>
             </div>
             <div>
-              <dt className="text-sm text-gray-500">Category</dt>
+              <dt className="text-sm text-gray-500">{t('menu.category')}</dt>
               <dd className="text-sm text-gray-900">
                 {(product.categoryId as unknown as { name: string })?.name || 'N/A'}
               </dd>
             </div>
             <div>
-              <dt className="text-sm text-gray-500">Price</dt>
+              <dt className="text-sm text-gray-500">{t('menu.price')}</dt>
               <dd className="text-sm text-gray-900">{product.price} MRU</dd>
             </div>
             <div>
-              <dt className="text-sm text-gray-500">Prep Time</dt>
+              <dt className="text-sm text-gray-500">{t('form.prepTime')}</dt>
               <dd className="text-sm text-gray-900">{product.prepTime || 0} min</dd>
             </div>
             <div className="col-span-2">
-              <dt className="text-sm text-gray-500">Description</dt>
-              <dd className="text-sm text-gray-900">{product.description || 'No description'}</dd>
+              <dt className="text-sm text-gray-500">{t('form.description')}</dt>
+              <dd className="text-sm text-gray-900">{product.description || t('form.noDescription')}</dd>
             </div>
             <div>
-              <dt className="text-sm text-gray-500">Status</dt>
+              <dt className="text-sm text-gray-500">{t('menu.status')}</dt>
               <dd>
                 <span
                   className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -170,9 +172,9 @@ export function ProductDetailPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Recipe</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">{t('form.recipe')}</h2>
           {recipe.length === 0 ? (
-            <p className="text-gray-500 text-sm">No recipe defined</p>
+            <p className="text-gray-500 text-sm">{t('form.noRecipe')}</p>
           ) : (
             <ul className="space-y-3">
               {recipe.map((item, index) => (
@@ -191,22 +193,22 @@ export function ProductDetailPage() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Delete Product</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">{t('menu.deleteTitle')}</h3>
             <p className="text-gray-500 mb-6">
-              Are you sure you want to delete "{product.name}"? This will mark it as discontinued.
+              {t('form.deleteProductConfirm')} &quot;{product.name}&quot;?
             </p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleDelete}
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
               >
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>

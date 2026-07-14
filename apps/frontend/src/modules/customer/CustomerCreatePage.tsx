@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCustomerStore } from '../../stores/customerStore';
+import { useI18n } from '../../i18n/I18nContext';
 
 export function CustomerCreatePage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { createCustomer, loading } = useCustomerStore();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -23,7 +25,7 @@ export function CustomerCreatePage() {
     setError('');
 
     if (!formData.firstName || !formData.phone) {
-      setError('Name and phone are required');
+      setError(t('common.error'));
       return;
     }
 
@@ -35,7 +37,7 @@ export function CustomerCreatePage() {
       });
       navigate('/customers');
     } catch (err: any) {
-      setError(err.message || 'Failed to create customer');
+      setError(err.message || t('common.error'));
     }
   };
 
@@ -46,9 +48,9 @@ export function CustomerCreatePage() {
           onClick={() => navigate('/customers')}
           className="text-brand-600 hover:text-brand-700 text-sm font-medium"
         >
-          &larr; Back
+          &larr; {t('common.back')}
         </button>
-        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">Add Customer</h1>
+        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">{t('customers.add')}</h1>
       </div>
 
       <div className="max-w-lg">
@@ -60,7 +62,7 @@ export function CustomerCreatePage() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Name <span className="text-red-500">*</span>
+                {t('common.name')} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -68,13 +70,13 @@ export function CustomerCreatePage() {
                 value={formData.firstName}
                 onChange={handleChange}
                 className="input-field"
-                placeholder="Customer name"
+                placeholder={t('customers.name')}
               />
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Phone <span className="text-red-500">*</span>
+                {t('common.phone')} <span className="text-red-500">*</span>
               </label>
               <input
                 type="tel"
@@ -82,7 +84,7 @@ export function CustomerCreatePage() {
                 value={formData.phone}
                 onChange={handleChange}
                 className="input-field"
-                placeholder="Phone number"
+                placeholder={t('common.phone')}
               />
             </div>
           </div>
@@ -93,14 +95,14 @@ export function CustomerCreatePage() {
               onClick={() => navigate('/customers')}
               className="btn-secondary flex-1"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
               disabled={loading}
               className="btn-primary flex-1"
             >
-              {loading ? 'Saving...' : 'Add Customer'}
+              {loading ? t('common.saving') : t('customers.add')}
             </button>
           </div>
         </form>

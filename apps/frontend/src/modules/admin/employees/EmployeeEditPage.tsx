@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { authService } from '../../../services/auth.service';
 import { useUIStore } from '../../../stores/uiStore';
 import { UserDTO } from '../../../types';
+import { useI18n } from '../../../i18n/I18nContext';
 
 export function EmployeeEditPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +17,7 @@ export function EmployeeEditPage() {
   const [isSaving, setIsSaving] = useState(false);
   const navigate = useNavigate();
   const { addToast } = useUIStore();
+  const { t } = useI18n();
 
   useEffect(() => {
     const fetchEmployee = async () => {
@@ -59,10 +61,10 @@ export function EmployeeEditPage() {
       }
 
       await authService.updateEmployee(id, updateData);
-      addToast('success', 'Employee updated successfully');
+      addToast('success', t('common.success'));
       navigate('/admin/employees');
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to update employee';
+      const message = error instanceof Error ? error.message : t('common.error');
       addToast('error', message);
     } finally {
       setIsSaving(false);
@@ -70,11 +72,11 @@ export function EmployeeEditPage() {
   };
 
   const roleOptions = [
-    { value: 'server', label: 'Server' },
-    { value: 'cashier', label: 'Cashier' },
-    { value: 'chef', label: 'Chef' },
-    { value: 'stock_manager', label: 'Stock Manager' },
-    { value: 'manager', label: 'Manager' },
+    { value: 'server', label: t('role.server') },
+    { value: 'cashier', label: t('role.cashier') },
+    { value: 'chef', label: t('role.chef') },
+    { value: 'stock_manager', label: t('role.stock_manager') },
+    { value: 'manager', label: t('role.manager') },
   ];
 
   if (isLoading) {
@@ -88,7 +90,7 @@ export function EmployeeEditPage() {
   if (!employee) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Employee not found</p>
+        <p className="text-gray-500">{t('form.employeeNotFound')}</p>
       </div>
     );
   }
@@ -100,15 +102,15 @@ export function EmployeeEditPage() {
           onClick={() => navigate('/admin/employees')}
           className="text-brand-600 hover:text-brand-700 text-sm font-medium"
         >
-          &larr; Back
+          &larr; {t('common.back')}
         </button>
-        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">Edit Employee</h1>
+        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">{t('employees.edit')}</h1>
       </div>
 
       <div className="max-w-lg">
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Name</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.name')}</label>
             <input
               type="text"
               required
@@ -119,19 +121,19 @@ export function EmployeeEditPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Phone</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.phone')}</label>
             <input
               type="tel"
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="input-field"
-              placeholder="Phone number (used for login)"
+              placeholder={t('form.phoneNumber')}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Role</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('employees.role')}</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
@@ -153,12 +155,12 @@ export function EmployeeEditPage() {
               onChange={(e) => setIsActive(e.target.checked)}
               className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
             />
-            <label htmlFor="isActive" className="text-sm font-medium text-gray-700">Active</label>
+            <label htmlFor="isActive" className="text-sm font-medium text-gray-700">{t('form.active')}</label>
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-              New Password <span className="text-gray-400 font-normal">(leave blank to keep)</span>
+              {t('form.newPassword')} <span className="text-gray-400 font-normal">{t('form.passwordHint')}</span>
             </label>
             <input
               type="password"
@@ -166,7 +168,7 @@ export function EmployeeEditPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="input-field"
-              placeholder="New password"
+              placeholder={t('form.newPassword')}
             />
           </div>
 
@@ -176,14 +178,14 @@ export function EmployeeEditPage() {
               onClick={() => navigate('/admin/employees')}
               className="btn-secondary flex-1"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
               disabled={isSaving}
               className="btn-primary flex-1"
             >
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSaving ? t('common.saving') : t('profile.saveChanges')}
             </button>
           </div>
         </form>

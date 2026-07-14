@@ -3,10 +3,12 @@ import { useMenuStore } from '../../../stores/menuStore';
 import { useUIStore } from '../../../stores/uiStore';
 import { CategoryDTO } from '../../../types';
 import { Plus, Edit, Trash2 } from 'lucide-react';
+import { useI18n } from '../../../i18n/I18nContext';
 
 export function CategoryListPage() {
   const { categories, fetchCategories, createCategory, updateCategory, deleteCategory } = useMenuStore();
   const { addToast } = useUIStore();
+  const { t } = useI18n();
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryDTO | null>(null);
   const [formData, setFormData] = useState({ name: '', sortOrder: 0 });
@@ -40,42 +42,42 @@ export function CategoryListPage() {
     try {
       if (editingCategory) {
         await updateCategory(editingCategory._id, formData);
-        addToast('success', 'Category updated successfully');
+        addToast('success', t('common.success'));
       } else {
         await createCategory(formData);
-        addToast('success', 'Category created successfully');
+        addToast('success', t('common.success'));
       }
       handleCloseModal();
       fetchCategories();
     } catch (error) {
-      addToast('error', error instanceof Error ? error.message : 'Failed to save category');
+      addToast('error', error instanceof Error ? error.message : t('common.error'));
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
+    if (!confirm(t('form.deleteCategoryConfirm'))) return;
 
     try {
       await deleteCategory(id);
-      addToast('success', 'Category deleted successfully');
+      addToast('success', t('common.success'));
       fetchCategories();
     } catch (error) {
-      addToast('error', error instanceof Error ? error.message : 'Failed to delete category');
+      addToast('error', error instanceof Error ? error.message : t('common.error'));
     }
   };
 
   return (
     <div className="py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('menu.title')}</h1>
         <button
           onClick={() => handleOpenModal()}
           className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
         >
           <Plus size={20} />
-          <span>Add Category</span>
+          <span>{t('form.createCategory')}</span>
         </button>
       </div>
 
@@ -84,13 +86,13 @@ export function CategoryListPage() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
+                {t('common.name')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Sort Order
+                {t('form.sortOrder')}
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                {t('common.actions')}
               </th>
             </tr>
           </thead>
@@ -129,12 +131,12 @@ export function CategoryListPage() {
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
-              {editingCategory ? 'Edit Category' : 'Create Category'}
+              {editingCategory ? t('form.editCategory') : t('form.createCategory')}
             </h3>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.name')} *</label>
                   <input
                     type="text"
                     value={formData.name}
@@ -144,7 +146,7 @@ export function CategoryListPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('form.sortOrder')}</label>
                   <input
                     type="number"
                     value={formData.sortOrder}
@@ -160,14 +162,14 @@ export function CategoryListPage() {
                   onClick={handleCloseModal}
                   className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
                   className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
                 >
-                  {isLoading ? 'Saving...' : editingCategory ? 'Update' : 'Create'}
+                  {isLoading ? t('common.saving') : editingCategory ? t('common.save') : t('common.create')}
                 </button>
               </div>
             </form>
