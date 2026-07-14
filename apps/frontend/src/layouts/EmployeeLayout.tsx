@@ -63,7 +63,7 @@ const ROLE_COLORS: Record<string, string> = {
   stock_manager: 'from-purple-500 to-violet-500',
 };
 
-const BOTTOM_TAB_COUNT = 4;
+const BOTTOM_TAB_COUNT = 3;
 
 export function EmployeeLayout() {
   const { user, logout } = useAuthStore();
@@ -251,7 +251,7 @@ export function EmployeeLayout() {
             );
           })}
 
-          {moreItems.length > 0 && (
+          {moreItems.length > 0 ? (
             <button
               onClick={() => { setMoreOpen(true); setNotifOpen(false); }}
               className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1"
@@ -261,6 +261,18 @@ export function EmployeeLayout() {
               </div>
               <span className="text-[10px] font-semibold leading-tight text-gray-400">
                 More
+              </span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setMoreOpen(true)}
+              className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1"
+            >
+              <div className="p-1.5 rounded-xl text-gray-400">
+                <User size={21} strokeWidth={2} />
+              </div>
+              <span className="text-[10px] font-semibold leading-tight text-gray-400">
+                Profile
               </span>
             </button>
           )}
@@ -281,7 +293,9 @@ export function EmployeeLayout() {
               </div>
 
               <div className="flex items-center justify-between px-5 pb-3 border-b border-gray-100">
-                <h3 className="text-lg font-display font-bold text-gray-900">More</h3>
+                <h3 className="text-lg font-display font-bold text-gray-900">
+                  {moreItems.length > 0 ? 'More' : 'Menu'}
+                </h3>
                 <button
                   onClick={() => setMoreOpen(false)}
                   className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
