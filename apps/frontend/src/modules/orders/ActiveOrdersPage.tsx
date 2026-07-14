@@ -186,9 +186,9 @@ export function ActiveOrdersPage() {
     );
   }
 
-  // Admin/Manager view - Table-based
+  // Admin/Manager view - Card-based for mobile, table for desktop
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-4 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-display font-bold text-gray-900">All Orders</h1>
@@ -208,8 +208,42 @@ export function ActiveOrdersPage() {
           <p className="text-gray-500 font-medium">No active orders</p>
         </div>
       ) : (
-        <div className="card bg-white overflow-hidden">
-          <div className="overflow-x-auto">
+        <>
+          {/* Mobile: Card view */}
+          <div className="md:hidden space-y-3">
+            {orders.map((order) => {
+              const status = statusConfig[order.status] || statusConfig.new;
+              return (
+                <div key={order._id} className="card bg-white p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-sm text-gray-900">
+                        #{order._id.slice(-6).toUpperCase()}
+                      </span>
+                      <span className="text-xs text-gray-400 capitalize">{order.type}</span>
+                    </div>
+                    <span className={`badge ${status.bg} ${status.text} text-[10px]`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${status.dot} mr-1`} />
+                      {status.label}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 text-xs text-gray-500">
+                      <span>T: {(order.tableId as unknown as { name: string })?.name || 'N/A'}</span>
+                      <span className="flex items-center gap-1">
+                        <Clock size={12} />
+                        {new Date(order.createdAt).toLocaleTimeString()}
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-brand-600">{order.totalTTC} MRU</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop: Table view */}
+          <div className="hidden md:block card bg-white overflow-hidden">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100">
@@ -251,7 +285,7 @@ export function ActiveOrdersPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
