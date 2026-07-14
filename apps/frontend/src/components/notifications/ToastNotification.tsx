@@ -30,15 +30,15 @@ export const ToastNotification: React.FC<ToastNotificationProps> = ({ toasts, on
   const getTypeStyles = (type: string) => {
     switch (type) {
       case 'order_ready':
-        return 'bg-green-500';
+        return 'bg-brand-500/90 backdrop-blur-sm border border-brand-400/20';
       case 'stock_critical':
-        return 'bg-red-500';
+        return 'bg-coral-500/90 backdrop-blur-sm border border-coral-400/20';
       case 'loyalty_earned':
-        return 'bg-yellow-500';
+        return 'bg-amber-500/90 backdrop-blur-sm border border-amber-400/20';
       case 'payment_received':
-        return 'bg-blue-500';
+        return 'bg-blue-500/90 backdrop-blur-sm border border-blue-400/20';
       default:
-        return 'bg-gray-500';
+        return 'bg-surface-700/90 backdrop-blur-sm border border-white/5';
     }
   };
 
@@ -67,7 +67,7 @@ export const ToastNotification: React.FC<ToastNotificationProps> = ({ toasts, on
         <div
           key={toast.id}
           onClick={() => handleClick(toast)}
-          className={`${getTypeStyles(toast.type)} text-white px-4 py-3 rounded-lg shadow-lg cursor-pointer transform transition-all hover:scale-105 animate-slide-in`}
+          className={`${getTypeStyles(toast.type)} text-white px-4 py-3 rounded-xl shadow-elevated cursor-pointer transform transition-all hover:scale-105 animate-slide-in`}
         >
           <div className="font-semibold">{toast.title}</div>
           <div className="text-sm opacity-90">{toast.message}</div>

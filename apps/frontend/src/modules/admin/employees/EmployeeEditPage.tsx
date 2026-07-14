@@ -82,7 +82,7 @@ export function EmployeeEditPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="w-8 h-8 border-2 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-3 border-surface-700 border-t-brand-500 rounded-full animate-spin" />
       </div>
     );
   }
@@ -90,27 +90,27 @@ export function EmployeeEditPage() {
   if (!employee) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">{t('form.employeeNotFound')}</p>
+        <p className="text-surface-400">{t('form.employeeNotFound')}</p>
       </div>
     );
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 animate-fade-in">
       <div className="mb-4">
         <button
           onClick={() => navigate('/admin/employees')}
-          className="text-brand-600 hover:text-brand-700 text-sm font-medium"
+          className="text-brand-400 hover:text-brand-500 text-sm font-medium transition-colors"
         >
           &larr; {t('common.back')}
         </button>
-        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">{t('employees.edit')}</h1>
+        <h1 className="mt-2 text-xl font-display font-bold text-white">{t('employees.edit')}</h1>
       </div>
 
       <div className="max-w-lg">
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.name')}</label>
+            <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.name')}</label>
             <input
               type="text"
               required
@@ -121,7 +121,7 @@ export function EmployeeEditPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.phone')}</label>
+            <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.phone')}</label>
             <input
               type="tel"
               required
@@ -133,7 +133,7 @@ export function EmployeeEditPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('employees.role')}</label>
+            <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('employees.role')}</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
@@ -153,14 +153,14 @@ export function EmployeeEditPage() {
               type="checkbox"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-white/10 bg-surface-800 text-brand-500 focus:ring-brand-500"
             />
-            <label htmlFor="isActive" className="text-sm font-medium text-gray-700">{t('form.active')}</label>
+            <label htmlFor="isActive" className="text-sm font-medium text-surface-300">{t('form.active')}</label>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-              {t('form.newPassword')} <span className="text-gray-400 font-normal">{t('form.passwordHint')}</span>
+            <label className="block text-sm font-semibold text-surface-300 mb-1.5">
+              {t('form.newPassword')} <span className="text-surface-500 font-normal">{t('form.passwordHint')}</span>
             </label>
             <input
               type="password"

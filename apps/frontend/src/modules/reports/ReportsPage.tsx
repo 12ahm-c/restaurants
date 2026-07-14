@@ -71,16 +71,16 @@ export function ReportsPage() {
 
   return (
     <div className="py-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('reports.title')}</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">{t('reports.title')}</h1>
 
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="card rounded-lg shadow p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('reports.type')}</label>
+            <label className="block text-sm font-medium text-surface-300 mb-2">{t('reports.type')}</label>
             <select
               value={reportType}
               onChange={(e) => { setReportType(e.target.value as any); setReport(null); }}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="input-field w-full"
             >
               <option value="sales">{t('reports.salesReport')}</option>
               <option value="profitability">{t('reports.profitabilityReport')}</option>
@@ -88,35 +88,35 @@ export function ReportsPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('reports.from')}</label>
-            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <label className="block text-sm font-medium text-surface-300 mb-2">{t('reports.from')}</label>
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="input-field w-full" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('reports.to')}</label>
-            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <label className="block text-sm font-medium text-surface-300 mb-2">{t('reports.to')}</label>
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="input-field w-full" />
           </div>
         </div>
 
         <div className="flex gap-3 mt-4">
-          <button onClick={handleGenerateReport} disabled={isLoading} className="bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 font-medium">
+          <button onClick={handleGenerateReport} disabled={isLoading} className="btn-primary px-5 py-2">
             {isLoading ? t('reports.generating') : t('reports.generate')}
           </button>
-          <button onClick={() => handleExport('pdf')} disabled={!report} className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 disabled:opacity-50 font-medium">
+          <button onClick={() => handleExport('pdf')} disabled={!report} className="flex items-center gap-2 bg-coral-500 text-white px-4 py-2 rounded-md hover:bg-coral-600 disabled:opacity-50 font-medium">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
             {t('reports.exportPdf')}
           </button>
-          <button onClick={() => handleExport('xlsx')} disabled={!report} className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50 font-medium">
+          <button onClick={() => handleExport('xlsx')} disabled={!report} className="flex items-center gap-2 bg-brand-500 text-white px-4 py-2 rounded-md hover:bg-brand-600 disabled:opacity-50 font-medium">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
             {t('reports.exportExcel')}
           </button>
         </div>
       </div>
 
-      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4">{error}</div>}
+      {error && <div className="bg-coral-500/10 border border-coral-500/20 text-coral-400 px-4 py-3 rounded-md mb-4">{error}</div>}
 
       {report && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">{reportTypeLabels[reportType]}</h2>
+        <div className="card rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">{reportTypeLabels[reportType]}</h2>
           {reportType === 'sales' && renderSalesReport(report as SalesReport, t)}
           {reportType === 'profitability' && renderProfitabilityReport(report as ProfitabilityReport, t)}
           {reportType === 'stock-usage' && renderStockUsageReport(report as StockUsageReport, t)}
@@ -124,7 +124,7 @@ export function ReportsPage() {
       )}
 
       {!report && !isLoading && (
-        <div className="bg-white rounded-lg shadow p-12 text-center text-gray-500">
+        <div className="card rounded-lg shadow p-12 text-center text-surface-400">
           <p>{t('reports.selectHint')}</p>
         </div>
       )}
@@ -136,40 +136,40 @@ function renderSalesReport(data: SalesReport, t: (key: string) => string) {
   return (
     <div>
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">{t('reports.totalSales')}</p>
-          <p className="text-2xl font-bold text-blue-700">{data.summary.totalSales.toLocaleString()} MRU</p>
+        <div className="bg-blue-500/10 p-4 rounded-lg">
+          <p className="text-sm text-surface-400">{t('reports.totalSales')}</p>
+          <p className="text-2xl font-bold text-blue-400">{data.summary.totalSales.toLocaleString()} MRU</p>
         </div>
-        <div className="bg-green-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">{t('reports.totalOrders')}</p>
-          <p className="text-2xl font-bold text-green-700">{data.summary.totalOrders}</p>
+        <div className="bg-brand-500/10 p-4 rounded-lg">
+          <p className="text-sm text-surface-400">{t('reports.totalOrders')}</p>
+          <p className="text-2xl font-bold text-brand-400">{data.summary.totalOrders}</p>
         </div>
-        <div className="bg-purple-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">{t('reports.averageTicket')}</p>
-          <p className="text-2xl font-bold text-purple-700">{data.summary.averageTicket.toLocaleString()} MRU</p>
+        <div className="bg-purple-500/10 p-4 rounded-lg">
+          <p className="text-sm text-surface-400">{t('reports.averageTicket')}</p>
+          <p className="text-2xl font-bold text-purple-400">{data.summary.averageTicket.toLocaleString()} MRU</p>
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-white/5">
+          <thead className="bg-white/5">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('common.date')}</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('reports.totalSales')}</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('reports.totalOrders')}</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('finance.cash')}</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('finance.card')}</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('finance.mobile')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('common.date')}</th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('reports.totalSales')}</th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('reports.totalOrders')}</th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('finance.cash')}</th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('finance.card')}</th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('finance.mobile')}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-white/5">
             {data.sales.map((day: any, i: number) => (
-              <tr key={i} className="hover:bg-gray-50">
-                <td className="px-4 py-3 text-sm font-medium text-gray-900">{day.date}</td>
-                <td className="px-4 py-3 text-sm text-gray-900 text-right font-semibold">{day.totalSales.toLocaleString()} MRU</td>
-                <td className="px-4 py-3 text-sm text-gray-600 text-right">{day.ordersCount}</td>
-                <td className="px-4 py-3 text-sm text-green-600 text-right">{day.cashSales.toLocaleString()}</td>
-                <td className="px-4 py-3 text-sm text-blue-600 text-right">{day.cardSales.toLocaleString()}</td>
-                <td className="px-4 py-3 text-sm text-purple-600 text-right">{day.mobileSales.toLocaleString()}</td>
+              <tr key={i} className="hover:bg-white/5">
+                <td className="px-4 py-3 text-sm font-medium text-white">{day.date}</td>
+                <td className="px-4 py-3 text-sm text-white text-right font-semibold">{day.totalSales.toLocaleString()} MRU</td>
+                <td className="px-4 py-3 text-sm text-surface-400 text-right">{day.ordersCount}</td>
+                <td className="px-4 py-3 text-sm text-brand-400 text-right">{day.cashSales.toLocaleString()}</td>
+                <td className="px-4 py-3 text-sm text-blue-400 text-right">{day.cardSales.toLocaleString()}</td>
+                <td className="px-4 py-3 text-sm text-purple-400 text-right">{day.mobileSales.toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
@@ -182,21 +182,21 @@ function renderSalesReport(data: SalesReport, t: (key: string) => string) {
 function renderProfitabilityReport(data: ProfitabilityReport, t: (key: string) => string) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div className="bg-green-50 p-4 rounded-lg">
-        <p className="text-sm text-gray-600">{t('reports.revenue')}</p>
-        <p className="text-2xl font-bold text-green-700">{(data.revenue || 0).toLocaleString()} MRU</p>
+      <div className="bg-brand-500/10 p-4 rounded-lg">
+        <p className="text-sm text-surface-400">{t('reports.revenue')}</p>
+        <p className="text-2xl font-bold text-brand-400">{(data.revenue || 0).toLocaleString()} MRU</p>
       </div>
-      <div className="bg-red-50 p-4 rounded-lg">
-        <p className="text-sm text-gray-600">{t('reports.expenses')}</p>
-        <p className="text-2xl font-bold text-red-700">{(data.expenses || 0).toLocaleString()} MRU</p>
+      <div className="bg-coral-500/10 p-4 rounded-lg">
+        <p className="text-sm text-surface-400">{t('reports.expenses')}</p>
+        <p className="text-2xl font-bold text-coral-400">{(data.expenses || 0).toLocaleString()} MRU</p>
       </div>
-      <div className="bg-blue-50 p-4 rounded-lg">
-        <p className="text-sm text-gray-600">{t('reports.profit')}</p>
-        <p className="text-2xl font-bold text-blue-700">{(data.profit || 0).toLocaleString()} MRU</p>
+      <div className="bg-blue-500/10 p-4 rounded-lg">
+        <p className="text-sm text-surface-400">{t('reports.profit')}</p>
+        <p className="text-2xl font-bold text-blue-400">{(data.profit || 0).toLocaleString()} MRU</p>
       </div>
-      <div className="bg-purple-50 p-4 rounded-lg">
-        <p className="text-sm text-gray-600">{t('reports.margin')}</p>
-        <p className="text-2xl font-bold text-purple-700">{(data.margin || 0).toFixed(1)}%</p>
+      <div className="bg-purple-500/10 p-4 rounded-lg">
+        <p className="text-sm text-surface-400">{t('reports.margin')}</p>
+        <p className="text-2xl font-bold text-purple-400">{(data.margin || 0).toFixed(1)}%</p>
       </div>
     </div>
   );
@@ -205,22 +205,22 @@ function renderProfitabilityReport(data: ProfitabilityReport, t: (key: string) =
 function renderStockUsageReport(data: StockUsageReport, t: (key: string) => string) {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+      <table className="min-w-full divide-y divide-white/5">
+        <thead className="bg-white/5">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('menu.product')}</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('reports.consumed')}</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('reports.replenished')}</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('reports.waste')}</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('menu.product')}</th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('reports.consumed')}</th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('reports.replenished')}</th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('reports.waste')}</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-white/5">
           {data.items.map((item: any, i: number) => (
-            <tr key={i} className="hover:bg-gray-50">
-              <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.name}</td>
-              <td className="px-4 py-3 text-sm text-blue-600 text-right font-semibold">{item.consumed}</td>
-              <td className="px-4 py-3 text-sm text-green-600 text-right font-semibold">{item.replenished}</td>
-              <td className="px-4 py-3 text-sm text-red-600 text-right font-semibold">{item.waste}</td>
+            <tr key={i} className="hover:bg-white/5">
+              <td className="px-4 py-3 text-sm font-medium text-white">{item.name}</td>
+              <td className="px-4 py-3 text-sm text-blue-400 text-right font-semibold">{item.consumed}</td>
+              <td className="px-4 py-3 text-sm text-brand-400 text-right font-semibold">{item.replenished}</td>
+              <td className="px-4 py-3 text-sm text-coral-400 text-right font-semibold">{item.waste}</td>
             </tr>
           ))}
         </tbody>

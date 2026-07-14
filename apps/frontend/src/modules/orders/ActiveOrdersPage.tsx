@@ -6,7 +6,7 @@ import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
 import { useTableStore } from '../../stores/tableStore';
 import { useSocket } from '../../hooks/useSocket';
-import { Clock, CheckCircle, Trash2, RefreshCw, Package } from 'lucide-react';
+import { Clock, CheckCircle, Trash2, RefreshCw, Package, ClipboardList } from 'lucide-react';
 
 export function ActiveOrdersPage() {
   const [orders, setOrders] = useState<OrderDTO[]>([]);
@@ -18,12 +18,12 @@ export function ActiveOrdersPage() {
   const { t } = useI18n();
 
   const statusConfig: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-    new: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', label: t('orders.new') },
-    preparing: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500', label: t('orders.preparing') },
-    ready: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', label: t('orders.ready') },
-    served: { bg: 'bg-gray-100', text: 'text-gray-700', dot: 'bg-gray-400', label: t('orders.served') },
-    cancelled: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500', label: t('orders.cancelled') },
-    completed: { bg: 'bg-purple-50', text: 'text-purple-700', dot: 'bg-purple-500', label: t('orders.paid') },
+    new: { bg: 'bg-blue-500/15', text: 'text-blue-400', dot: 'bg-blue-400', label: t('orders.new') },
+    preparing: { bg: 'bg-amber-500/15', text: 'text-amber-400', dot: 'bg-amber-400', label: t('orders.preparing') },
+    ready: { bg: 'bg-brand-500/15', text: 'text-brand-400', dot: 'bg-brand-400', label: t('orders.ready') },
+    served: { bg: 'bg-surface-500/15', text: 'text-surface-400', dot: 'bg-surface-400', label: t('orders.served') },
+    cancelled: { bg: 'bg-coral-500/15', text: 'text-coral-400', dot: 'bg-coral-400', label: t('orders.cancelled') },
+    completed: { bg: 'bg-purple-500/15', text: 'text-purple-400', dot: 'bg-purple-400', label: t('orders.paid') },
   };
 
   const isAdmin = user?.role === 'owner' || user?.role === 'manager' || user?.role === 'cashier';
@@ -94,8 +94,8 @@ export function ActiveOrdersPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-3 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">{t('common.loading')}</p>
+          <div className="w-10 h-10 border-3 border-surface-700 border-t-brand-500 rounded-full animate-spin" />
+          <p className="text-sm text-surface-400">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -107,8 +107,8 @@ export function ActiveOrdersPage() {
       <div className="space-y-6 animate-fade-in">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-display font-bold text-gray-900">{t('orders.ready')}</h1>
-            <p className="text-sm text-gray-500 mt-1">{orders.length} {t('orders.pending').toLowerCase()}</p>
+            <h1 className="text-2xl font-display font-bold text-white">{t('orders.ready')}</h1>
+            <p className="text-sm text-surface-400 mt-1">{orders.length} {t('orders.pending').toLowerCase()}</p>
           </div>
           <button onClick={loadOrders} className="btn-secondary flex items-center gap-2">
             <RefreshCw size={16} />
@@ -117,29 +117,29 @@ export function ActiveOrdersPage() {
         </div>
 
         {orders.length === 0 ? (
-          <div className="card bg-white p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Package size={32} className="text-gray-300" />
+          <div className="card p-12 text-center">
+            <div className="w-16 h-16 bg-surface-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Package size={32} className="text-surface-600" />
             </div>
-            <p className="text-gray-500 font-medium">{t('kitchen.noOrders')}</p>
-            <p className="text-sm text-gray-400 mt-1">{t('orders.new')}</p>
+            <p className="text-surface-400 font-medium">{t('kitchen.noOrders')}</p>
+            <p className="text-sm text-surface-500 mt-1">{t('orders.new')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {orders.map((order) => {
               const status = statusConfig[order.status] || statusConfig.new;
               return (
-                <div key={order._id} className="card bg-white overflow-hidden hover:shadow-card-hover transition-all animate-slide-up">
+                <div key={order._id} className="card overflow-hidden card-hover animate-slide-up">
                   {/* Status bar */}
                   <div className={`h-1 ${status.dot}`} />
                   
                   <div className="p-5">
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <p className="text-lg font-bold text-gray-900">
+                        <p className="text-lg font-bold text-white">
                           #{order._id.slice(-6).toUpperCase()}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-surface-400">
                           {t('orders.table')}: {(order.tableId as unknown as { name: string })?.name || 'N/A'}
                         </p>
                       </div>
@@ -149,12 +149,12 @@ export function ActiveOrdersPage() {
                       </span>
                     </div>
 
-                    <div className="flex items-center text-sm text-gray-500 mb-4">
+                    <div className="flex items-center text-sm text-surface-400 mb-4">
                       <Clock size={14} className="mr-1.5" />
                       {new Date(order.createdAt).toLocaleTimeString()}
                     </div>
 
-                    <div className="text-xl font-bold text-brand-600 mb-4">
+                    <div className="text-xl font-bold text-brand-400 mb-4">
                       {order.totalTTC} MRU
                     </div>
 
@@ -171,7 +171,7 @@ export function ActiveOrdersPage() {
                       {order.status === 'served' && (order.tableId as unknown as { _id: string })?._id && (
                         <button
                           onClick={() => handleClearTable((order.tableId as unknown as { _id: string })._id, order._id)}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
+                          className="btn-danger w-full flex items-center justify-center gap-2"
                         >
                           <Trash2 size={18} />
                           {t('tables.available')}
@@ -193,8 +193,8 @@ export function ActiveOrdersPage() {
     <div className="space-y-4 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-gray-900">{t('orders.active')}</h1>
-          <p className="text-sm text-gray-500 mt-1">{orders.length} {t('orders.active').toLowerCase()}</p>
+          <h1 className="text-2xl font-display font-bold text-white">{t('orders.active')}</h1>
+          <p className="text-sm text-surface-400 mt-1">{orders.length} {t('orders.active').toLowerCase()}</p>
         </div>
         <button onClick={loadOrders} className="btn-secondary flex items-center gap-2">
           <RefreshCw size={16} />
@@ -203,11 +203,11 @@ export function ActiveOrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="card bg-white p-12 text-center">
-          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Package size={32} className="text-gray-300" />
+        <div className="card p-12 text-center">
+          <div className="w-16 h-16 bg-surface-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <ClipboardList size={32} className="text-surface-600" />
           </div>
-          <p className="text-gray-500 font-medium">{t('orders.noOrders')}</p>
+          <p className="text-surface-400 font-medium">{t('orders.noOrders')}</p>
         </div>
       ) : (
         <>
@@ -216,28 +216,28 @@ export function ActiveOrdersPage() {
             {orders.map((order) => {
               const status = statusConfig[order.status] || statusConfig.new;
               return (
-                <div key={order._id} className="card bg-white p-4">
+                <div key={order._id} className="card p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-gray-900">
+                      <span className="font-bold text-sm text-white">
                         #{order._id.slice(-6).toUpperCase()}
                       </span>
-                      <span className="text-xs text-gray-400 capitalize">{order.type}</span>
+                      <span className="text-xs text-surface-500 capitalize">{order.type}</span>
                     </div>
-                    <span className={`badge ${status.bg} ${status.text} text-[10px]`}>
+                    <span className={`badge text-[10px] ${status.bg} ${status.text}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${status.dot} mr-1`} />
                       {status.label}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 text-xs text-gray-500">
+                    <div className="flex items-center gap-3 text-xs text-surface-400">
                       <span>{t('orders.table')}: {(order.tableId as unknown as { name: string })?.name || 'N/A'}</span>
                       <span className="flex items-center gap-1">
                         <Clock size={12} />
                         {new Date(order.createdAt).toLocaleTimeString()}
                       </span>
                     </div>
-                    <span className="text-sm font-bold text-brand-600">{order.totalTTC} MRU</span>
+                    <span className="text-sm font-bold text-brand-400">{order.totalTTC} MRU</span>
                   </div>
                 </div>
               );
@@ -245,28 +245,28 @@ export function ActiveOrdersPage() {
           </div>
 
           {/* Desktop: Table view */}
-          <div className="hidden md:block card bg-white overflow-hidden">
+          <div className="hidden md:block card overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('orders.active')}</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('orders.table')}</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('common.status')}</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('common.amount')}</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('common.time')}</th>
+                <tr className="border-b border-white/5">
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('orders.active')}</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('orders.table')}</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.status')}</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.amount')}</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.time')}</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-white/5">
                 {orders.map((order) => {
                   const status = statusConfig[order.status] || statusConfig.new;
                   return (
                     <tr key={order._id} className="table-row">
                       <td className="px-6 py-4">
-                        <span className="font-bold text-sm text-gray-900">
+                        <span className="font-bold text-sm text-white">
                           #{order._id.slice(-6).toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
+                      <td className="px-6 py-4 text-sm text-surface-300">
                         {(order.tableId as unknown as { name: string })?.name || 'N/A'}
                       </td>
                       <td className="px-6 py-4">
@@ -275,8 +275,8 @@ export function ActiveOrdersPage() {
                           {status.label}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">{order.totalTTC} MRU</td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
+                      <td className="px-6 py-4 text-sm font-semibold text-brand-400">{order.totalTTC} MRU</td>
+                      <td className="px-6 py-4 text-sm text-surface-400">
                         {new Date(order.createdAt).toLocaleTimeString()}
                       </td>
                     </tr>

@@ -19,10 +19,10 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onChan
         <button
           key={p.value}
           onClick={() => onChange(p.value)}
-          className={`px-4 py-2 rounded ${
+          className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 border ${
             selected === p.value
-              ? 'bg-blue-600 text-white'
-              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+              ? 'bg-brand-500 text-white border-brand-500 shadow-lg shadow-brand-500/20'
+              : 'bg-surface-800/50 border-white/5 text-surface-400 hover:bg-surface-700/50 hover:text-surface-200'
           }`}
         >
           {p.label}

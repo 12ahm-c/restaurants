@@ -18,6 +18,7 @@ import {
   Clock,
   ArrowUpRight,
   Activity,
+  Zap,
 } from 'lucide-react';
 
 export const EmployeeDashboard: React.FC = () => {
@@ -49,8 +50,8 @@ export const EmployeeDashboard: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-3 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">{t('common.loading')}</p>
+          <div className="w-10 h-10 border-3 border-surface-700 border-t-brand-500 rounded-full animate-spin" />
+          <p className="text-sm text-surface-400">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -58,8 +59,8 @@ export const EmployeeDashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="p-6 bg-red-50 border border-red-100 rounded-2xl">
-        <p className="text-red-600">{error}</p>
+      <div className="p-6 bg-coral-500/10 border border-coral-500/20 rounded-2xl">
+        <p className="text-coral-400">{error}</p>
       </div>
     );
   }
@@ -74,86 +75,86 @@ export const EmployeeDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-gray-900">
+          <h1 className="text-2xl font-display font-bold text-white">
             {isCashier ? t('dashboard.title') : t('dashboard.title')}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            <Clock size={14} className="inline mr-1" />
+          <p className="text-sm text-surface-400 mt-1 flex items-center gap-2">
+            <Clock size={14} />
             {lastUpdated.toLocaleTimeString()}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse-soft" />
-          <span className="text-sm text-emerald-600 font-medium">{t('common.active')}</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-brand-500/10 rounded-full border border-brand-500/20">
+          <span className="w-2 h-2 bg-brand-400 rounded-full animate-pulse-soft" />
+          <span className="text-sm text-brand-400 font-medium">{t('common.active')}</span>
         </div>
       </div>
 
       {/* Main KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Sales */}
-        <div className="stat-card bg-gradient-to-br from-brand-500 to-orange-600 text-white">
+        {/* Revenue - Featured Card */}
+        <div className="stat-card bg-gradient-to-br from-brand-500/20 to-accent-500/20 border-brand-500/20 sm:col-span-2 lg:col-span-1">
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-white/20 rounded-xl">
-                <DollarSign size={22} />
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-2.5 bg-brand-500/20 rounded-xl">
+                <DollarSign size={22} className="text-brand-400" />
               </div>
-              <span className="flex items-center gap-1 text-sm font-medium bg-white/20 px-2 py-1 rounded-lg">
-                <ArrowUpRight size={14} />
-                {t('dashboard.title')}
+              <span className="flex items-center gap-1 text-xs font-semibold text-brand-400 bg-brand-500/10 px-2 py-1 rounded-lg">
+                <ArrowUpRight size={12} />
+                +12.5%
               </span>
             </div>
-            <p className="text-3xl font-bold mb-1">{formatCurrency(employeeKPIs.todaySales)}</p>
-            <p className="text-white/70 text-sm">{t('dashboard.revenue')}</p>
+            <p className="text-3xl font-bold text-white mb-1">{formatCurrency(employeeKPIs.todaySales)}</p>
+            <p className="text-surface-400 text-sm">{t('dashboard.revenue')}</p>
           </div>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full -translate-y-16 translate-x-16" />
         </div>
 
         {/* Orders */}
-        <div className="stat-card bg-white">
+        <div className="stat-card">
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-3">
-              <div className="p-2 bg-blue-100 rounded-xl">
-                <ShoppingCart size={22} className="text-blue-600" />
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-2.5 bg-blue-500/15 rounded-xl">
+                <ShoppingCart size={22} className="text-blue-400" />
               </div>
-              <span className="flex items-center gap-1 text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">
-                <Activity size={14} />
+              <span className="flex items-center gap-1 text-xs font-semibold text-blue-400 bg-blue-500/10 px-2 py-1 rounded-lg">
+                <Activity size={12} />
                 {t('common.active')}
               </span>
             </div>
-            <p className="text-3xl font-bold text-gray-900 mb-1">{employeeKPIs.totalOrders}</p>
-            <p className="text-gray-500 text-sm">{t('dashboard.totalOrders')}</p>
+            <p className="text-3xl font-bold text-white mb-1">{employeeKPIs.totalOrders}</p>
+            <p className="text-surface-400 text-sm">{t('dashboard.totalOrders')}</p>
           </div>
-          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -translate-y-12 translate-x-12" />
+          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full -translate-y-12 translate-x-12" />
         </div>
 
         {/* Customers */}
         {!isCashier && (
           <>
-            <div className="stat-card bg-white">
+            <div className="stat-card">
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="p-2 bg-purple-100 rounded-xl">
-                    <Users size={22} className="text-purple-600" />
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-2.5 bg-purple-500/15 rounded-xl">
+                    <Users size={22} className="text-purple-400" />
                   </div>
                 </div>
-                <p className="text-3xl font-bold text-gray-900 mb-1">{employeeKPIs.totalCustomers}</p>
-                <p className="text-gray-500 text-sm">{t('dashboard.customers')}</p>
+                <p className="text-3xl font-bold text-white mb-1">{employeeKPIs.totalCustomers}</p>
+                <p className="text-surface-400 text-sm">{t('dashboard.customers')}</p>
               </div>
-              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-full -translate-y-12 translate-x-12" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full -translate-y-12 translate-x-12" />
             </div>
 
             {/* Tables */}
-            <div className="stat-card bg-white">
+            <div className="stat-card">
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="p-2 bg-amber-100 rounded-xl">
-                    <Table2 size={22} className="text-amber-600" />
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-2.5 bg-amber-500/15 rounded-xl">
+                    <Table2 size={22} className="text-amber-400" />
                   </div>
                 </div>
-                <p className="text-3xl font-bold text-gray-900 mb-1">{employeeKPIs.occupiedTables}</p>
-                <p className="text-gray-500 text-sm">{t('tables.occupied')}</p>
+                <p className="text-3xl font-bold text-white mb-1">{employeeKPIs.occupiedTables}</p>
+                <p className="text-surface-400 text-sm">{t('tables.occupied')}</p>
               </div>
-              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full -translate-y-12 translate-x-12" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full -translate-y-12 translate-x-12" />
             </div>
           </>
         )}
@@ -161,50 +162,50 @@ export const EmployeeDashboard: React.FC = () => {
 
       {/* Order Status */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card bg-white p-4 hover:shadow-card-hover transition-all">
+        <div className="card p-4 card-hover">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl text-white shadow-md">
-              <Flame size={20} />
+            <div className="p-2.5 bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-xl border border-amber-400/20">
+              <Flame size={20} className="text-amber-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{employeeKPIs.newOrders}</p>
-              <p className="text-xs text-gray-500 font-medium">{t('orders.new')}</p>
+              <p className="text-2xl font-bold text-white">{employeeKPIs.newOrders}</p>
+              <p className="text-xs text-surface-400 font-medium">{t('orders.new')}</p>
             </div>
           </div>
         </div>
 
-        <div className="card bg-white p-4 hover:shadow-card-hover transition-all">
+        <div className="card p-4 card-hover">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl text-white shadow-md">
-              <ChefHat size={20} />
+            <div className="p-2.5 bg-gradient-to-br from-orange-400/20 to-coral-500/20 rounded-xl border border-orange-400/20">
+              <ChefHat size={20} className="text-orange-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{employeeKPIs.preparingOrders}</p>
-              <p className="text-xs text-gray-500 font-medium">{t('orders.preparing')}</p>
+              <p className="text-2xl font-bold text-white">{employeeKPIs.preparingOrders}</p>
+              <p className="text-xs text-surface-400 font-medium">{t('orders.preparing')}</p>
             </div>
           </div>
         </div>
 
-        <div className="card bg-white p-4 hover:shadow-card-hover transition-all">
+        <div className="card p-4 card-hover">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl text-white shadow-md">
-              <CheckCircle size={20} />
+            <div className="p-2.5 bg-gradient-to-br from-brand-400/20 to-accent-400/20 rounded-xl border border-brand-400/20">
+              <CheckCircle size={20} className="text-brand-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{employeeKPIs.readyOrders}</p>
-              <p className="text-xs text-gray-500 font-medium">{t('orders.ready')}</p>
+              <p className="text-2xl font-bold text-white">{employeeKPIs.readyOrders}</p>
+              <p className="text-xs text-surface-400 font-medium">{t('orders.ready')}</p>
             </div>
           </div>
         </div>
 
-        <div className="card bg-white p-4 hover:shadow-card-hover transition-all">
+        <div className="card p-4 card-hover">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl text-white shadow-md">
-              <Truck size={20} />
+            <div className="p-2.5 bg-gradient-to-br from-blue-400/20 to-indigo-500/20 rounded-xl border border-blue-400/20">
+              <Truck size={20} className="text-blue-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{employeeKPIs.deliveryOrders}</p>
-              <p className="text-xs text-gray-500 font-medium">{t('nav.orders')}</p>
+              <p className="text-2xl font-bold text-white">{employeeKPIs.deliveryOrders}</p>
+              <p className="text-xs text-surface-400 font-medium">{t('nav.orders')}</p>
             </div>
           </div>
         </div>
@@ -214,38 +215,43 @@ export const EmployeeDashboard: React.FC = () => {
       {!isCashier && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Daily Profit */}
-          <div className="card bg-white p-6">
+          <div className="card p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className={`p-2.5 rounded-xl ${employeeKPIs.todayProfit >= 0 ? 'bg-emerald-100' : 'bg-red-100'}`}>
+              <div className={`p-2.5 rounded-xl ${employeeKPIs.todayProfit >= 0 ? 'bg-brand-500/15' : 'bg-coral-500/15'}`}>
                 {employeeKPIs.todayProfit >= 0 
-                  ? <TrendingUp size={20} className="text-emerald-600" />
-                  : <TrendingDown size={20} className="text-red-600" />
+                  ? <TrendingUp size={20} className="text-brand-400" />
+                  : <TrendingDown size={20} className="text-coral-400" />
                 }
               </div>
-              <h3 className="font-semibold text-gray-900">{t('finance.profit')}</h3>
+              <h3 className="font-semibold text-white">{t('finance.profit')}</h3>
             </div>
-            <p className={`text-3xl font-bold ${employeeKPIs.todayProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+            <p className={`text-3xl font-bold ${employeeKPIs.todayProfit >= 0 ? 'text-brand-400' : 'text-coral-400'}`}>
               {formatCurrency(employeeKPIs.todayProfit)}
             </p>
           </div>
 
           {/* Top Products */}
-          <div className="card bg-white p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">{t('nav.menu')}</h3>
+          <div className="card p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2.5 bg-brand-500/15 rounded-xl">
+                <Zap size={20} className="text-brand-400" />
+              </div>
+              <h3 className="font-semibold text-white">{t('nav.menu')}</h3>
+            </div>
             {employeeKPIs.topProducts.length === 0 ? (
-              <p className="text-sm text-gray-500">{t('common.noData')}</p>
+              <p className="text-sm text-surface-500">{t('common.noData')}</p>
             ) : (
               <div className="space-y-3">
                 {employeeKPIs.topProducts.map((product, index) => (
                   <div key={index} className="flex items-center gap-3">
-                    <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold
-                      ${index === 0 ? 'bg-brand-100 text-brand-600' 
-                        : index === 1 ? 'bg-gray-100 text-gray-600' 
-                        : 'bg-gray-50 text-gray-500'}`}>
+                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold
+                      ${index === 0 ? 'bg-brand-500/20 text-brand-400 border border-brand-500/20'
+                        : index === 1 ? 'bg-surface-700 text-surface-300 border border-surface-600'
+                        : 'bg-surface-800 text-surface-400 border border-surface-700'}`}>
                       {index + 1}
                     </span>
-                    <span className="text-sm text-gray-900 flex-1 truncate">{product.name}</span>
-                    <span className="text-sm font-semibold text-brand-600">{product.quantity}x</span>
+                    <span className="text-sm text-surface-200 flex-1 truncate">{product.name}</span>
+                    <span className="text-sm font-semibold text-brand-400">{product.quantity}x</span>
                   </div>
                 ))}
               </div>
@@ -253,24 +259,24 @@ export const EmployeeDashboard: React.FC = () => {
           </div>
 
           {/* Stock Alerts */}
-          <div className="card bg-white p-6">
+          <div className="card p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2.5 bg-amber-100 rounded-xl">
-                <AlertTriangle size={20} className="text-amber-600" />
+              <div className="p-2.5 bg-amber-500/15 rounded-xl">
+                <AlertTriangle size={20} className="text-amber-400" />
               </div>
-              <h3 className="font-semibold text-gray-900">{t('nav.kitchen')}</h3>
+              <h3 className="font-semibold text-white">{t('nav.kitchen')}</h3>
             </div>
             {employeeKPIs.stockAlerts.length === 0 ? (
               <div className="text-center py-4">
-                <CheckCircle size={32} className="mx-auto text-emerald-400 mb-2" />
-                <p className="text-sm text-gray-500">{t('common.noData')}</p>
+                <CheckCircle size={32} className="mx-auto text-brand-400 mb-2" />
+                <p className="text-sm text-surface-500">{t('common.noData')}</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {employeeKPIs.stockAlerts.map((alert, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-red-50 rounded-lg">
-                    <span className="text-sm text-gray-900 truncate">{alert.name}</span>
-                    <span className="text-sm font-semibold text-red-600">
+                  <div key={index} className="flex items-center justify-between p-3 bg-coral-500/5 rounded-xl border border-coral-500/10">
+                    <span className="text-sm text-surface-200 truncate">{alert.name}</span>
+                    <span className="text-sm font-semibold text-coral-400">
                       {alert.quantity}/{alert.threshold}
                     </span>
                   </div>

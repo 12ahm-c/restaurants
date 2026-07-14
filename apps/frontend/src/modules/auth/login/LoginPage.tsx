@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../stores/authStore';
 import { useI18n } from '../../../i18n/I18nContext';
-import { Utensils, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Utensils, Eye, EyeOff, ArrowRight, Shield, Zap, Clock } from 'lucide-react';
 
 export function LoginPage() {
   const [phone, setPhone] = useState('');
@@ -23,75 +23,100 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-surface-950">
       {/* Left side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-brand-500 via-brand-600 to-orange-700">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-surface-900 via-surface-950 to-surface-950">
+        {/* Background effects */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-radial from-white/5 to-transparent rounded-full" />
+          <div className="absolute top-20 left-20 w-96 h-96 bg-brand-500/10 rounded-full blur-[100px]" />
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-accent-500/10 rounded-full blur-[100px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-brand-500/5 to-transparent rounded-full" />
+          {/* Grid pattern */}
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundSize: '60px 60px'
+          }} />
         </div>
         
-        <div className="relative z-10 flex flex-col justify-center px-16 text-white">
-          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-8">
-            <Utensils size={32} />
+        <div className="relative z-10 flex flex-col justify-center px-16">
+          {/* Logo */}
+          <div className="w-16 h-16 bg-gradient-to-br from-brand-500 to-accent-500 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-brand-500/20">
+            <Utensils size={32} className="text-white" />
           </div>
-          <h1 className="text-5xl font-display font-bold mb-4 leading-tight">
+          
+          <h1 className="text-5xl font-display font-bold mb-4 leading-tight text-white">
             RestoManager
           </h1>
-          <p className="text-xl text-white/80 mb-8 max-w-md">
+          <p className="text-xl text-surface-400 mb-12 max-w-md leading-relaxed">
             Modern restaurant management system. Streamline orders, manage tables, and boost efficiency.
           </p>
-          <div className="flex gap-8">
-            <div>
-              <p className="text-3xl font-bold">50+</p>
-              <p className="text-white/60 text-sm">Features</p>
+          
+          {/* Features */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/5">
+              <div className="p-2.5 bg-brand-500/15 rounded-xl">
+                <Zap size={20} className="text-brand-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">Real-time Analytics</p>
+                <p className="text-xs text-surface-500">Track sales, orders, and performance live</p>
+              </div>
             </div>
-            <div>
-              <p className="text-3xl font-bold">24/7</p>
-              <p className="text-white/60 text-sm">Support</p>
+            <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/5">
+              <div className="p-2.5 bg-accent-500/15 rounded-xl">
+                <Shield size={20} className="text-accent-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">Role-based Access</p>
+                <p className="text-xs text-surface-500">Secure permissions for every team member</p>
+              </div>
             </div>
-            <div>
-              <p className="text-3xl font-bold">99%</p>
-              <p className="text-white/60 text-sm">Uptime</p>
+            <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/5">
+              <div className="p-2.5 bg-amber-500/15 rounded-xl">
+                <Clock size={20} className="text-amber-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">24/7 Support</p>
+                <p className="text-xs text-surface-500">Always here to help you succeed</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Right side - Login form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-white">
+      <div className="flex-1 flex items-center justify-center p-8 bg-surface-950">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/20">
               <Utensils size={24} className="text-white" />
             </div>
-            <span className="text-2xl font-display font-bold text-gray-900">RestoManager</span>
+            <span className="text-2xl font-display font-bold text-white">RestoManager</span>
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-display font-bold text-gray-900 mb-2">{t('auth.login')}</h2>
-            <p className="text-gray-500">{t('auth.phoneNumber')}</p>
+            <h2 className="text-3xl font-display font-bold text-white mb-2">{t('auth.login')}</h2>
+            <p className="text-surface-400">{t('auth.phoneNumber')}</p>
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
             {error && (
-              <div className="p-4 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 animate-scale-in">
-                <div className="w-2 h-2 bg-red-500 rounded-full" />
-                <p className="text-sm text-red-600 flex-1">{error}</p>
+              <div className="p-4 bg-coral-500/10 border border-coral-500/20 rounded-xl flex items-center gap-3 animate-scale-in">
+                <div className="w-2 h-2 bg-coral-500 rounded-full" />
+                <p className="text-sm text-coral-400 flex-1">{error}</p>
                 <button
                   type="button"
                   onClick={clearError}
-                  className="text-red-400 hover:text-red-600"
+                  className="text-coral-400/60 hover:text-coral-400 transition-colors"
                 >
-                  x
+                  ×
                 </button>
               </div>
             )}
 
             <div className="space-y-2">
-              <label htmlFor="phone" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="phone" className="block text-sm font-semibold text-surface-300">
                 {t('auth.phoneNumber')}
               </label>
               <input
@@ -108,7 +133,7 @@ export function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="password" className="block text-sm font-semibold text-surface-300">
                 {t('auth.password')}
               </label>
               <div className="relative">
@@ -126,7 +151,7 @@ export function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-surface-500 hover:text-surface-300 transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -149,7 +174,7 @@ export function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm text-gray-500">
+          <p className="mt-8 text-center text-sm text-surface-600">
             Restaurant Management System
           </p>
         </div>

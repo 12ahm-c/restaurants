@@ -52,7 +52,7 @@ export function CustomerDetailPage() {
   if (error || !selectedCustomer) {
     return (
       <div className="p-4">
-        <div className="p-3 bg-red-50 rounded-xl text-sm text-red-600">{error || t('form.customerNotFound')}</div>
+        <div className="p-3 bg-coral-500/10 rounded-xl text-sm text-coral-400">{error || t('form.customerNotFound')}</div>
         <button onClick={() => navigate('/customers')} className="mt-3 text-brand-600 text-sm font-medium">
           {t('form.backToCustomers')}
         </button>
@@ -77,16 +77,16 @@ export function CustomerDetailPage() {
       </div>
 
       {/* Customer header */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 mb-4">
+      <div className="card rounded-2xl border border-white/5 shadow-card p-5 mb-4">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-xl shrink-0">
             {selectedCustomer.firstName?.charAt(0)}{selectedCustomer.lastName?.charAt(0)}
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-display font-bold text-gray-900 truncate">
+            <h1 className="text-lg font-display font-bold text-white truncate">
               {selectedCustomer.firstName} {selectedCustomer.lastName}
             </h1>
-            <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-0.5">
+            <div className="flex items-center gap-1.5 text-sm text-surface-400 mt-0.5">
               <Phone size={14} />
               {selectedCustomer.phone}
             </div>
@@ -98,20 +98,20 @@ export function CustomerDetailPage() {
           <div className="text-center p-3 bg-brand-50 rounded-xl">
             <Star size={18} className="text-brand-500 mx-auto mb-1" />
             <p className="text-lg font-bold text-brand-600">{selectedCustomer.loyaltyPoints}</p>
-            <p className="text-[10px] text-gray-500 font-medium">{t('form.points')}</p>
+            <p className="text-[10px] text-surface-400 font-medium">{t('form.points')}</p>
           </div>
           <div className="text-center p-3 bg-blue-50 rounded-xl">
             <ShoppingCart size={18} className="text-blue-500 mx-auto mb-1" />
             <p className="text-lg font-bold text-blue-600">{totalOrders}</p>
-            <p className="text-[10px] text-gray-500 font-medium">{t('form.orders')}</p>
+            <p className="text-[10px] text-surface-400 font-medium">{t('form.orders')}</p>
           </div>
           <div className="text-center p-3 bg-emerald-50 rounded-xl">
             <p className="text-lg font-bold text-emerald-600 mt-1">{totalSpent.toFixed(0)}</p>
-            <p className="text-[10px] text-gray-500 font-medium">{t('form.mruSpent')}</p>
+            <p className="text-[10px] text-surface-400 font-medium">{t('form.mruSpent')}</p>
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
+        <div className="mt-4 flex items-center justify-between text-xs text-surface-400">
           <span className="flex items-center gap-1">
             <Calendar size={12} />
             {t('form.lastPurchase') + ':'} {lastPurchaseAt ? new Date(lastPurchaseAt).toLocaleDateString() : t('form.never')}
@@ -127,26 +127,26 @@ export function CustomerDetailPage() {
       </div>
 
       {/* Loyalty History */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
-        <h2 className="text-sm font-bold text-gray-900 mb-3">{t('form.loyaltyHistory')}</h2>
+      <div className="card rounded-2xl border border-white/5 shadow-card p-5">
+        <h2 className="text-sm font-bold text-white mb-3">{t('form.loyaltyHistory')}</h2>
         {loyaltyHistory.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-6">{t('form.noLoyaltyHistory')}</p>
+          <p className="text-sm text-surface-400 text-center py-6">{t('form.noLoyaltyHistory')}</p>
         ) : (
           <div className="space-y-2">
             {loyaltyHistory.map((transaction) => (
-              <div key={transaction._id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+              <div key={transaction._id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${
-                    transaction.type === 'earn' ? 'bg-green-400' :
-                    transaction.type === 'redeem' ? 'bg-red-400' : 'bg-blue-400'
+                    transaction.type === 'earn' ? 'bg-brand-400' :
+                    transaction.type === 'redeem' ? 'bg-coral-400' : 'bg-blue-400'
                   }`} />
                   <div>
-                    <p className="text-sm text-gray-700">{transaction.description}</p>
-                    <p className="text-xs text-gray-400">{new Date(transaction.timestamp).toLocaleDateString()}</p>
+                    <p className="text-sm text-surface-300">{transaction.description}</p>
+                    <p className="text-xs text-surface-400">{new Date(transaction.timestamp).toLocaleDateString()}</p>
                   </div>
                 </div>
                 <span className={`text-sm font-bold ${
-                  transaction.type === 'earn' ? 'text-green-600' : 'text-red-600'
+                  transaction.type === 'earn' ? 'text-brand-400' : 'text-coral-400'
                 }`}>
                   {transaction.type === 'earn' ? '+' : '-'}{transaction.points}
                 </span>
@@ -157,7 +157,7 @@ export function CustomerDetailPage() {
 
         {loyaltyHistoryTotal > 10 && (
           <div className="mt-3 flex items-center justify-between">
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-surface-400">
               {loyaltyPage} / {Math.ceil(loyaltyHistoryTotal / 10)}
             </span>
             <div className="flex gap-2">

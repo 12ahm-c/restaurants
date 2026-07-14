@@ -177,18 +177,18 @@ export function POSPage() {
   const isTableRequired = orderType === 'dine-in';
 
   return (
-    <div className="flex h-[calc(100dvh-8rem)] md:h-[calc(100vh-8rem)] bg-gray-50 rounded-2xl overflow-hidden shadow-card">
+    <div className="flex h-[calc(100dvh-8rem)] md:h-[calc(100vh-8rem)] bg-surface-950 rounded-2xl overflow-hidden shadow-card">
       {/* Products Panel */}
       <div className={`flex-1 overflow-auto p-3 md:p-5 ${showCart ? 'hidden md:block' : 'block'}`}>
         {/* Search */}
         <div className="relative mb-4">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-400" size={20} />
           <input
             type="text"
             placeholder={t('pos.searchProducts')}
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+            className="input-field w-full pl-12 pr-4 py-3 rounded-xl"
           />
         </div>
 
@@ -199,7 +199,7 @@ export function POSPage() {
             className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all
               ${selectedCategory === ''
                 ? 'bg-brand-500 text-white shadow-md'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                : 'bg-surface-900 text-surface-300 hover:bg-white/5 border border-white/5'
               }`}
           >
             {t('pos.all')}
@@ -211,7 +211,7 @@ export function POSPage() {
               className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all
                 ${selectedCategory === cat._id
                   ? 'bg-brand-500 text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  : 'bg-surface-900 text-surface-300 hover:bg-white/5 border border-white/5'
                 }`}
             >
               {cat.name}
@@ -233,7 +233,7 @@ export function POSPage() {
                 disabled={!isAvailable}
                 className={`card text-left overflow-hidden transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0`}
               >
-                <div className="h-20 md:h-24 bg-gradient-to-br from-brand-50 to-orange-50 flex items-center justify-center">
+                <div className="h-20 md:h-24 bg-gradient-to-br from-brand-500/10 to-orange-500/10 flex items-center justify-center">
                   {product.imageUrl ? (
                     <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
                   ) : (
@@ -243,23 +243,23 @@ export function POSPage() {
                 
                 <div className="p-2 md:p-3">
                   {isOutOfStock && (
-                    <span className="inline-flex items-center px-2 py-0.5 bg-red-100 text-red-700 text-[10px] md:text-xs font-semibold rounded-lg mb-1">
+                    <span className="inline-flex items-center px-2 py-0.5 bg-coral-400/10 text-coral-400 text-[10px] md:text-xs font-semibold rounded-lg mb-1">
                       {t('pos.outOfStock')}
                     </span>
                   )}
                   {stock?.inStock && stock.missingItems.length === 0 && product.status === 'available' && (
-                    <span className="inline-flex items-center px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] md:text-xs font-semibold rounded-lg mb-1">
+                    <span className="inline-flex items-center px-2 py-0.5 bg-brand-400/10 text-brand-400 text-[10px] md:text-xs font-semibold rounded-lg mb-1">
                       {t('pos.inStock')}
                     </span>
                   )}
-                  <p className="font-semibold text-gray-900 text-xs md:text-sm truncate">{product.name}</p>
-                  <p className="text-[10px] md:text-xs text-gray-500 truncate mt-0.5">{product.description}</p>
+                  <p className="font-semibold text-white text-xs md:text-sm truncate">{product.name}</p>
+                  <p className="text-[10px] md:text-xs text-surface-400 truncate mt-0.5">{product.description}</p>
                   {isOutOfStock && stock.missingItems.length > 0 && (
-                    <p className="text-[10px] md:text-xs text-red-500 mt-1 truncate">
+                    <p className="text-[10px] md:text-xs text-coral-400 mt-1 truncate">
                       Missing: {stock.missingItems.join(', ')}
                     </p>
                   )}
-                  <p className="text-brand-600 font-bold mt-1 md:mt-2 text-sm md:text-base">{product.price} MRU</p>
+                  <p className="text-brand-400 font-bold mt-1 md:mt-2 text-sm md:text-base">{product.price} MRU</p>
                 </div>
               </button>
             );
@@ -268,20 +268,20 @@ export function POSPage() {
       </div>
 
       {/* Cart Sidebar - Desktop */}
-      <div className={`w-full md:w-96 bg-white border-l border-gray-100 flex flex-col ${showCart ? 'block' : 'hidden md:flex'}`}>
+      <div className={`w-full md:w-96 bg-surface-900 border-l border-white/5 flex flex-col ${showCart ? 'block' : 'hidden md:flex'}`}>
         {/* Order Header */}
-        <div className="p-4 md:p-5 border-b border-gray-100">
+        <div className="p-4 md:p-5 border-b border-white/5">
           <div className="flex items-center justify-between">
-            <button onClick={() => setShowCart(false)} className="md:hidden p-1 rounded-lg hover:bg-gray-100">
-              <ArrowLeft size={20} className="text-gray-600" />
+            <button onClick={() => setShowCart(false)} className="md:hidden p-1 rounded-lg hover:bg-white/5">
+              <ArrowLeft size={20} className="text-surface-300" />
             </button>
-            <h2 className="font-display font-bold text-lg text-gray-900">{t('pos.newOrder')}</h2>
+            <h2 className="font-display font-bold text-lg text-white">{t('pos.newOrder')}</h2>
             <div className="w-8" />
           </div>
 
           <div className="mt-4 space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{t('pos.orderType')}</label>
+              <label className="block text-xs font-semibold text-surface-400 uppercase tracking-wider mb-1.5">{t('pos.orderType')}</label>
               <select
                 value={orderType}
                 onChange={(e) => {
@@ -299,8 +299,8 @@ export function POSPage() {
 
             {isTableRequired && (
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  {t('pos.selectTable')} <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold text-surface-400 uppercase tracking-wider mb-1.5">
+                  {t('pos.selectTable')} <span className="text-coral-400">*</span>
                 </label>
                 <select
                   value={selectedTable?._id || ''}
@@ -319,7 +319,7 @@ export function POSPage() {
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{t('pos.customer')}</label>
+              <label className="block text-xs font-semibold text-surface-400 uppercase tracking-wider mb-1.5">{t('pos.customer')}</label>
               <CustomerSearch onSelect={handleCustomerSelect} selectedCustomer={selectedCustomer} onRemove={handleCustomerRemove} />
             </div>
           </div>
@@ -329,47 +329,47 @@ export function POSPage() {
         <div className="flex-1 overflow-auto p-4">
           {items.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <ShoppingBag size={28} className="text-gray-300" />
+              <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <ShoppingBag size={28} className="text-surface-500" />
               </div>
-              <p className="text-gray-500 font-medium">{t('pos.cartEmpty')}</p>
-              <p className="text-sm text-gray-400 mt-1">{t('pos.cartEmptyHint')}</p>
+              <p className="text-surface-400 font-medium">{t('pos.cartEmpty')}</p>
+              <p className="text-sm text-surface-500 mt-1">{t('pos.cartEmptyHint')}</p>
             </div>
           ) : (
             <div className="space-y-3">
               {items.map((item: CartItem) => (
-                <div key={item.productId} className="bg-gray-50 rounded-xl p-3 transition-all">
+                <div key={item.productId} className="bg-white/5 rounded-xl p-3 transition-all">
                   <div className="flex justify-between items-start">
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-gray-900 text-sm truncate">{item.name}</p>
-                      <p className="text-xs text-gray-500">{item.price} MRU each</p>
+                      <p className="font-semibold text-white text-sm truncate">{item.name}</p>
+                      <p className="text-xs text-surface-400">{item.price} MRU each</p>
                       {item.notes && (
-                        <p className="text-xs text-brand-600 mt-1 flex items-center gap-1">
+                        <p className="text-xs text-brand-400 mt-1 flex items-center gap-1">
                           <MessageSquare size={10} />
                           {item.notes}
                         </p>
                       )}
                     </div>
                     <div className="flex items-center gap-1 ml-2">
-                      <button onClick={() => handleOpenItemNotes(item.productId, item.notes)} className="p-1.5 rounded-lg text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors">
+                      <button onClick={() => handleOpenItemNotes(item.productId, item.notes)} className="p-1.5 rounded-lg text-surface-400 hover:text-brand-400 hover:bg-brand-500/10 transition-colors">
                         <MessageSquare size={14} />
                       </button>
-                      <button onClick={() => removeItem(item.productId)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors">
+                      <button onClick={() => removeItem(item.productId)} className="p-1.5 rounded-lg text-surface-400 hover:text-coral-400 hover:bg-coral-400/10 transition-colors">
                         <Trash2 size={14} />
                       </button>
                     </div>
                   </div>
                   <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200">
-                      <button onClick={() => updateQuantity(item.productId, item.quantity - 1)} className="p-1.5 rounded-l-lg hover:bg-gray-100 transition-colors">
-                        <Minus size={14} className="text-gray-600" />
+                    <div className="flex items-center gap-1 bg-surface-900 rounded-lg border border-white/5">
+                      <button onClick={() => updateQuantity(item.productId, item.quantity - 1)} className="p-1.5 rounded-l-lg hover:bg-white/5 transition-colors">
+                        <Minus size={14} className="text-surface-300" />
                       </button>
-                      <span className="w-8 text-center font-semibold text-sm">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="p-1.5 rounded-r-lg hover:bg-gray-100 transition-colors">
-                        <Plus size={14} className="text-gray-600" />
+                      <span className="w-8 text-center font-semibold text-sm text-white">{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="p-1.5 rounded-r-lg hover:bg-white/5 transition-colors">
+                        <Plus size={14} className="text-surface-300" />
                       </button>
                     </div>
-                    <p className="font-bold text-gray-900">{item.price * item.quantity} MRU</p>
+                    <p className="font-bold text-white">{item.price * item.quantity} MRU</p>
                   </div>
                 </div>
               ))}
@@ -378,26 +378,26 @@ export function POSPage() {
         </div>
 
         {/* Order Summary */}
-        <div className="p-4 md:p-5 border-t border-gray-100 bg-gray-50">
+        <div className="p-4 md:p-5 border-t border-white/5 bg-surface-900">
           {selectedCustomer && (
-            <div className="mb-3 p-3 bg-blue-50 rounded-xl">
+            <div className="mb-3 p-3 bg-brand-500/10 rounded-xl">
               <div className="flex justify-between text-sm">
-                <span className="text-blue-600">{t('pos.customer')}:</span>
-                <span className="font-semibold text-blue-700">{selectedCustomer.firstName} {selectedCustomer.lastName}</span>
+                <span className="text-brand-400">{t('pos.customer')}:</span>
+                <span className="font-semibold text-brand-500">{selectedCustomer.firstName} {selectedCustomer.lastName}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-blue-600">Points:</span>
-                <span className="font-semibold text-blue-700">{selectedCustomer.loyaltyPoints} pts</span>
+                <span className="text-brand-400">Points:</span>
+                <span className="font-semibold text-brand-500">{selectedCustomer.loyaltyPoints} pts</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-blue-600">To Earn:</span>
-                <span className="font-semibold text-emerald-600">+{Math.floor(getTotal() / 100)} pts</span>
+                <span className="text-brand-400">To Earn:</span>
+                <span className="font-semibold text-brand-400">+{Math.floor(getTotal() / 100)} pts</span>
               </div>
             </div>
           )}
 
           <div className="mb-3">
-            <button onClick={() => setShowOrderNotes(!showOrderNotes)} className="text-sm text-gray-500 hover:text-brand-600 flex items-center gap-1.5 transition-colors">
+            <button onClick={() => setShowOrderNotes(!showOrderNotes)} className="text-sm text-surface-400 hover:text-brand-400 flex items-center gap-1.5 transition-colors">
               <MessageSquare size={14} />
               {orderNotes ? t('pos.editOrderNotes') : t('pos.addOrderNotes')}
             </button>
@@ -406,12 +406,12 @@ export function POSPage() {
                 <textarea value={orderNotes} onChange={(e) => setOrderNotes(e.target.value)} placeholder={t('pos.specialInstructions')} className="input-field text-sm resize-none" rows={2} />
               </div>
             )}
-            {orderNotes && !showOrderNotes && <p className="text-xs text-gray-500 mt-1.5 truncate">{orderNotes}</p>}
+            {orderNotes && !showOrderNotes && <p className="text-xs text-surface-400 mt-1.5 truncate">{orderNotes}</p>}
           </div>
 
           <div className="flex justify-between items-center mb-4">
-            <span className="text-gray-600 font-medium">{t('pos.total')} ({getItemCount()} {t('pos.items')})</span>
-            <span className="text-2xl font-bold text-gray-900">{getTotal()} MRU</span>
+            <span className="text-surface-300 font-medium">{t('pos.total')} ({getItemCount()} {t('pos.items')})</span>
+            <span className="text-2xl font-bold text-white">{getTotal()} MRU</span>
           </div>
 
           <button
@@ -439,7 +439,7 @@ export function POSPage() {
         >
           <div className="relative">
             <ShoppingBag size={24} />
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+            <span className="absolute -top-2 -right-2 bg-coral-400 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
               {getItemCount()}
             </span>
           </div>
@@ -451,8 +451,8 @@ export function POSPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-md card p-6 animate-scale-in">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-display font-bold text-gray-900">{t('pos.itemNotes')}</h3>
-              <button onClick={() => setEditingItemNotes(null)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+              <h3 className="text-lg font-display font-bold text-white">{t('pos.itemNotes')}</h3>
+              <button onClick={() => setEditingItemNotes(null)} className="p-2 rounded-lg hover:bg-white/5 text-surface-400 hover:text-surface-300 transition-colors">
                 <X size={18} />
               </button>
             </div>

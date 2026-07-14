@@ -49,15 +49,15 @@ export const LogsPage: React.FC = () => {
   const getActionColor = (action: string) => {
     switch (action) {
       case 'CREATE':
-        return 'bg-green-100 text-green-800';
+        return 'bg-brand-500/10 text-brand-400';
       case 'UPDATE':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-brand-500/10 text-brand-400';
       case 'DELETE':
-        return 'bg-red-100 text-red-800';
+        return 'bg-coral-500/10 text-coral-400';
       case 'LOGIN':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-brand-500/10 text-brand-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-surface-800 text-surface-300';
     }
   };
 
@@ -71,28 +71,28 @@ export const LogsPage: React.FC = () => {
         onClearFilters={clearFilters}
       />
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="card rounded-lg shadow overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-white/5">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Timestamp</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Entity</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">Timestamp</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">User</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">Action</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">Entity</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">Details</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-white/5">
             {logs.map((log) => (
               <React.Fragment key={log._id}>
                 <tr
-                  className="hover:bg-gray-50 cursor-pointer"
+                  className="hover:bg-white/5 cursor-pointer"
                   onClick={() => setExpandedRow(expandedRow === log._id ? null : log._id)}
                 >
-                  <td className="px-4 py-3 text-sm text-gray-900">
+                  <td className="px-4 py-3 text-sm text-white">
                     {new Date(log.timestamp).toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900">
+                  <td className="px-4 py-3 text-sm text-white">
                     {log.userId?.name || 'Unknown'}
                   </td>
                   <td className="px-4 py-3">
@@ -100,15 +100,15 @@ export const LogsPage: React.FC = () => {
                       {log.action}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900">{log.entity}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500">
+                  <td className="px-4 py-3 text-sm text-white">{log.entity}</td>
+                  <td className="px-4 py-3 text-sm text-surface-400">
                     {log.details ? 'Click to expand' : '-'}
                   </td>
                 </tr>
                 {expandedRow === log._id && log.details && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-3 bg-gray-50">
-                      <pre className="text-xs text-gray-700 whitespace-pre-wrap">
+                    <td colSpan={5} className="px-4 py-3 bg-white/5">
+                      <pre className="text-xs text-surface-300 whitespace-pre-wrap">
                         {JSON.stringify(log.details, null, 2)}
                       </pre>
                     </td>
@@ -120,7 +120,7 @@ export const LogsPage: React.FC = () => {
         </table>
 
         {logs.length === 0 && !isLoading && (
-          <div className="text-center py-8 text-gray-500">No logs found</div>
+          <div className="text-center py-8 text-surface-400">No logs found</div>
         )}
 
         {hasMore && (
@@ -128,7 +128,7 @@ export const LogsPage: React.FC = () => {
             <button
               onClick={handleLoadMore}
               disabled={isLoading}
-              className="w-full py-2 text-blue-600 hover:text-blue-800 disabled:opacity-50"
+              className="w-full py-2 text-brand-400 hover:text-brand-500 disabled:opacity-50"
             >
               {isLoading ? 'Loading...' : 'Load more'}
             </button>

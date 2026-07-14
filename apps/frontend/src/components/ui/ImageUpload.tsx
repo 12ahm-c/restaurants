@@ -107,12 +107,12 @@ export function ImageUpload({ currentImage, onUpload, onRemove, disabled }: Imag
           <img
             src={preview}
             alt="Preview"
-            className="w-full h-48 object-cover rounded-lg border border-gray-200"
+            className="w-full h-48 object-cover rounded-lg border border-white/10"
           />
           {!disabled && (
             <button
               onClick={handleRemove}
-              className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
+              className="absolute top-2 right-2 p-1 bg-coral-500 text-white rounded-full hover:bg-coral-600"
             >
               <X size={16} />
             </button>
@@ -131,26 +131,26 @@ export function ImageUpload({ currentImage, onUpload, onRemove, disabled }: Imag
           onDragLeave={handleDragLeave}
           className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
             isDragging
-              ? 'border-indigo-500 bg-indigo-50'
-              : 'border-gray-300 hover:border-indigo-400 hover:bg-gray-50'
+              ? 'border-brand-500 bg-brand-500/10'
+              : 'border-white/10 hover:border-brand-400 hover:bg-white/5'
           } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <div className="flex flex-col items-center">
             {isUploading ? (
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-2"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500 mb-2"></div>
             ) : (
-              <ImageIcon size={48} className="text-gray-300 mb-2" />
+              <ImageIcon size={48} className="text-surface-400 mb-2" />
             )}
-            <p className="text-gray-500 mb-1">
+            <p className="text-surface-400 mb-1">
               {isUploading ? 'Uploading...' : 'Click or drag image here'}
             </p>
-            <p className="text-sm text-gray-400">JPG, PNG, WebP (max 5MB)</p>
+            <p className="text-sm text-surface-400">JPG, PNG, WebP (max 5MB)</p>
           </div>
         </div>
       )}
 
       {error && (
-        <p className="mt-2 text-sm text-red-600">{error}</p>
+        <p className="mt-2 text-sm text-coral-400">{error}</p>
       )}
     </div>
   );

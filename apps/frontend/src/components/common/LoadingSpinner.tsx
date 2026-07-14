@@ -14,8 +14,8 @@ const sizeClasses = {
 export function LoadingSpinner({ size = 'md', message }: LoadingSpinnerProps) {
   return (
     <div className="flex flex-col items-center justify-center p-8">
-      <Loader2 className={`${sizeClasses[size]} animate-spin text-indigo-600`} />
-      {message && <p className="mt-2 text-sm text-gray-600">{message}</p>}
+      <Loader2 className={`${sizeClasses[size]} animate-spin text-brand-500`} />
+      {message && <p className="mt-2 text-sm text-surface-400">{message}</p>}
     </div>
   );
 }
@@ -35,9 +35,9 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center p-8 text-center">
-      {icon && <div className="mb-4 text-gray-400">{icon}</div>}
-      <h3 className="text-lg font-medium text-gray-900 mb-1">{title}</h3>
-      <p className="text-sm text-gray-600 mb-4">{message}</p>
+      {icon && <div className="mb-4 text-surface-500">{icon}</div>}
+      <h3 className="text-lg font-medium text-white mb-1">{title}</h3>
+      <p className="text-sm text-surface-400 mb-4">{message}</p>
       {action}
     </div>
   );
@@ -56,17 +56,17 @@ export function ErrorState({
 }: ErrorStateProps) {
   return (
     <div className="flex flex-col items-center justify-center p-8 text-center">
-      <div className="mb-4 text-red-500">
+      <div className="mb-4 text-coral-400">
         <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-1">{title}</h3>
-      <p className="text-sm text-gray-600 mb-4">{message}</p>
+      <h3 className="text-lg font-medium text-white mb-1">{title}</h3>
+      <p className="text-sm text-surface-400 mb-4">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm"
+          className="btn-primary text-sm"
         >
           Try again
         </button>

@@ -39,15 +39,15 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-[200px] flex items-center justify-center p-6">
           <div className="text-center">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
+            <h2 className="text-lg font-semibold text-white mb-2">
               Something went wrong
             </h2>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-surface-400 mb-4">
               {this.state.error?.message || 'An unexpected error occurred'}
             </p>
             <button
               onClick={this.handleReset}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm"
+              className="btn-primary text-sm"
             >
               Try again
             </button>

@@ -155,20 +155,20 @@ export function SettingsPage() {
 
   return (
     <div className="p-4 space-y-4 pb-8">
-      <h1 className="text-xl font-display font-bold text-gray-900">{t('settings.title')}</h1>
+      <h1 className="text-xl font-display font-bold text-white">{t('settings.title')}</h1>
 
       {/* Logo */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">{t('settings.restaurantLogo')}</h2>
+      <div className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold text-white">{t('settings.restaurantLogo')}</h2>
         <div className="flex items-center gap-4">
           <div
-            className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden bg-gray-50 cursor-pointer hover:border-brand-300 transition-colors"
+            className="w-20 h-20 rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden bg-surface-900 cursor-pointer hover:border-brand-300 transition-colors"
             onClick={() => fileInputRef.current?.click()}
           >
             {logoPreview ? (
               <img src={logoPreview} alt="Logo" className="w-full h-full object-contain" />
             ) : (
-              <svg className="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-8 h-8 text-surface-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             )}
@@ -177,7 +177,7 @@ export function SettingsPage() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="text-sm font-medium text-brand-600 hover:text-brand-700"
+              className="text-sm font-medium text-brand-400 hover:text-brand-500"
               disabled={isSavingLogo}
             >
               {logoPreview ? t('settings.changeLogo') : t('settings.uploadLogo')}
@@ -186,13 +186,13 @@ export function SettingsPage() {
               <button
                 type="button"
                 onClick={handleRemoveLogo}
-                className="block text-sm font-medium text-red-500 hover:text-red-600"
+                className="block text-sm font-medium text-coral-400 hover:text-coral-500"
                 disabled={isSavingLogo}
               >
                 {t('settings.removeLogo')}
               </button>
             )}
-            <p className="text-xs text-gray-400">{t('settings.pngJpgUpTo2Mb')}</p>
+            <p className="text-xs text-surface-400">{t('settings.pngJpgUpTo2Mb')}</p>
           </div>
           <input
             ref={fileInputRef}
@@ -205,10 +205,10 @@ export function SettingsPage() {
       </div>
 
       {/* Profile */}
-      <form onSubmit={handleSaveProfile} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">{t('settings.yourProfile')}</h2>
+      <form onSubmit={handleSaveProfile} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold text-white">{t('settings.yourProfile')}</h2>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.name')}</label>
+          <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.name')}</label>
           <input
             type="text"
             value={profileName}
@@ -217,7 +217,7 @@ export function SettingsPage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.phone')}</label>
+          <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.phone')}</label>
           <input
             type="tel"
             value={profilePhone}
@@ -233,10 +233,10 @@ export function SettingsPage() {
       </form>
 
       {/* Change Password */}
-      <form onSubmit={handleChangePassword} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">{t('settings.changePassword')}</h2>
+      <form onSubmit={handleChangePassword} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold text-white">{t('settings.changePassword')}</h2>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.currentPassword')}</label>
+          <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('settings.currentPassword')}</label>
           <input
             type="password"
             value={currentPassword}
@@ -246,7 +246,7 @@ export function SettingsPage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.newPassword')}</label>
+          <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('settings.newPassword')}</label>
           <input
             type="password"
             value={newPassword}
@@ -257,7 +257,7 @@ export function SettingsPage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.confirmPassword')}</label>
+          <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('settings.confirmPassword')}</label>
           <input
             type="password"
             value={confirmPassword}
@@ -275,10 +275,10 @@ export function SettingsPage() {
       </form>
 
       {/* General Settings */}
-      <form onSubmit={handleSaveGeneral} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">{t('settings.restaurant')}</h2>
+      <form onSubmit={handleSaveGeneral} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold text-white">{t('settings.restaurant')}</h2>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.restaurantName')}</label>
+          <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('settings.restaurantName')}</label>
           <input
             type="text"
             value={companyName}
@@ -287,7 +287,7 @@ export function SettingsPage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.currency')}</label>
+          <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('settings.currency')}</label>
           <input
             type="text"
             value={currency}
@@ -296,7 +296,7 @@ export function SettingsPage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.taxRate')}</label>
+          <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('settings.taxRate')}</label>
           <input
             type="number"
             value={taxRate}
@@ -308,7 +308,7 @@ export function SettingsPage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.loyaltyPoints')}</label>
+          <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('settings.loyaltyPoints')}</label>
           <input
             type="number"
             value={loyaltyPoints}
@@ -319,7 +319,7 @@ export function SettingsPage() {
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('settings.loyaltyRedeem')}</label>
+          <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('settings.loyaltyRedeem')}</label>
           <input
             type="number"
             value={loyaltyRedeem}

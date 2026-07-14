@@ -42,45 +42,45 @@ export function RedemptionModal({ customerId, customerName, currentPoints, order
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Redeem Loyalty Points</h2>
-        <p className="mb-4 text-sm text-gray-600">Customer: {customerName}</p>
+      <div className="w-full max-w-md rounded-lg bg-surface-900 p-6 shadow-xl">
+        <h2 className="mb-4 text-lg font-semibold text-white">Redeem Loyalty Points</h2>
+        <p className="mb-4 text-sm text-surface-300">Customer: {customerName}</p>
 
         {error && (
-          <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>
+          <div className="mb-4 rounded-md bg-coral-500/10 p-3 text-sm text-coral-400">{error}</div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Available Points</label>
-            <div className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-surface-300 mb-1">Available Points</label>
+            <div className="rounded-md bg-surface-800 px-3 py-2 text-sm font-medium text-surface-300">
               {currentPoints} points
             </div>
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Points to Redeem</label>
+            <label className="block text-sm font-medium text-surface-300 mb-1">Points to Redeem</label>
             <input
               type="number"
               min="1"
               max={currentPoints}
               value={points}
               onChange={(e) => setPoints(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-white/10 bg-surface-800 px-3 py-2 text-white placeholder-surface-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               placeholder="Enter points to redeem"
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Discount Amount</label>
-            <div className="rounded-md bg-green-50 px-3 py-2 text-sm font-medium text-green-800">
+            <label className="block text-sm font-medium text-surface-300 mb-1">Discount Amount</label>
+            <div className="rounded-md bg-brand-500/10 px-3 py-2 text-sm font-medium text-brand-400">
               {discountAmount} MRU
             </div>
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Remaining Points</label>
-            <div className="rounded-md bg-blue-50 px-3 py-2 text-sm font-medium text-blue-800">
+            <label className="block text-sm font-medium text-surface-300 mb-1">Remaining Points</label>
+            <div className="rounded-md bg-surface-800 px-3 py-2 text-sm font-medium text-brand-400">
               {remainingPoints >= 0 ? remainingPoints : 0} points
             </div>
           </div>
@@ -89,14 +89,14 @@ export function RedemptionModal({ customerId, customerName, currentPoints, order
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="rounded-md border border-white/10 bg-surface-800 px-4 py-2 text-sm font-medium text-surface-300 hover:bg-white/5"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || pointsToRedeem <= 0 || pointsToRedeem > currentPoints}
-              className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
+              className="rounded-md bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
             >
               {loading ? 'Redeeming...' : 'Redeem Points'}
             </button>

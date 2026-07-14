@@ -69,7 +69,7 @@ export function CustomerEditPage() {
   if (error) {
     return (
       <div className="p-4">
-        <div className="p-3 bg-red-50 rounded-xl text-sm text-red-600">{error}</div>
+        <div className="p-3 bg-coral-500/10 rounded-xl text-sm text-coral-400">{error}</div>
         <button onClick={() => navigate('/customers')} className="mt-3 text-brand-600 text-sm font-medium">
           {t('form.backToCustomers')}
         </button>
@@ -83,23 +83,23 @@ export function CustomerEditPage() {
         <button onClick={() => navigate(`/customers/${id}`)} className="text-brand-600 hover:text-brand-700 text-sm font-medium">
           &larr; {t('common.back')}
         </button>
-        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">{t('customers.edit')}</h1>
+        <h1 className="mt-2 text-xl font-display font-bold text-white">{t('customers.edit')}</h1>
       </div>
 
       <div className="max-w-lg">
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
+        <form onSubmit={handleSubmit} className="card rounded-2xl border border-white/5 shadow-card p-5">
           {submitError && (
-            <div className="mb-4 p-3 bg-red-50 rounded-xl text-sm text-red-600">{submitError}</div>
+            <div className="mb-4 p-3 bg-coral-500/10 rounded-xl text-sm text-coral-400">{submitError}</div>
           )}
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.name')}</label>
+              <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.name')}</label>
               <input type="text" name="firstName" value={formData.firstName} onChange={handleChange}
                 className="input-field" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.phone')}</label>
+              <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.phone')}</label>
               <input type="tel" name="phone" value={formData.phone} onChange={handleChange}
                 className="input-field" />
             </div>

@@ -39,20 +39,20 @@ export function CustomerListPage() {
   return (
     <div className="animate-fade-in">
       <div className="mb-4">
-        <h1 className="text-xl font-display font-bold text-gray-900">{t('customers.title')}</h1>
-        <p className="text-sm text-gray-500 mt-0.5">{total} {t('customers.title').toLowerCase()}</p>
+        <h1 className="text-xl font-display font-bold text-white">{t('customers.title')}</h1>
+        <p className="text-sm text-surface-400 mt-0.5">{total} {t('customers.title').toLowerCase()}</p>
       </div>
 
       {/* Search + Add row */}
       <div className="flex gap-3 mb-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400" size={18} />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('customers.search')}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
+            className="input-field w-full pl-10 pr-4 py-2.5"
           />
         </div>
         <Link
@@ -65,7 +65,7 @@ export function CustomerListPage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 rounded-xl text-sm text-red-600">{error}</div>
+        <div className="mb-4 p-3 bg-coral-500/10 rounded-xl text-sm text-coral-400">{error}</div>
       )}
 
       {/* Customer list - cards on mobile */}
@@ -74,9 +74,9 @@ export function CustomerListPage() {
           <div className="w-8 h-8 border-2 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
         </div>
       ) : customers.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-12 text-center">
-          <Users size={40} className="text-gray-200 mx-auto mb-3" />
-          <p className="text-gray-500 font-medium">{t('customers.noCustomers')}</p>
+        <div className="card rounded-2xl border border-white/5 shadow-card p-12 text-center">
+          <Users size={40} className="text-surface-300 mx-auto mb-3" />
+          <p className="text-surface-400 font-medium">{t('customers.noCustomers')}</p>
           <Link to="/customers/new" className="btn-primary inline-flex items-center gap-2 mt-4 text-sm">
             <Plus size={16} />
             {t('customers.add')}
@@ -90,17 +90,17 @@ export function CustomerListPage() {
               <Link
                 key={customer._id}
                 to={`/customers/${customer._id}`}
-                className="block bg-white rounded-xl border border-gray-100 shadow-sm p-4 active:scale-[0.98] transition-transform"
+                className="block card rounded-xl border border-white/5 shadow-sm p-4 active:scale-[0.98] transition-transform"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-sm shrink-0">
                     {customer.firstName?.charAt(0)}{customer.lastName?.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm truncate">
+                    <p className="font-semibold text-white text-sm truncate">
                       {customer.firstName} {customer.lastName}
                     </p>
-                    <p className="text-xs text-gray-500">{customer.phone}</p>
+                    <p className="text-xs text-surface-400">{customer.phone}</p>
                   </div>
                   <span className="text-xs font-semibold text-brand-600 bg-brand-50 px-2 py-1 rounded-full shrink-0">
                     {customer.loyaltyPoints} pts
@@ -111,25 +111,25 @@ export function CustomerListPage() {
           </div>
 
           {/* Desktop: Table view */}
-          <div className="hidden md:block bg-white rounded-2xl border border-gray-100 shadow-card overflow-hidden">
+          <div className="hidden md:block card rounded-2xl border border-white/5 shadow-card overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">{t('common.name')}</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">{t('common.phone')}</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">{t('customers.loyaltyPoints')}</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase">{t('common.actions')}</th>
+                <tr className="border-b border-white/5">
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('common.name')}</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('common.phone')}</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('customers.loyaltyPoints')}</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('common.actions')}</th>
                 </tr>
               </thead>
               <tbody>
                 {customers.map((customer) => (
                   <tr key={customer._id} className="table-row">
                     <td className="px-5 py-3">
-                      <span className="font-semibold text-sm text-gray-900">
+                      <span className="font-semibold text-sm text-white">
                         {customer.firstName} {customer.lastName}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-sm text-gray-500">{customer.phone}</td>
+                    <td className="px-5 py-3 text-sm text-surface-400">{customer.phone}</td>
                     <td className="px-5 py-3">
                       <span className="text-xs font-semibold text-brand-600 bg-brand-50 px-2 py-1 rounded-full">
                         {customer.loyaltyPoints} pts
@@ -152,7 +152,7 @@ export function CustomerListPage() {
           {/* Pagination */}
           {total > limit && (
             <div className="mt-4 flex items-center justify-between">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-surface-400">
                 {((page - 1) * limit) + 1}-{Math.min(page * limit, total)} of {total}
               </span>
               <div className="flex gap-2">

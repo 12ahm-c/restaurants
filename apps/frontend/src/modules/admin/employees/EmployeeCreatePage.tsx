@@ -39,21 +39,21 @@ export function EmployeeCreatePage() {
   ];
 
   return (
-    <div className="p-4">
+    <div className="p-4 animate-fade-in">
       <div className="mb-4">
         <button
           onClick={() => navigate('/admin/employees')}
-          className="text-brand-600 hover:text-brand-700 text-sm font-medium"
+          className="text-brand-400 hover:text-brand-500 text-sm font-medium transition-colors"
         >
           &larr; {t('common.back')}
         </button>
-        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">{t('employees.add')}</h1>
+        <h1 className="mt-2 text-xl font-display font-bold text-white">{t('employees.add')}</h1>
       </div>
 
       <div className="max-w-lg">
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.name')}</label>
+            <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.name')}</label>
             <input
               type="text"
               required
@@ -65,7 +65,7 @@ export function EmployeeCreatePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.phone')}</label>
+            <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.phone')}</label>
             <input
               type="tel"
               required
@@ -77,7 +77,7 @@ export function EmployeeCreatePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('common.password')}</label>
+            <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.password')}</label>
             <input
               type="password"
               required
@@ -90,7 +90,7 @@ export function EmployeeCreatePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('employees.role')}</label>
+            <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('employees.role')}</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}

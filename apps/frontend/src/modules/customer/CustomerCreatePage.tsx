@@ -50,19 +50,19 @@ export function CustomerCreatePage() {
         >
           &larr; {t('common.back')}
         </button>
-        <h1 className="mt-2 text-xl font-display font-bold text-gray-900">{t('customers.add')}</h1>
+        <h1 className="mt-2 text-xl font-display font-bold text-white">{t('customers.add')}</h1>
       </div>
 
       <div className="max-w-lg">
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
+        <form onSubmit={handleSubmit} className="card rounded-2xl border border-white/5 shadow-card p-5">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 rounded-xl text-sm text-red-600">{error}</div>
+            <div className="mb-4 p-3 bg-coral-500/10 rounded-xl text-sm text-coral-400">{error}</div>
           )}
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                {t('common.name')} <span className="text-red-500">*</span>
+              <label className="block text-sm font-semibold text-surface-300 mb-1.5">
+                {t('common.name')} <span className="text-coral-400">*</span>
               </label>
               <input
                 type="text"
@@ -75,8 +75,8 @@ export function CustomerCreatePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                {t('common.phone')} <span className="text-red-500">*</span>
+              <label className="block text-sm font-semibold text-surface-300 mb-1.5">
+                {t('common.phone')} <span className="text-coral-400">*</span>
               </label>
               <input
                 type="tel"
