@@ -17,7 +17,7 @@ export interface TokenPair {
 export interface UserDTO {
   _id: string;
   name: string;
-  email: string;
+  phone: string;
   role: string;
   isActive: boolean;
   branchId?: string;
@@ -27,8 +27,8 @@ export interface UserDTO {
 }
 
 export class AuthService {
-  static async login(email: string, password: string, ip?: string, userAgent?: string): Promise<{ user: UserDTO; tokens: TokenPair }> {
-    const user = await User.findOne({ email, isActive: true }).select('+passwordHash');
+  static async login(phone: string, password: string, ip?: string, userAgent?: string): Promise<{ user: UserDTO; tokens: TokenPair }> {
+    const user = await User.findOne({ phone, isActive: true }).select('+passwordHash');
 
     if (!user) {
       throw new AppError(401, 'AUTH_REQUIRED', 'Invalid credentials');
@@ -50,7 +50,7 @@ export class AuthService {
       action: 'login',
       entity: 'User',
       entityId: user._id,
-      details: { email: user.email },
+      details: { phone: user.phone },
       ipAddress: ip,
       userAgent,
     });
@@ -63,7 +63,6 @@ export class AuthService {
 
   static async refreshToken(refreshToken: string): Promise<TokenPair> {
     if (!isRedisAvailable()) {
-      // Without Redis, validate JWT directly
       try {
         const decoded = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as { sub: string; family: string };
         const user = await User.findById(decoded.sub);
@@ -155,7 +154,6 @@ export class AuthService {
     const accessTokenExpiresAt = new Date(accessTokenDecoded.exp * 1000);
     const refreshTokenExpiresAt = new Date(refreshTokenDecoded.exp * 1000);
 
-    // Store refresh token in Redis if available
     if (isRedisAvailable()) {
       const refreshTtl = Math.floor((refreshTokenExpiresAt.getTime() - Date.now()) / 1000);
       await redis.set(`refresh_token:${refreshToken}`, user._id.toString(), 'EX', refreshTtl);
@@ -172,7 +170,7 @@ export class AuthService {
 
   private static async invalidateTokenFamily(family: string): Promise<void> {
     if (!isRedisAvailable()) return;
-    
+
     const keys = await redis.keys(`refresh_token_family:${family}:*`);
     if (keys.length > 0) {
       await redis.del(...keys);
@@ -183,7 +181,7 @@ export class AuthService {
     return {
       _id: user._id.toString(),
       name: user.name,
-      email: user.email,
+      phone: user.phone,
       role: user.role,
       isActive: user.isActive,
       branchId: user.branchId?.toString(),

@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { sendSuccess, sendError, AppError } from '../../utils/response';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email format'),
+  phone: z.string().min(1, 'Phone number is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -30,12 +30,12 @@ export class AuthController {
       return;
     }
 
-    const { email, password } = result.data;
+    const { phone, password } = result.data;
     const ip = req.ip || req.socket.remoteAddress;
     const userAgent = req.headers['user-agent'];
 
     try {
-      const { user, tokens } = await AuthService.login(email, password, ip, userAgent);
+      const { user, tokens } = await AuthService.login(phone, password, ip, userAgent);
 
       res.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,

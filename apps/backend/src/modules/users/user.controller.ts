@@ -5,20 +5,20 @@ import { sendSuccess, sendError, AppError } from '../../utils/response';
 
 const updateProfileSchema = z.object({
   name: z.string().min(1).optional(),
-  email: z.string().email().optional(),
+  phone: z.string().min(1).optional(),
   language: z.enum(['fr', 'en', 'ar']).optional(),
 });
 
 const createEmployeeSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email format'),
+  phone: z.string().min(1, 'Phone number is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   role: z.enum(['owner', 'manager', 'cashier', 'server', 'chef', 'stock_manager']),
 });
 
 const updateEmployeeSchema = z.object({
   name: z.string().min(1).optional(),
-  email: z.string().email().optional(),
+  phone: z.string().min(1).optional(),
   role: z.enum(['owner', 'manager', 'cashier', 'server', 'chef', 'stock_manager']).optional(),
   isActive: z.boolean().optional(),
   password: z.string().min(6).optional(),

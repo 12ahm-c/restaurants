@@ -39,7 +39,7 @@ router.post('/setup', async (_req, res) => {
 
     const user = await User.create({
       name: 'Admin',
-      email: 'admin@restomanager.com',
+      phone: '00000000',
       passwordHash: 'admin123',
       role: 'owner',
       isActive: true,
@@ -48,7 +48,7 @@ router.post('/setup', async (_req, res) => {
 
     res.status(201).json({
       success: true,
-      data: { message: 'Admin user created', email: 'admin@restomanager.com' },
+      data: { message: 'Admin user created', phone: '00000000' },
       error: null,
       meta: null,
     });
