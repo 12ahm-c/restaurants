@@ -28,7 +28,7 @@
 
   html.light body,
   html.light {
-    background-color: #F8FAFC;
+    background-color: #FFFFFF;
     color: #1E293B;
   }
 
@@ -75,8 +75,11 @@
   }
 
   html.light .glass {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
 
   /* Glass morphism - Dark */
@@ -88,7 +91,7 @@
   }
 
   html.light .glass-dark {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(0, 0, 0, 0.08);
   }
 
@@ -102,7 +105,7 @@
   }
 
   html.light .card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(241, 245, 249, 0.9));
+    background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
   }
@@ -173,9 +176,9 @@
   }
 
   html.light .btn-secondary {
-    background: rgba(0, 0, 0, 0.03);
+    background: #FFFFFF;
     color: #475569;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.15);
   }
 
   .btn-secondary:hover {
@@ -184,8 +187,8 @@
   }
 
   html.light .btn-secondary:hover {
-    background: rgba(0, 0, 0, 0.06);
-    border-color: rgba(0, 0, 0, 0.15);
+    background: #F8FAFC;
+    border-color: rgba(0, 0, 0, 0.2);
   }
 
   .btn-secondary:active {
@@ -248,8 +251,8 @@
   }
 
   html.light .input-field {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.15);
     color: #1E293B;
   }
 
@@ -268,7 +271,9 @@
   }
 
   html.light .input-field:focus {
-    background: rgba(255, 255, 255, 1);
+    background: #FFFFFF;
+    border-color: rgba(16, 185, 129, 0.5);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
   }
 
   /* Badges */
@@ -284,32 +289,57 @@
 
   .badge-success {
     background: rgba(16, 185, 129, 0.15);
-    color: #34D399;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  html.light .badge-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #047857;
   }
 
   .badge-warning {
     background: rgba(245, 158, 11, 0.15);
-    color: #FBBF24;
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    color: #D97706;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  html.light .badge-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: #B45309;
   }
 
   .badge-danger {
     background: rgba(244, 63, 94, 0.15);
-    color: #FB7185;
-    border: 1px solid rgba(244, 63, 94, 0.2);
+    color: #E11D48;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+  }
+
+  html.light .badge-danger {
+    background: rgba(244, 63, 94, 0.1);
+    color: #BE123C;
   }
 
   .badge-info {
     background: rgba(59, 130, 246, 0.15);
-    color: #60A5FA;
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: #2563EB;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  html.light .badge-info {
+    background: rgba(59, 130, 246, 0.1);
+    color: #1D4ED8;
   }
 
   .badge-brand {
     background: rgba(16, 185, 129, 0.15);
-    color: #6EE7B7;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  html.light .badge-brand {
+    background: rgba(16, 185, 129, 0.1);
+    color: #047857;
   }
 
   /* Stat card */
@@ -325,7 +355,7 @@
   }
 
   html.light .stat-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 249, 0.95));
+    background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
   }
@@ -357,8 +387,16 @@
     transition: background-color 0.2s;
   }
 
+  html.light .table-row {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
   .table-row:hover {
     background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  html.light .table-row:hover {
+    background-color: rgba(0, 0, 0, 0.03);
   }
 
   /* Mobile card */
@@ -371,7 +409,7 @@
   }
 
   html.light .mobile-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(241, 245, 249, 0.9));
+    background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
   }
@@ -394,7 +432,7 @@
   }
 
   html.light .bottom-sheet {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(241, 245, 249, 1));
+    background: #FFFFFF;
     box-shadow: 0 -4px 30px rgba(0,0,0,0.1);
   }
 
@@ -439,11 +477,19 @@
     margin: 0 auto;
   }
 
+  html.light .swipe-indicator {
+    background: rgba(100, 116, 139, 0.2);
+  }
+
   /* Shimmer loading effect */
   .shimmer {
     position: relative;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.05);
+  }
+
+  html.light .shimmer {
+    background: rgba(0, 0, 0, 0.05);
   }
 
   .shimmer::after {
@@ -452,6 +498,10 @@
     inset: 0;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
     animation: shimmer 2s linear infinite;
+  }
+
+  html.light .shimmer::after {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
   }
 
   /* Gradient text */
@@ -476,6 +526,10 @@
     background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
   }
 
+  html.light .bg-gradient-premium {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #FFFFFF 100%);
+  }
+
   .bg-gradient-brand {
     background: linear-gradient(135deg, #10B981, #059669);
   }
@@ -496,6 +550,10 @@
     background: inherit;
     opacity: 0.3;
     animation: pulse 2s ease-in-out infinite;
+  }
+
+  html.light .status-dot::before {
+    opacity: 0.4;
   }
 
   @keyframes pulse {
@@ -532,7 +590,12 @@
 
   .nav-item.active {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(20, 184, 166, 0.1));
-    color: #34D399;
+    color: #059669;
+  }
+
+  html.light .nav-item.active {
+    background: rgba(16, 185, 129, 0.1);
+    color: #047857;
   }
 
   .nav-item.active::before {
@@ -556,7 +619,7 @@
   }
 
   html.light .chart-container {
-    background: rgba(255, 255, 255, 0.7);
+    background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.08);
   }
 }
