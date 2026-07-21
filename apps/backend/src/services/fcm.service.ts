@@ -1,21 +1,23 @@
-import admin from 'firebase-admin';
+import { initializeApp, cert, App } from 'firebase-admin/app';
+import { getMessaging, Messaging } from 'firebase-admin/messaging';
 import { User } from '../models/User';
 import { logger } from '../utils/logger';
 
-let initialized = false;
+let app: App | undefined;
+let messaging: Messaging | undefined;
 
 function initializeFirebaseAdmin(): boolean {
-  if (initialized) return true;
+  if (app) return true;
 
   const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   if (!serviceAccountJson) return false;
 
   try {
     const serviceAccount = JSON.parse(serviceAccountJson);
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+    app = initializeApp({
+      credential: cert(serviceAccount),
     });
-    initialized = true;
+    messaging = getMessaging(app);
     logger.info('Firebase Admin initialized');
     return true;
   } catch (err) {
@@ -48,13 +50,13 @@ export class FcmService {
     body: string,
     data?: Record<string, unknown>
   ): Promise<void> {
-    if (!initializeFirebaseAdmin()) return;
+    if (!initializeFirebaseAdmin() || !messaging) return;
 
     const user = await User.findById(userId).select('fcmTokens');
     const tokens = user?.fcmTokens || [];
     if (tokens.length === 0) return;
 
-    const response = await admin.messaging().sendEachForMulticast({
+    const response = await messaging.sendEachForMulticast({
       tokens,
       notification: { title, body },
       data: stringifyData(data),
@@ -65,13 +67,15 @@ export class FcmService {
       },
     });
 
-    const invalidTokens = response.responses
-      .map((item, index) => ({ item, token: tokens[index] }))
-      .filter(({ item }) =>
+    const invalidTokens: string[] = [];
+    response.responses.forEach((item, index) => {
+      if (
         item.error?.code === 'messaging/registration-token-not-registered' ||
         item.error?.code === 'messaging/invalid-registration-token'
-      )
-      .map(({ token }) => token);
+      ) {
+        invalidTokens.push(tokens[index]);
+      }
+    });
 
     if (invalidTokens.length > 0) {
       await User.findByIdAndUpdate(userId, { $pull: { fcmTokens: { $in: invalidTokens } } });
