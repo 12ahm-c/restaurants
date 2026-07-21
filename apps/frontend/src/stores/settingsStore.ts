@@ -61,20 +61,11 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   getLogo: () => get().settings?.logo || '',
   getTentPrice: (tentSize, duration) => {
     const settings = get().settings;
-    if (!settings?.tent_pricing) return 0;
+    if (!settings?.tent_price_per_hour) return 0;
 
-    const durationMap: Record<string, keyof typeof settings.tent_pricing> = {
-      '1h': 'per_hour',
-      '2h': 'per_2hours',
-      '3h': 'per_3hours',
-      '4h': 'per_4hours',
-      '5h': 'per_5hours',
-      '6h': 'per_6hours',
-      '8h': 'per_8hours',
-      '12h': 'per_12hours',
-    };
+    const hourlyPrice = settings.tent_price_per_hour[tentSize] || 0;
+    const hours = parseInt(duration.replace('h', ''), 10) || 1;
 
-    const period = durationMap[duration] || 'per_hour';
-    return settings.tent_pricing[period]?.[tentSize] || 0;
+    return hourlyPrice * hours;
   },
 }));

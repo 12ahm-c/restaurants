@@ -16,20 +16,11 @@ export class SettingsService {
 
   static async getTentPrice(tentSize: 'small' | 'medium' | 'large', duration: string): Promise<number> {
     const settings = await this.getSettings();
-    const pricing = settings.tent_pricing;
+    const hourlyPrice = settings.tent_price_per_hour?.[tentSize] || 0;
 
-    const durationMap: Record<string, keyof typeof pricing> = {
-      '1h': 'per_hour',
-      '2h': 'per_2hours',
-      '3h': 'per_3hours',
-      '4h': 'per_4hours',
-      '5h': 'per_5hours',
-      '6h': 'per_6hours',
-      '8h': 'per_8hours',
-      '12h': 'per_12hours',
-    };
+    // Extract number of hours from duration string (e.g., "2h" -> 2, "12h" -> 12)
+    const hours = parseInt(duration.replace('h', ''), 10) || 1;
 
-    const period = durationMap[duration] || 'per_hour';
-    return pricing[period]?.[tentSize] || 0;
+    return hourlyPrice * hours;
   }
 }

@@ -91,19 +91,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'settings.pngJpgUpTo2Mb': 'PNG, JPG jusqu\'à 2 Mo',
 
     // Tent Pricing
-    'settings.tentPricing.title': 'Tarification des Khaymat',
-    'settings.tentPricing.duration': 'Durée',
-    'settings.tentPricing.small': 'Petite',
-    'settings.tentPricing.medium': 'Moyenne',
-    'settings.tentPricing.large': 'Grande',
-    'settings.tentPricing.perHour': '1 heure',
-    'settings.tentPricing.per2Hours': '2 heures',
-    'settings.tentPricing.per3Hours': '3 heures',
-    'settings.tentPricing.per4Hours': '4 heures',
-    'settings.tentPricing.per5Hours': '5 heures',
-    'settings.tentPricing.per6Hours': '6 heures',
-    'settings.tentPricing.per8Hours': '8 heures',
-    'settings.tentPricing.per12Hours': '12 heures',
+    'settings.tentPricePerHour': 'Prix de la Khayma par heure',
+    'settings.tentPricePerHourHint': 'Le prix total est calculé automatiquement en multipliant le prix horaire par le nombre d\'heures.',
+    'settings.tentPricing.small': 'Khayma petite',
+    'settings.tentPricing.medium': 'Khayma moyenne',
+    'settings.tentPricing.large': 'Khayma grande',
 
     // Profile
     'profile.title': 'Profil',
@@ -481,19 +473,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'settings.pngJpgUpTo2Mb': 'PNG, JPG up to 2MB',
 
     // Tent Pricing
-    'settings.tentPricing.title': 'Tent Pricing',
-    'settings.tentPricing.duration': 'Duration',
-    'settings.tentPricing.small': 'Small',
-    'settings.tentPricing.medium': 'Medium',
-    'settings.tentPricing.large': 'Large',
-    'settings.tentPricing.perHour': '1 hour',
-    'settings.tentPricing.per2Hours': '2 hours',
-    'settings.tentPricing.per3Hours': '3 hours',
-    'settings.tentPricing.per4Hours': '4 hours',
-    'settings.tentPricing.per5Hours': '5 hours',
-    'settings.tentPricing.per6Hours': '6 hours',
-    'settings.tentPricing.per8Hours': '8 hours',
-    'settings.tentPricing.per12Hours': '12 hours',
+    'settings.tentPricePerHour': 'Tent Price per Hour',
+    'settings.tentPricePerHourHint': 'Total price is calculated automatically by multiplying hourly rate by number of hours.',
+    'settings.tentPricing.small': 'Small Tent',
+    'settings.tentPricing.medium': 'Medium Tent',
+    'settings.tentPricing.large': 'Large Tent',
 
     // Profile
     'profile.title': 'Profile',
@@ -871,19 +855,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'settings.pngJpgUpTo2Mb': 'PNG, JPG حتى 2 ميجابايت',
 
     // Tent Pricing
-    'settings.tentPricing.title': 'تسعير الخيام',
-    'settings.tentPricing.duration': 'المدة',
-    'settings.tentPricing.small': 'صغيرة',
-    'settings.tentPricing.medium': 'متوسطة',
-    'settings.tentPricing.large': 'كبيرة',
-    'settings.tentPricing.perHour': 'ساعة',
-    'settings.tentPricing.per2Hours': 'ساعتين',
-    'settings.tentPricing.per3Hours': '3 ساعات',
-    'settings.tentPricing.per4Hours': '4 ساعات',
-    'settings.tentPricing.per5Hours': '5 ساعات',
-    'settings.tentPricing.per6Hours': '6 ساعات',
-    'settings.tentPricing.per8Hours': '8 ساعات',
-    'settings.tentPricing.per12Hours': '12 ساعة',
+    'settings.tentPricePerHour': 'سعر الخيمة في الساعة',
+    'settings.tentPricePerHourHint': 'يُحسب السعر الإجمالي تلقائياً بضرب السعر في الساعة بعدد الساعات المختارة.',
+    'settings.tentPricing.small': 'خيمة صغيرة',
+    'settings.tentPricing.medium': 'خيمة متوسطة',
+    'settings.tentPricing.large': 'خيمة كبيرة',
 
     // Profile
     'profile.title': 'الملف الشخصي',
