@@ -1,6 +1,6 @@
 import { KitchenQueue, IKitchenQueue, KitchenStatus } from '../../models/KitchenQueue';
 import { Order } from '../../models/Order';
-import { Table } from '../../models/Table';
+import { Tent } from '../../models/Tent';
 import { Inventory } from '../../models/Inventory';
 import { AppError } from '../../utils/response';
 import { getIO } from '../../socket/socket.server';
@@ -27,8 +27,8 @@ export interface KitchenQueueDTO {
   };
   table?: {
     _id: string;
-    name: string;
-    zone: string;
+    tentNumber: number;
+    size: string;
   };
   items?: Array<{
     productId: string;
@@ -56,10 +56,10 @@ export class KitchenService {
       .populate({
         path: 'orderId',
         select: 'type status totalTTC notes createdAt',
-        populate: {
-          path: 'tableId',
-          select: 'name zone',
-        },
+          populate: {
+            path: 'tentId',
+            select: 'tentNumber size',
+          },
       })
       .sort({ priority: -1, createdAt: 1 });
 
@@ -72,7 +72,7 @@ export class KitchenService {
           totalTTC: number;
           notes?: string;
           createdAt: Date;
-          tableId?: { _id: string; name: string; zone: string };
+          tentId?: { _id: string; tentNumber: number; size: string };
         };
 
         const OrderItem = (await import('../../models/OrderItem')).OrderItem;
@@ -98,11 +98,11 @@ export class KitchenService {
                 createdAt: orderData.createdAt,
               }
             : undefined,
-          table: orderData?.tableId
+          table: orderData?.tentId
             ? {
-                _id: orderData.tableId._id,
-                name: orderData.tableId.name,
-                zone: orderData.tableId.zone,
+                _id: orderData.tentId._id,
+                tentNumber: orderData.tentId.tentNumber,
+                size: orderData.tentId.size,
               }
             : undefined,
           items: orderItems.map((item) => ({
@@ -141,16 +141,18 @@ export class KitchenService {
       entry.orderId,
       { status: 'preparing' },
       { new: true }
-    ).populate('tableId', 'name');
+    ).populate('tentId', 'tentNumber size');
 
     if (order) {
       try {
         const io = getIO();
-        const tableName = (order.tableId as unknown as { name: string })?.name || 'Unknown';
+        const tentData = (order.tentId as unknown as { tentNumber: number; size: string }) || {};
+        const sizeLabel = tentData.size === 'small' ? 'صغيرة' : tentData.size === 'large' ? 'كبيرة' : 'متوسطة';
+        const tentName = tentData.tentNumber ? `خيمة ${tentData.tentNumber} - ${sizeLabel}` : 'Unknown';
         emitOrderStatusUpdate(io, {
           orderId: order._id.toString(),
           status: 'preparing',
-          tableName,
+          tentName,
           timestamp: new Date(),
         });
       } catch (socketError) {
@@ -180,93 +182,25 @@ export class KitchenService {
       entry.orderId,
       { status: 'ready' },
       { new: true }
-    ).populate('tableId', 'name');
+    ).populate('tentId', 'tentNumber size');
 
     if (order) {
       try {
         const io = getIO();
-        const tableName = (order.tableId as unknown as { name: string })?.name || 'Unknown';
+        const tentData = (order.tentId as unknown as { tentNumber: number; size: string }) || {};
+        const sizeLabel = tentData.size === 'small' ? 'صغيرة' : tentData.size === 'large' ? 'كبيرة' : 'متوسطة';
+        const tentName = tentData.tentNumber ? `خيمة ${tentData.tentNumber} - ${sizeLabel}` : 'Unknown';
         emitOrderStatusUpdate(io, {
           orderId: order._id.toString(),
           status: 'ready',
-          tableName,
+          tentName,
           timestamp: new Date(),
         });
-
-        // Notify servers that order is ready
-        await NotificationService.notifyServersOrderReady(
-          order._id.toString(),
-          order.orderNumber || order._id.toString().slice(-6).toUpperCase(),
-          tableName
-        );
       } catch (socketError) {
-        logger.warn({ err: socketError }, 'Failed to emit notification');
+        // ignore
       }
     }
 
     return entry;
-  }
-
-  static async cancelOrder(orderId: string, reason: string): Promise<void> {
-    const session = await (await import('mongoose')).startSession();
-    session.startTransaction();
-
-    try {
-      const Order = (await import('../../models/Order')).Order;
-      const order = await Order.findById(orderId).session(session);
-
-      if (!order) {
-        throw new AppError(404, 'NOT_FOUND', 'Order not found');
-      }
-
-      const cancellableStatuses = ['new', 'preparing'];
-      if (!cancellableStatuses.includes(order.status)) {
-        throw new AppError(
-          409,
-          'INVALID_STATE',
-          `Cannot cancel order in ${order.status} status`
-        );
-      }
-
-      const OrderItem = (await import('../../models/OrderItem')).OrderItem;
-      const orderItems = await OrderItem.find({ orderId }).session(session);
-
-      for (const item of orderItems) {
-        const Product = (await import('../../models/Product')).Product;
-        const product = await Product.findById(item.productId).session(session);
-        if (product?.recipe) {
-          for (const recipeItem of product.recipe) {
-            const inventory = await Inventory.findById(recipeItem.inventoryId).session(session);
-            if (inventory) {
-              const restoration = recipeItem.quantity * item.quantity;
-              inventory.quantity += restoration;
-              await inventory.save({ session });
-            }
-          }
-        }
-      }
-
-      await Table.findByIdAndUpdate(
-        order.tableId,
-        { status: 'free', currentOrderId: null },
-        { session }
-      );
-
-      await KitchenQueue.findOneAndUpdate(
-        { orderId },
-        { status: 'ready', endTime: new Date() },
-        { session }
-      );
-
-      order.status = 'cancelled';
-      await order.save({ session });
-
-      await session.commitTransaction();
-    } catch (error) {
-      await session.abortTransaction();
-      throw error;
-    } finally {
-      session.endSession();
-    }
   }
 }

@@ -1,5 +1,5 @@
 import { Order } from '../../models/Order';
-import { Table } from '../../models/Table';
+import { Tent } from '../../models/Tent';
 import { Inventory } from '../../models/Inventory';
 import { Payment } from '../../models/Payment';
 import { Customer } from '../../models/Customer';
@@ -10,7 +10,7 @@ export class DashboardService {
     todaySales: number;
     totalOrders: number;
     totalCustomers: number;
-    occupiedTables: number;
+    occupiedTents: number;
     newOrders: number;
     preparingOrders: number;
     readyOrders: number;
@@ -35,7 +35,7 @@ export class DashboardService {
       salesResult,
       totalOrders,
       totalCustomers,
-      occupiedTables,
+      occupiedTents,
       newOrders,
       preparingOrders,
       readyOrders,
@@ -50,7 +50,7 @@ export class DashboardService {
       ]),
       Order.countDocuments({ createdAt: { $gte: today, $lt: tomorrow } }),
       Customer.countDocuments({}),
-      Table.countDocuments({ status: 'occupied' }),
+      Tent.countDocuments({ status: 'occupied' }),
       Order.countDocuments({ createdAt: { $gte: today, $lt: tomorrow }, status: 'new' }),
       Order.countDocuments({ createdAt: { $gte: today, $lt: tomorrow }, status: 'preparing' }),
       Order.countDocuments({ createdAt: { $gte: today, $lt: tomorrow }, status: 'ready' }),
@@ -94,7 +94,7 @@ export class DashboardService {
       todaySales,
       totalOrders,
       totalCustomers,
-      occupiedTables,
+      occupiedTents,
       newOrders,
       preparingOrders,
       readyOrders,
@@ -114,7 +114,7 @@ export class DashboardService {
     revenue: { total: number; change: number };
     orders: { total: number; averageTicket: number };
     topProducts: Array<{ name: string; quantity: number; revenue: number }>;
-    tableUtilization: number;
+    tentUtilization: number;
     alertsCount: number;
   }> {
     const cacheKey = `dashboard:manager:${period}`;
@@ -126,7 +126,7 @@ export class DashboardService {
 
     const { startDate, endDate, prevStartDate, prevEndDate } = this.getDateRanges(period);
 
-    const [revenueResult, prevRevenueResult, ordersCount, topProducts, activeTables, totalTables, criticalAlerts] =
+    const [revenueResult, prevRevenueResult, ordersCount, topProducts, activeTents, totalTents, criticalAlerts] =
       await Promise.all([
         Payment.aggregate([
           { $match: { createdAt: { $gte: startDate, $lt: endDate }, status: 'completed' } },
@@ -159,8 +159,8 @@ export class DashboardService {
           { $sort: { quantity: -1 } },
           { $limit: 10 },
         ]),
-        Table.countDocuments({ status: { $in: ['occupied', 'reserved'] } }),
-        Table.countDocuments({}),
+        Tent.countDocuments({ status: { $in: ['occupied', 'reserved'] } }),
+        Tent.countDocuments({}),
         Inventory.countDocuments({ $expr: { $lte: ['$quantity', '$threshold'] } }),
       ]);
 
@@ -168,13 +168,13 @@ export class DashboardService {
     const prevRevenue = prevRevenueResult.length > 0 ? prevRevenueResult[0].total : 0;
     const change = prevRevenue > 0 ? ((currentRevenue - prevRevenue) / prevRevenue) * 100 : 0;
     const averageTicket = ordersCount > 0 ? currentRevenue / ordersCount : 0;
-    const tableUtilization = totalTables > 0 ? (activeTables / totalTables) * 100 : 0;
+    const tentUtilization = totalTents > 0 ? (activeTents / totalTents) * 100 : 0;
 
     const result = {
       revenue: { total: currentRevenue, change },
       orders: { total: ordersCount, averageTicket },
       topProducts: topProducts.map((p) => ({ name: p._id, quantity: p.quantity, revenue: p.revenue })),
-      tableUtilization,
+      tentUtilization,
       alertsCount: criticalAlerts,
     };
 

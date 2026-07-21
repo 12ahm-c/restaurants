@@ -20,8 +20,8 @@ export interface KitchenQueueItem {
   };
   table?: {
     _id: string;
-    name: string;
-    zone: string;
+    tentNumber: number;
+    size: string;
   };
   items?: Array<{
     productId: string;

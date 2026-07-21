@@ -4,7 +4,7 @@ import { useI18n } from '../../i18n/I18nContext';
 import { OrderDTO } from '../../types';
 import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
-import { useTableStore } from '../../stores/tableStore';
+import { useTentStore } from '../../stores/tentStore';
 import { useSocket } from '../../hooks/useSocket';
 import { Clock, CheckCircle, Trash2, RefreshCw, Package, ClipboardList } from 'lucide-react';
 
@@ -13,7 +13,7 @@ export function ActiveOrdersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { addToast } = useUIStore();
   const { user } = useAuthStore();
-  const { clearTable } = useTableStore();
+  const { markTentEmpty } = useTentStore();
   const { socket } = useSocket();
   const { t } = useI18n();
 
@@ -78,11 +78,11 @@ export function ActiveOrdersPage() {
     }
   };
 
-  const handleClearTable = async (tableId: string, orderId: string) => {
+  const handleClearTent = async (tentId: string, orderId: string) => {
     try {
       await orderService.updateOrderStatus(orderId, 'completed');
-      await clearTable(tableId);
-      addToast('success', t('tables.available'));
+      await markTentEmpty(tentId);
+      addToast('success', t('tents.available'));
       setOrders((prev) => prev.filter((o) => o._id !== orderId));
     } catch (error) {
       const message = error instanceof Error ? error.message : t('common.error');
@@ -140,8 +140,8 @@ export function ActiveOrdersPage() {
                           #{order._id.slice(-6).toUpperCase()}
                         </p>
                         <p className="text-sm text-surface-400">
-                          {t('orders.table')}: {(order.tableId as unknown as { name: string })?.name || 'N/A'}
-                        </p>
+                           {t('orders.tent')}: {(() => { const t = order.tentId as unknown as { tentNumber?: number; size?: string }; if (!t?.tentNumber) return 'N/A'; const sizeLabel = t.size === 'small' ? 'صغيرة' : t.size === 'large' ? 'كبيرة' : 'متوسطة'; return `خيمة #${t.tentNumber} - ${sizeLabel}`; })()}
+                         </p>
                       </div>
                       <span className={`badge ${status.bg} ${status.text}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${status.dot} mr-1.5`} />
@@ -168,15 +168,15 @@ export function ActiveOrdersPage() {
                           {t('orders.served')}
                         </button>
                       )}
-                      {order.status === 'served' && (order.tableId as unknown as { _id: string })?._id && (
-                        <button
-                          onClick={() => handleClearTable((order.tableId as unknown as { _id: string })._id, order._id)}
-                          className="btn-danger w-full flex items-center justify-center gap-2"
-                        >
-                          <Trash2 size={18} />
-                          {t('tables.available')}
-                        </button>
-                      )}
+                      {order.status === 'served' && (order.tentId as unknown as { _id: string })?._id && (
+                         <button
+                           onClick={() => handleClearTent((order.tentId as unknown as { _id: string })._id, order._id)}
+                           className="btn-danger w-full flex items-center justify-center gap-2"
+                         >
+                           <Trash2 size={18} />
+                           {t('tents.available')}
+                         </button>
+                       )}
                     </div>
                   </div>
                 </div>
@@ -231,7 +231,7 @@ export function ActiveOrdersPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 text-xs text-surface-400">
-                      <span>{t('orders.table')}: {(order.tableId as unknown as { name: string })?.name || 'N/A'}</span>
+                      <span>{t('orders.tent')}: {(() => { const t = order.tentId as unknown as { tentNumber?: number; size?: string }; if (!t?.tentNumber) return 'N/A'; const sizeLabel = t.size === 'small' ? 'صغيرة' : t.size === 'large' ? 'كبيرة' : 'متوسطة'; return `خيمة #${t.tentNumber} - ${sizeLabel}`; })()}</span>
                       <span className="flex items-center gap-1">
                         <Clock size={12} />
                         {new Date(order.createdAt).toLocaleTimeString()}
@@ -250,7 +250,7 @@ export function ActiveOrdersPage() {
               <thead>
                 <tr className="border-b border-white/5">
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('orders.active')}</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('orders.table')}</th>
+                    <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('orders.tent')}</th>
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.status')}</th>
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.amount')}</th>
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.time')}</th>
@@ -267,8 +267,8 @@ export function ActiveOrdersPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-surface-300">
-                        {(order.tableId as unknown as { name: string })?.name || 'N/A'}
-                      </td>
+                         {(() => { const t = order.tentId as unknown as { tentNumber?: number; size?: string }; if (!t?.tentNumber) return 'N/A'; const sizeLabel = t.size === 'small' ? 'صغيرة' : t.size === 'large' ? 'كبيرة' : 'متوسطة'; return `خيمة #${t.tentNumber} - ${sizeLabel}`; })()}
+                       </td>
                       <td className="px-6 py-4">
                         <span className={`badge ${status.bg} ${status.text}`}>
                           <span className={`w-1.5 h-1.5 rounded-full ${status.dot} mr-1.5`} />

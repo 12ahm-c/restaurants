@@ -13,6 +13,8 @@ export interface IOrderItem extends Document {
   quantity: number;
   unitPrice: number;
   options: IOrderOption[];
+  quantityTypeName?: string;
+  quantityTypeLabel?: string;
   notes?: string;
   total: number;
   createdAt: Date;
@@ -32,6 +34,8 @@ const orderItemSchema = new Schema<IOrderItem>(
         price: { type: Number, required: true, min: 0 },
       },
     ],
+    quantityTypeName: { type: String, trim: true },
+    quantityTypeLabel: { type: String, trim: true },
     notes: { type: String, trim: true },
     total: { type: Number, required: true, min: 0 },
   },

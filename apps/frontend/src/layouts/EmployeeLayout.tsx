@@ -6,7 +6,7 @@ import { useNotificationStore } from '../stores/notificationStore';
 import { useI18n } from '../i18n/I18nContext';
 import { useTheme } from '../contexts/ThemeContext';
 import {
-  LogOut, User, X, LayoutDashboard, ShoppingCart, Table2,
+  LogOut, User, X, LayoutDashboard, ShoppingCart, Tent,
   ChefHat, UtensilsCrossed, Users, DollarSign, FileText, Settings,
   ClipboardList, Utensils, MoreHorizontal, Bell, CheckCheck, ChevronRight,
   Search, Sun, Moon
@@ -36,7 +36,7 @@ function getNavConfig(t: (key: string) => string): Record<UserRole, { path: stri
     owner: [
       { path: '/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard, section: 'main' },
       { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList, section: 'main' },
-      { path: '/tables', label: t('nav.tables'), icon: Table2, section: 'main' },
+      { path: '/tents', label: t('nav.tents'), icon: Tent, section: 'main' },
       { path: '/kitchen', label: t('nav.kitchen'), icon: ChefHat, section: 'operations' },
       { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed, section: 'operations' },
       { path: '/customers', label: t('nav.customers'), icon: Users, section: 'operations' },
@@ -48,7 +48,7 @@ function getNavConfig(t: (key: string) => string): Record<UserRole, { path: stri
     manager: [
       { path: '/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard, section: 'main' },
       { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList, section: 'main' },
-      { path: '/tables', label: t('nav.tables'), icon: Table2, section: 'main' },
+      { path: '/tents', label: t('nav.tents'), icon: Tent, section: 'main' },
       { path: '/kitchen', label: t('nav.kitchen'), icon: ChefHat, section: 'operations' },
       { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed, section: 'operations' },
       { path: '/customers', label: t('nav.customers'), icon: Users, section: 'operations' },
@@ -63,7 +63,7 @@ function getNavConfig(t: (key: string) => string): Record<UserRole, { path: stri
       { path: '/customers', label: t('nav.customers'), icon: Users, section: 'operations' },
     ],
     server: [
-      { path: '/tables', label: t('nav.tables'), icon: Table2, section: 'main' },
+      { path: '/tents', label: t('nav.tents'), icon: Tent, section: 'main' },
       { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList, section: 'main' },
       { path: '/customers', label: t('nav.customers'), icon: Users, section: 'operations' },
     ],

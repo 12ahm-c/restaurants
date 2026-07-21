@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { app } from '../../server';
 import { User } from '../../models/User';
 import { Order } from '../../models/Order';
-import { Table } from '../../models/Table';
+import { Tent } from '../../models/Tent';
 import { Payment } from '../../models/Payment';
 import { Inventory } from '../../models/Inventory';
 import { StockMovement } from '../../models/StockMovement';
@@ -18,10 +18,10 @@ beforeAll(async () => {
     role: 'manager',
   });
 
-  const table = await Table.create({ number: 1, capacity: 4, status: 'occupied' });
+  const tent = await Tent.create({ number: 1, capacity: 4, status: 'occupied' });
 
   const order = await Order.create({
-    tableId: table._id,
+    tentId: tent._id,
     userId: user._id,
     type: 'dine-in',
     status: 'paid',
@@ -63,7 +63,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await User.deleteMany({});
   await Order.deleteMany({});
-  await Table.deleteMany({});
+  await Tent.deleteMany({});
   await Payment.deleteMany({});
   await Inventory.deleteMany({});
   await StockMovement.deleteMany({});
@@ -80,7 +80,7 @@ describe('Dashboard Endpoints', () => {
       expect(res.body.data).toHaveProperty('todayOrdersCount');
       expect(res.body.data).toHaveProperty('todayRevenue');
       expect(res.body.data).toHaveProperty('todayAverageTicket');
-      expect(res.body.data).toHaveProperty('activeTables');
+      expect(res.body.data).toHaveProperty('activeTents');
       expect(res.body.data).toHaveProperty('pendingKitchenOrders');
     });
   });
@@ -96,7 +96,7 @@ describe('Dashboard Endpoints', () => {
       expect(res.body.data).toHaveProperty('revenue');
       expect(res.body.data).toHaveProperty('orders');
       expect(res.body.data).toHaveProperty('topProducts');
-      expect(res.body.data).toHaveProperty('tableUtilization');
+      expect(res.body.data).toHaveProperty('tentUtilization');
       expect(res.body.data).toHaveProperty('alertsCount');
     });
 

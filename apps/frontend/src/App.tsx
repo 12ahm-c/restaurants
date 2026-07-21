@@ -11,7 +11,7 @@ const ProfilePage = lazy(() => import('./modules/auth/profile/ProfilePage').then
 const EmployeeListPage = lazy(() => import('./modules/admin/employees/EmployeeListPage').then(m => ({ default: m.EmployeeListPage })));
 const EmployeeCreatePage = lazy(() => import('./modules/admin/employees/EmployeeCreatePage').then(m => ({ default: m.EmployeeCreatePage })));
 const EmployeeEditPage = lazy(() => import('./modules/admin/employees/EmployeeEditPage').then(m => ({ default: m.EmployeeEditPage })));
-const TableMapPage = lazy(() => import('./modules/tables/TableMapPage').then(m => ({ default: m.TableMapPage })));
+const TentMapPage = lazy(() => import('./modules/tents/TentMapPage').then(m => ({ default: m.TentMapPage })));
 const POSPage = lazy(() => import('./modules/pos/POSPage').then(m => ({ default: m.POSPage })));
 const ActiveOrdersPage = lazy(() => import('./modules/orders/ActiveOrdersPage').then(m => ({ default: m.ActiveOrdersPage })));
 const KitchenPage = lazy(() => import('./modules/kitchen/KitchenPage').then(m => ({ default: m.KitchenPage })));
@@ -69,12 +69,12 @@ function App() {
               }
             />
 
-            {/* Tables - server, cashier, owner, manager */}
+            {/* Tents - server, cashier, owner, manager */}
             <Route
-              path="tables"
+              path="tents"
               element={
                 <ProtectedRoute allowedRoles={['server', 'cashier', 'owner', 'manager']}>
-                  <TableMapPage />
+                  <TentMapPage />
                 </ProtectedRoute>
               }
             />

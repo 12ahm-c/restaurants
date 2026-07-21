@@ -12,7 +12,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import { initSocketIO } from './socket/socket.server';
 import authRoutes from './modules/auth/auth.routes';
 import userRoutes from './modules/users/user.routes';
-import tableRoutes from './modules/tables/table.routes';
+import tentRoutes from './modules/tents/tent.routes';
 import menuRoutes from './modules/menu/menu.routes';
 import orderRoutes from './modules/orders/order.routes';
 import kitchenRoutes from './modules/kitchen/kitchen.routes';
@@ -62,7 +62,7 @@ app.get('/health', (_req, res) => {
 app.use('/v1/auth', authRoutes);
 app.use('/v1/users', userRoutes);
 app.use('/v1/admin', userRoutes);
-app.use('/v1', tableRoutes);
+app.use('/v1', tentRoutes);
 app.use('/v1', menuRoutes);
 app.use('/v1', orderRoutes);
 app.use('/v1', kitchenRoutes);

@@ -3,7 +3,7 @@ import { logger } from '../utils/logger';
 
 export interface NewOrderEvent {
   orderId: string;
-  tableName: string;
+  tentName: string;
   items: Array<{
     name: string;
     quantity: number;
@@ -15,7 +15,7 @@ export interface NewOrderEvent {
 export interface OrderStatusUpdateEvent {
   orderId: string;
   status: string;
-  tableName: string;
+  tentName: string;
   timestamp: Date;
 }
 

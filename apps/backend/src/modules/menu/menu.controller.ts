@@ -48,6 +48,7 @@ const updateProductSchema = z.object({
   price: z.number().min(0).optional(),
   prepTime: z.number().min(0).optional(),
   status: z.enum(['available', 'unavailable', 'discontinued']).optional(),
+  isActive: z.boolean().optional(),
   imageUrl: z.string().url().optional(),
   recipe: z
     .array(

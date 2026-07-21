@@ -47,31 +47,40 @@ export interface ApiResponse<T> {
 
 export interface PaginatedResponse<T> extends ApiResponse<T[]> {}
 
-// Phase 2 Types
+// Tent Types (replacing Tables)
 
-export type TableStatus = 'free' | 'occupied' | 'reserved' | 'in-service';
+export type TentStatus = 'free' | 'occupied' | 'reserved' | 'cleaning';
+export type TentSize = 'small' | 'medium' | 'large';
 
-export interface TableDTO {
+export interface TentDTO {
   _id: string;
-  name: string;
+  tentNumber: number;
+  size: TentSize;
   branchId?: string;
-  capacity: number;
-  status: TableStatus;
-  zone: string;
+  status: TentStatus;
   position: { x: number; y: number };
   currentOrderId?: string;
   serverId?: string;
+  isEmpty: boolean;
+  lastEmptiedAt?: string;
 }
 
-export interface TableStatusSummary {
+export interface TentStatusSummary {
   free: number;
   occupied: number;
   reserved: number;
-  inService: number;
+  cleaning: number;
   total: number;
 }
 
 export type ProductStatus = 'available' | 'unavailable' | 'discontinued';
+
+export interface QuantityType {
+  name: string;
+  label: string;
+  price: number;
+  unit: string;
+}
 
 export interface ProductDTO {
   _id: string;
@@ -82,6 +91,10 @@ export interface ProductDTO {
   price: number;
   prepTime: number;
   status: ProductStatus;
+  isActive: boolean;
+  hasQuantityTypes: boolean;
+  quantityTypes: QuantityType[];
+  emoji?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -93,13 +106,13 @@ export interface CategoryDTO {
   sortOrder: number;
 }
 
-export type OrderType = 'dine-in' | 'takeaway' | 'delivery';
+export type OrderType = 'dine-in' | 'takeaway' | 'delivery' | 'rental';
 export type OrderStatus = 'new' | 'preparing' | 'ready' | 'served' | 'cancelled' | 'completed';
 
 export interface OrderDTO {
   _id: string;
   branchId?: string;
-  tableId: string;
+  tentId: string;
   customerId?: string;
   userId: string;
   type: OrderType;
@@ -119,6 +132,8 @@ export interface OrderItemDTO {
   quantity: number;
   unitPrice: number;
   options: Array<{ name: string; price: number }>;
+  quantityTypeName?: string;
+  quantityTypeLabel?: string;
   notes?: string;
   total: number;
 }
@@ -130,19 +145,25 @@ export interface CartItem {
   quantity: number;
   variant?: string;
   options?: Array<{ name: string; price: number }>;
+  quantityTypeName?: string;
+  quantityTypeLabel?: string;
   notes?: string;
 }
 
 export interface CreateOrderInput {
-  tableId: string;
+  tentId?: string;
   customerId?: string;
   type: OrderType;
   paymentMethod?: 'cash' | 'card' | 'mobile';
+  rentalDuration?: string;
+  rentalPrice?: number;
   items: Array<{
     productId: string;
     quantity: number;
     variant?: string;
     options?: Array<{ name: string; price: number }>;
+    quantityTypeName?: string;
+    quantityTypeLabel?: string;
     notes?: string;
   }>;
   notes?: string;

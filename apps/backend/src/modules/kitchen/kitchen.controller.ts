@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { KitchenService } from './kitchen.service';
+import { OrderService } from '../orders/order.service';
 import { sendSuccess, AppError } from '../../utils/response';
 
 export class KitchenController {
@@ -105,7 +106,7 @@ export class KitchenController {
     try {
       const { id } = req.params;
       const { reason } = req.body;
-      await KitchenService.cancelOrder(id, reason);
+      await OrderService.cancelOrder(id, reason);
       sendSuccess(res, { message: 'Order cancelled successfully' });
     } catch (error) {
       if (error instanceof AppError) {

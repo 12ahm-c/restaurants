@@ -5,7 +5,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     // Navigation
     'nav.dashboard': 'Tableau de bord',
     'nav.orders': 'Commandes',
-    'nav.tables': 'Tables',
+    'nav.tents': 'Khaymat',
     'nav.kitchen': 'Cuisine',
     'nav.menu': 'Menu',
     'nav.customers': 'Clients',
@@ -104,7 +104,7 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Orders
     'orders.active': 'Commandes actives',
-    'orders.table': 'Table',
+    'orders.tent': 'Khayma',
     'orders.items': 'Articles',
     'orders.status': 'Statut',
     'orders.noOrders': 'Aucune commande',
@@ -159,8 +159,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'kitchen.noOrders': 'Aucune commande en attente',
 
     // Tables
-    'tables.title': 'Tables',
-    'tables.available': 'Disponible',
+    'tents.title': 'Khaymat',
+    'tents.available': 'Disponible',
 
     // Finance
     'finance.revenue': 'Revenu',
@@ -199,6 +199,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'menu.available': 'Disponible',
     'menu.unavailable': 'Indisponible',
     'menu.discontinued': 'Arrêté',
+    'menu.activeInPOS': 'Actif en POS',
+    'menu.active': 'Actif',
+    'menu.inactive': 'Inactif',
+    'menu.activate': 'Activer',
+    'menu.deactivate': 'Désactiver',
 
     // POS
     'pos.newOrder': 'Nouvelle commande',
@@ -206,7 +211,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'pos.dineIn': 'Sur place',
     'pos.takeaway': 'À emporter',
     'pos.delivery': 'Livraison',
-    'pos.selectTable': 'Sélectionner une table',
+    'pos.selectTent': 'Sélectionner une khayma',
     'pos.customer': 'Client (optionnel)',
     'pos.cartEmpty': 'Le panier est vide',
     'pos.cartEmptyHint': 'Cliquez sur les produits pour les ajouter',
@@ -223,6 +228,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     'pos.outOfStock': 'Rupture de stock',
     'pos.inStock': 'En stock',
     'pos.orderCreated': 'Commande créée',
+    'pos.availableByWeight': 'Disponible au poids',
+    'pos.rentalMode': 'Mode',
+    'pos.sitInTent': 'Assis',
+    'pos.rentOnly': 'Location',
+    'pos.takeawayOnly': 'À emporter',
+    'pos.rentalDuration': 'Durée de location',
+    'pos.rentalPrice': 'Prix de location',
+    'pos.rentOnlyNoItems': 'Sélectionnez une khayma et un prix',
+    'pos.createRental': 'Créer la location',
+    'pos.rental': 'Location',
 
     // Reports
     'reports.title': 'Rapports',
@@ -285,22 +300,25 @@ export const translations: Record<Locale, Record<string, string>> = {
     'finance.tax': 'Impôt',
     'finance.other': 'Autre',
 
-    // Tables
-    'tables.manage': 'Gérez les tables de votre restaurant',
-    'tables.addTable': 'Ajouter une table',
-    'tables.free': 'Libre',
-    'tables.occupied': 'Occupée',
-    'tables.reserved': 'Réservée',
-    'tables.inService': 'En service',
-    'tables.total': 'Total',
-    'tables.allZones': 'Toutes les zones',
-    'tables.noTables': 'Aucune table trouvée',
-    'tables.createTable': 'Créer une table',
-    'tables.tableName': 'Nom de la table',
-    'tables.capacity': 'Capacité',
-    'tables.zone': 'Zone',
-    'tables.creating': 'Création...',
-    'tables.clearTable': 'Libérer la table',
+    // Tents
+    'tents.manage': 'Gérez les khaymat de votre restaurant',
+    'tents.addTent': 'Ajouter une khayma',
+    'tents.free': 'Libre',
+    'tents.occupied': 'Occupée',
+    'tents.reserved': 'Réservée',
+    'tents.cleaning': 'Nettoyage',
+    'tents.total': 'Total',
+    'tents.allSizes': 'Toutes les tailles',
+    'tents.noTents': 'Aucune khayma trouvée',
+    'tents.createTent': 'Créer une khayma',
+    'tents.tentSize': 'Taille de la khayma',
+    'tents.sizeSmall': 'Petite',
+    'tents.sizeMedium': 'Moyenne',
+    'tents.sizeLarge': 'Grande',
+    'tents.creating': 'Création...',
+    'tents.markEmpty': 'Marquer comme vide',
+    'tents.tentEmpty': 'Khayma vide',
+    'tents.markEmptyHint': 'Appuyez pour signaler que la khayma est vide',
 
     // Forms - Product
     'form.createProduct': 'Créer un produit',
@@ -361,7 +379,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     // Navigation
     'nav.dashboard': 'Dashboard',
     'nav.orders': 'Orders',
-    'nav.tables': 'Tables',
+    'nav.tents': 'Tents',
     'nav.kitchen': 'Kitchen',
     'nav.menu': 'Menu',
     'nav.customers': 'Customers',
@@ -460,7 +478,7 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Orders
     'orders.active': 'Active Orders',
-    'orders.table': 'Table',
+    'orders.tent': 'Tent',
     'orders.items': 'Items',
     'orders.status': 'Status',
     'orders.noOrders': 'No orders',
@@ -515,8 +533,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'kitchen.noOrders': 'No pending orders',
 
     // Tables
-    'tables.title': 'Tables',
-    'tables.available': 'Available',
+    'tents.title': 'Tents',
+    'tents.available': 'Available',
 
     // Finance
     'finance.revenue': 'Revenue',
@@ -555,6 +573,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'menu.available': 'Available',
     'menu.unavailable': 'Unavailable',
     'menu.discontinued': 'Discontinued',
+    'menu.activeInPOS': 'Active in POS',
+    'menu.active': 'Active',
+    'menu.inactive': 'Inactive',
+    'menu.activate': 'Activate',
+    'menu.deactivate': 'Deactivate',
 
     // POS
     'pos.newOrder': 'New Order',
@@ -562,7 +585,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'pos.dineIn': 'Dine-in',
     'pos.takeaway': 'Takeaway',
     'pos.delivery': 'Delivery',
-    'pos.selectTable': 'Select a table',
+    'pos.selectTent': 'Select tent',
     'pos.customer': 'Customer (optional)',
     'pos.cartEmpty': 'Cart is empty',
     'pos.cartEmptyHint': 'Click products to add them',
@@ -579,6 +602,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     'pos.outOfStock': 'Out of Stock',
     'pos.inStock': 'In Stock',
     'pos.orderCreated': 'Order created',
+    'pos.availableByWeight': 'Available by weight',
+    'pos.rentalMode': 'Mode',
+    'pos.sitInTent': 'Sit-in',
+    'pos.rentOnly': 'Rent only',
+    'pos.takeawayOnly': 'Takeaway',
+    'pos.rentalDuration': 'Rental duration',
+    'pos.rentalPrice': 'Rental price',
+    'pos.rentOnlyNoItems': 'Select a tent and price',
+    'pos.createRental': 'Create rental',
+    'pos.rental': 'Rental',
 
     // Reports
     'reports.title': 'Reports',
@@ -641,22 +674,25 @@ export const translations: Record<Locale, Record<string, string>> = {
     'finance.tax': 'Tax',
     'finance.other': 'Other',
 
-    // Tables
-    'tables.manage': 'Manage your restaurant tables',
-    'tables.addTable': 'Add Table',
-    'tables.free': 'Free',
-    'tables.occupied': 'Occupied',
-    'tables.reserved': 'Reserved',
-    'tables.inService': 'In Service',
-    'tables.total': 'Total',
-    'tables.allZones': 'All Zones',
-    'tables.noTables': 'No tables found',
-    'tables.createTable': 'Create Table',
-    'tables.tableName': 'Table Name',
-    'tables.capacity': 'Capacity',
-    'tables.zone': 'Zone',
-    'tables.creating': 'Creating...',
-    'tables.clearTable': 'Clear Table',
+    // Tents
+    'tents.manage': 'Manage your restaurant tents',
+    'tents.addTent': 'Add Tent',
+    'tents.free': 'Free',
+    'tents.occupied': 'Occupied',
+    'tents.reserved': 'Reserved',
+    'tents.cleaning': 'Cleaning',
+    'tents.total': 'Total',
+    'tents.allSizes': 'All Sizes',
+    'tents.noTents': 'No tents found',
+    'tents.createTent': 'Create Tent',
+    'tents.tentSize': 'Tent Size',
+    'tents.sizeSmall': 'Small',
+    'tents.sizeMedium': 'Medium',
+    'tents.sizeLarge': 'Large',
+    'tents.creating': 'Creating...',
+    'tents.markEmpty': 'Mark Empty',
+    'tents.tentEmpty': 'Empty tent',
+    'tents.markEmptyHint': 'Press to signal tent is empty',
 
     // Forms - Product
     'form.createProduct': 'Create Product',
@@ -717,7 +753,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     // Navigation
     'nav.dashboard': 'لوحة التحكم',
     'nav.orders': 'الطلبات',
-    'nav.tables': 'الطاولات',
+    'nav.tents': 'الخيام',
     'nav.kitchen': 'المطبخ',
     'nav.menu': 'القائمة',
     'nav.customers': 'العملاء',
@@ -816,7 +852,7 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     // Orders
     'orders.active': 'الطلبات النشطة',
-    'orders.table': 'الطاولة',
+    'orders.tent': 'الخيمة',
     'orders.items': 'العناصر',
     'orders.status': 'الحالة',
     'orders.noOrders': 'لا توجد طلبات',
@@ -871,8 +907,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'kitchen.noOrders': 'لا توجد طلبات في الانتظار',
 
     // Tables
-    'tables.title': 'الطاولات',
-    'tables.available': 'متاحة',
+    'tents.title': 'الخيام',
+    'tents.available': 'متاحة',
 
     // Finance
     'finance.revenue': 'الإيرادات',
@@ -911,6 +947,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'menu.available': 'متاح',
     'menu.unavailable': 'غير متاح',
     'menu.discontinued': 'متوقف',
+    'menu.activeInPOS': 'نشط في نقطة البيع',
+    'menu.active': 'نشط',
+    'menu.inactive': 'غير نشط',
+    'menu.activate': 'تفعيل',
+    'menu.deactivate': 'إلغاء التفعيل',
 
     // POS
     'pos.newOrder': 'طلب جديد',
@@ -918,7 +959,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'pos.dineIn': 'في المطعم',
     'pos.takeaway': 'takeaway',
     'pos.delivery': 'توصيل',
-    'pos.selectTable': 'اختر طاولة',
+    'pos.selectTent': 'اختر خيمة',
     'pos.customer': 'العميل (اختياري)',
     'pos.cartEmpty': 'السلة فارغة',
     'pos.cartEmptyHint': 'انقر على المنتجات لإضافتها',
@@ -935,6 +976,16 @@ export const translations: Record<Locale, Record<string, string>> = {
     'pos.outOfStock': 'نفد من المخزون',
     'pos.inStock': 'متوفر',
     'pos.orderCreated': 'تم إنشاء الطلب',
+    'pos.availableByWeight': 'متاح بالأوزان',
+    'pos.rentalMode': 'نوع الطلب',
+    'pos.sitInTent': 'جلوس في الخيمة',
+    'pos.rentOnly': 'كراء فقط',
+    'pos.takeawayOnly': 'بدون جلوس',
+    'pos.rentalDuration': 'مدة الكراء',
+    'pos.rentalPrice': 'سعر الكراء',
+    'pos.rentOnlyNoItems': 'اختر خيمة وسعر الكراء',
+    'pos.createRental': 'إنشاء الكراء',
+    'pos.rental': 'كراء',
 
     // Reports
     'reports.title': 'التقارير',
@@ -997,22 +1048,25 @@ export const translations: Record<Locale, Record<string, string>> = {
     'finance.tax': 'الضريبة',
     'finance.other': 'أخرى',
 
-    // Tables
-    'tables.manage': 'إدارة طاولات المطعم',
-    'tables.addTable': 'إضافة طاولة',
-    'tables.free': 'فارغة',
-    'tables.occupied': 'مشغولة',
-    'tables.reserved': 'محجوزة',
-    'tables.inService': 'قيد الخدمة',
-    'tables.total': 'المجموع',
-    'tables.allZones': 'جميع المناطق',
-    'tables.noTables': 'لا توجد طاولات',
-    'tables.createTable': 'إنشاء طاولة',
-    'tables.tableName': 'اسم الطاولة',
-    'tables.capacity': 'السعة',
-    'tables.zone': 'المنطقة',
-    'tables.creating': 'جاري الإنشاء...',
-    'tables.clearTable': 'تحرير الطاولة',
+    // Tents
+    'tents.manage': 'إدارة خيام المطعم',
+    'tents.addTent': 'إضافة خيمة',
+    'tents.free': 'فارغة',
+    'tents.occupied': 'مشغولة',
+    'tents.reserved': 'محجوزة',
+    'tents.cleaning': 'تنظيف',
+    'tents.total': 'المجموع',
+    'tents.allSizes': 'جميع الأحجام',
+    'tents.noTents': 'لا توجد خيام',
+    'tents.createTent': 'إنشاء خيمة',
+    'tents.tentSize': 'حجم الخيمة',
+    'tents.sizeSmall': 'صغيرة',
+    'tents.sizeMedium': 'متوسطة',
+    'tents.sizeLarge': 'كبيرة',
+    'tents.creating': 'جاري الإنشاء...',
+    'tents.markEmpty': 'تحديد كفارغة',
+    'tents.tentEmpty': 'الخيمة فارغة',
+    'tents.markEmptyHint': 'اضغط للإشارة إلى أن الخيمة فارغة',
 
     // Forms - Product
     'form.createProduct': 'إنشاء منتج',

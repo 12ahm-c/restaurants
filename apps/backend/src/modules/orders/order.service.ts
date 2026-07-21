@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { Order, IOrder, OrderStatus } from '../../models/Order';
 import { OrderItem, IOrderItem } from '../../models/OrderItem';
-import { Table } from '../../models/Table';
+import { Tent } from '../../models/Tent';
 import { Product } from '../../models/Product';
 import { Inventory, IInventory } from '../../models/Inventory';
 import { KitchenQueue } from '../../models/KitchenQueue';
@@ -11,17 +11,22 @@ import { getIO } from '../../socket/socket.server';
 import { emitNewOrder, emitOrderStatusUpdate, emitOrderCancelled } from '../../socket/emitters';
 import { InventoryService } from '../inventory/inventory.service';
 import { NotificationService } from '../notifications/notification.service';
+import { logger } from '../../utils/logger';
 
 export interface CreateOrderInput {
-  tableId?: string;
+  tentId?: string;
   customerId?: string;
-  type: 'dine-in' | 'takeaway' | 'delivery';
+  type: 'dine-in' | 'takeaway' | 'delivery' | 'rental';
   paymentMethod?: 'cash' | 'card' | 'mobile';
-  items: Array<{
+  rentalDuration?: string;
+  rentalPrice?: number;
+  items?: Array<{
     productId: string;
     quantity: number;
     variant?: string;
     options?: Array<{ name: string; price: number }>;
+    quantityTypeName?: string;
+    quantityTypeLabel?: string;
     notes?: string;
   }>;
   notes?: string;
@@ -37,26 +42,34 @@ export class OrderService {
     session.startTransaction();
 
     try {
-      // tableId is required only for dine-in
-      if (input.type === 'dine-in' && !input.tableId) {
-        throw new AppError(400, 'VALIDATION_ERROR', 'Table is required for dine-in orders');
+      // Validate tent requirements based on order type
+      if (input.type === 'dine-in' && !input.tentId) {
+        throw new AppError(400, 'VALIDATION_ERROR', 'Tent is required for dine-in orders');
+      }
+      if (input.type === 'rental' && !input.tentId) {
+        throw new AppError(400, 'VALIDATION_ERROR', 'Tent is required for rental orders');
       }
 
-      let table: any = null;
-      if (input.tableId) {
-        table = await Table.findById(input.tableId).session(session);
-        if (!table) {
-          throw new AppError(404, 'NOT_FOUND', 'Table not found');
+      let tent: any = null;
+      if (input.tentId) {
+        tent = await Tent.findById(input.tentId).session(session);
+        if (!tent) {
+          throw new AppError(404, 'NOT_FOUND', 'Tent not found');
         }
-        if (table.status === 'occupied') {
-          throw new AppError(409, 'TABLE_OCCUPIED', 'Table is already occupied');
+        if (tent.status === 'occupied') {
+          throw new AppError(409, 'TENT_OCCUPIED', 'Tent is already occupied');
         }
       }
 
       const orderItems: IOrderItem[] = [];
       let totalHT = 0;
 
-      for (const item of input.items) {
+      // For rental-only orders, totalHT is just the rental price
+      if (input.type === 'rental') {
+        totalHT = input.rentalPrice || 0;
+      }
+
+      for (const item of (input.items || [])) {
         const product = await Product.findById(item.productId).session(session);
         if (!product) {
           throw new AppError(404, 'NOT_FOUND', `Product ${item.productId} not found`);
@@ -66,8 +79,17 @@ export class OrderService {
           throw new AppError(422, 'INVALID_STATE', `Product ${product.name} is not available`);
         }
 
+        // Calculate price based on quantity type or regular price
+        let unitPrice = product.price;
+        if (item.quantityTypeName && product.hasQuantityTypes) {
+          const qtyType = product.quantityTypes.find((qt) => qt.name === item.quantityTypeName);
+          if (qtyType) {
+            unitPrice = qtyType.price;
+          }
+        }
+
         const optionsTotal = item.options?.reduce((sum, opt) => sum + opt.price, 0) || 0;
-        const itemTotal = (product.price + optionsTotal) * item.quantity;
+        const itemTotal = (unitPrice + optionsTotal) * item.quantity;
         totalHT += itemTotal;
 
         orderItems.push({
@@ -75,8 +97,10 @@ export class OrderService {
           productId: product._id,
           variant: item.variant,
           quantity: item.quantity,
-          unitPrice: product.price,
+          unitPrice,
           options: item.options || [],
+          quantityTypeName: item.quantityTypeName,
+          quantityTypeLabel: item.quantityTypeLabel,
           notes: item.notes,
           total: itemTotal,
         } as IOrderItem);
@@ -99,13 +123,15 @@ export class OrderService {
 
       const order = new Order({
         orderNumber,
-        tableId: input.tableId || undefined,
+        tentId: input.tentId || undefined,
         customerId: input.customerId,
         userId,
         type: input.type,
         status: 'new',
         totalHT,
         totalTTC,
+        rentalDuration: input.rentalDuration,
+        rentalPrice: input.rentalPrice,
         notes: input.notes,
       });
 
@@ -116,7 +142,7 @@ export class OrderService {
         await OrderItem.create([item], { session });
       }
 
-      for (const item of input.items) {
+      for (const item of (input.items || [])) {
         const product = await Product.findById(item.productId).session(session);
         if (product?.recipe) {
           for (const recipeItem of product.recipe) {
@@ -138,21 +164,26 @@ export class OrderService {
         }
       }
 
-      // Only update table status for dine-in orders
-      if (table) {
-        table.status = 'occupied';
-        table.currentOrderId = order._id;
-        await table.save({ session });
+      // Update tent status for dine-in and rental orders
+      if (tent) {
+        tent.status = 'occupied';
+        tent.currentOrderId = order._id;
+        tent.isEmpty = false;
+        await tent.save({ session });
       }
 
-      const kitchenEntry = new KitchenQueue({
-        orderId: order._id,
-        status: 'pending',
-        priority: input.type === 'delivery' ? 1 : 0,
-      });
-      await kitchenEntry.save({ session });
+      // Skip kitchen queue for rental-only orders (no items to prepare)
+      let kitchenEntry: any = null;
+      if (orderItems.length > 0) {
+        kitchenEntry = new KitchenQueue({
+          orderId: order._id,
+          status: 'pending',
+          priority: input.type === 'delivery' ? 1 : 0,
+        });
+        await kitchenEntry.save({ session });
+      }
 
-      // Auto-create payment (cashier pays immediately)
+      // Auto-create payment
       const payment = new Payment({
         orderId: order._id,
         amount: totalTTC,
@@ -172,41 +203,42 @@ export class OrderService {
 
       try {
         const io = getIO();
-        const populatedOrder = await Order.findById(order._id).populate('tableId', 'name');
-        const tableName = (populatedOrder?.tableId as unknown as { name: string })?.name || 'Unknown';
+        const populatedOrder = await Order.findById(order._id).populate('tentId', 'tentNumber size');
+        const tentData = (populatedOrder?.tentId as unknown as { tentNumber: number; size: string }) || {};
+        const sizeLabel = tentData.size === 'small' ? 'صغيرة' : tentData.size === 'large' ? 'كبيرة' : 'متوسطة';
+        const tentName = tentData.tentNumber ? `خيمة ${tentData.tentNumber} - ${sizeLabel}` : 'Unknown';
 
         emitNewOrder(io, {
           orderId: order._id.toString(),
-          tableName,
-          items: input.items.map((item) => ({
+          tentName,
+          items: (input.items || []).map((item) => ({
             name: item.productId,
             quantity: item.quantity,
           })),
-          priority: kitchenEntry.priority,
+          priority: kitchenEntry?.priority || 0,
           timestamp: new Date(),
         });
       } catch (socketError) {
         logger.warn({ err: socketError }, 'Failed to emit Socket.IO event');
       }
 
-      // Send notifications after commit
       try {
-        const populatedOrder = await Order.findById(order._id).populate('tableId', 'name');
-        const tableName = (populatedOrder?.tableId as unknown as { name: string })?.name || 'Unknown';
+        const populatedOrder = await Order.findById(order._id).populate('tentId', 'tentNumber size');
+        const tentData2 = (populatedOrder?.tentId as unknown as { tentNumber: number; size: string }) || {};
+        const sizeLabel2 = tentData2.size === 'small' ? 'صغيرة' : tentData2.size === 'large' ? 'كبيرة' : 'متوسطة';
+        const tentName2 = tentData2.tentNumber ? `خيمة ${tentData2.tentNumber} - ${sizeLabel2}` : 'Unknown';
 
-        // Get product names for items
         const itemsWithName = await Promise.all(
-          input.items.map(async (item) => {
+          (input.items || []).map(async (item) => {
             const product = await Product.findById(item.productId).select('name');
             return { name: product?.name || item.productId, quantity: item.quantity };
           })
         );
 
-        // Notify chefs about new order
         await NotificationService.notifyChefsNewOrder(
           order._id.toString(),
           orderNumber,
-          tableName,
+          tentName2,
           itemsWithName
         );
       } catch (notifError) {
@@ -214,7 +246,6 @@ export class OrderService {
       }
 
       try {
-        // Notify cashiers/managers about payment received
         await NotificationService.notifyPaymentReceived(
           order._id.toString(),
           orderNumber,
@@ -228,7 +259,7 @@ export class OrderService {
       return {
         order,
         items: orderItems,
-        kitchenQueueId: kitchenEntry._id.toString(),
+        kitchenQueueId: kitchenEntry?._id?.toString() || '',
       };
     } catch (error) {
       await session.abortTransaction();
@@ -274,7 +305,7 @@ export class OrderService {
 
     const total = await Order.countDocuments(query);
     const orders = await Order.find(query)
-      .populate('tableId', 'name')
+      .populate('tentId', 'tentNumber size')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -287,7 +318,7 @@ export class OrderService {
       userId,
       status: { $in: ['new', 'preparing', 'ready'] },
     })
-      .populate('tableId', 'name')
+      .populate('tentId', 'tentNumber size')
       .sort({ createdAt: -1 });
   }
 
@@ -296,7 +327,7 @@ export class OrderService {
     items: IOrderItem[];
   }> {
     const order = await Order.findById(id)
-      .populate('tableId', 'name status')
+      .populate('tentId', 'tentNumber size status')
       .populate('customerId', 'firstName lastName phone');
 
     if (!order) {
@@ -331,31 +362,34 @@ export class OrderService {
     order.status = status;
     await order.save();
 
-    if (status === 'cancelled') {
-      await Table.findByIdAndUpdate(order.tableId, {
+    if (status === 'cancelled' || status === 'completed') {
+      await Tent.findByIdAndUpdate(order.tentId, {
         status: 'free',
         currentOrderId: null,
+        isEmpty: true,
+        lastEmptiedAt: new Date(),
       });
     }
 
     try {
       const io = getIO();
-      const populatedOrder = await Order.findById(order._id).populate('tableId', 'name');
-      const tableName = (populatedOrder?.tableId as unknown as { name: string })?.name || 'Unknown';
+      const populatedOrder = await Order.findById(order._id).populate('tentId', 'tentNumber size');
+      const tentData = (populatedOrder?.tentId as unknown as { tentNumber: number; size: string }) || {};
+      const sizeLabel = tentData.size === 'small' ? 'صغيرة' : tentData.size === 'large' ? 'كبيرة' : 'متوسطة';
+      const tentName = tentData.tentNumber ? `خيمة ${tentData.tentNumber} - ${sizeLabel}` : 'Unknown';
 
       emitOrderStatusUpdate(io, {
         orderId: order._id.toString(),
         status,
-        tableName,
+        tentName,
         timestamp: new Date(),
       });
 
-      // Notify managers when order is served
       if (status === 'served') {
         await NotificationService.notifyOrderServed(
           order._id.toString(),
           order.orderNumber || order._id.toString().slice(-6).toUpperCase(),
-          tableName
+          tentName
         );
       }
     } catch (socketError) {
@@ -401,9 +435,9 @@ export class OrderService {
         }
       }
 
-      await Table.findByIdAndUpdate(
-        order.tableId,
-        { status: 'free', currentOrderId: null },
+      await Tent.findByIdAndUpdate(
+        order.tentId,
+        { status: 'free', currentOrderId: null, isEmpty: true, lastEmptiedAt: new Date() },
         { session }
       );
 
@@ -436,5 +470,3 @@ export class OrderService {
     }
   }
 }
-
-import { logger } from '../../utils/logger';

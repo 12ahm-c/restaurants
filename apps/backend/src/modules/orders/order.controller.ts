@@ -4,10 +4,12 @@ import { OrderService } from './order.service';
 import { sendSuccess, sendError, AppError } from '../../utils/response';
 
 const createOrderSchema = z.object({
-  tableId: z.string().optional(),
+  tentId: z.string().optional(),
   customerId: z.string().optional(),
-  type: z.enum(['dine-in', 'takeaway', 'delivery']),
+  type: z.enum(['dine-in', 'takeaway', 'delivery', 'rental']),
   paymentMethod: z.enum(['cash', 'card', 'mobile']).optional(),
+  rentalDuration: z.string().optional(),
+  rentalPrice: z.number().min(0).optional(),
   items: z
     .array(
       z.object({
@@ -22,10 +24,12 @@ const createOrderSchema = z.object({
             })
           )
           .optional(),
+        quantityTypeName: z.string().optional(),
+        quantityTypeLabel: z.string().optional(),
         notes: z.string().optional(),
       })
     )
-    .min(1, 'At least one item is required'),
+    .optional(),
   notes: z.string().optional(),
 });
 
@@ -65,7 +69,7 @@ export class OrderController {
       sendSuccess(res, {
         orderId: order._id,
         orderNumber: order.orderNumber,
-        tableStatus: order.tableId ? 'occupied' : 'n/a',
+        tentStatus: order.tentId ? 'occupied' : 'n/a',
         kitchenQueueId,
         ticketUrl: null,
       }, 201);

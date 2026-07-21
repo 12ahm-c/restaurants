@@ -4,7 +4,7 @@ import { useMenuStore } from '../../../stores/menuStore';
 import { useAuthStore } from '../../../stores/authStore';
 import { useUIStore } from '../../../stores/uiStore';
 import { useI18n } from '../../../i18n/I18nContext';
-import { Plus, Search, Edit, Trash2, Eye, Package, Filter } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, Package, Filter, ToggleLeft, ToggleRight } from 'lucide-react';
 
 const statusColors: Record<string, string> = {
   available: 'badge-success',
@@ -44,6 +44,17 @@ export function ProductListPage() {
       await deleteProduct(id);
       addToast('success', t('common.success'));
       setShowDeleteModal(null);
+    } catch (error) {
+      addToast('error', error instanceof Error ? error.message : t('common.error'));
+    }
+  };
+
+  const handleToggleActive = async (productId: string, currentIsActive: boolean) => {
+    try {
+      const { menuService } = await import('../../../services/menu.service');
+      await menuService.updateProduct(productId, { isActive: !currentIsActive } as any);
+      fetchProducts();
+      addToast('success', t('common.success'));
     } catch (error) {
       addToast('error', error instanceof Error ? error.message : t('common.error'));
     }
@@ -151,9 +162,25 @@ export function ProductListPage() {
                           <p className="text-xs text-surface-500 truncate mt-0.5">{product.description}</p>
                         )}
                       </div>
-                      <span className={`badge text-[10px] ${statusColors[product.status]}`}>
-                        {statusLabels[product.status] || product.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`badge text-[10px] ${statusColors[product.status]}`}>
+                          {statusLabels[product.status] || product.status}
+                        </span>
+                        {/* Activation Toggle */}
+                        {canEdit && (
+                          <button
+                            onClick={() => handleToggleActive(product._id, product.isActive)}
+                            className={`p-1 rounded-lg transition-colors ${
+                              product.isActive
+                                ? 'text-emerald-400 hover:text-emerald-300'
+                                : 'text-surface-500 hover:text-surface-400'
+                            }`}
+                            title={product.isActive ? t('menu.deactivate') : t('menu.activate')}
+                          >
+                            {product.isActive ? <ToggleRight size={22} /> : <ToggleLeft size={22} />}
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-sm font-bold text-brand-400">{product.price} MRU</span>
@@ -186,6 +213,7 @@ export function ProductListPage() {
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.category')}</th>
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.price')}</th>
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.status')}</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.activeInPOS')}</th>
                   {canEdit && <th className="text-right px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.actions')}</th>}
                 </tr>
               </thead>
@@ -219,6 +247,25 @@ export function ProductListPage() {
                       <span className={`badge ${statusColors[product.status]}`}>
                         {statusLabels[product.status] || product.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {canEdit ? (
+                        <button
+                          onClick={() => handleToggleActive(product._id, product.isActive)}
+                          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all ${
+                            product.isActive
+                              ? 'bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25'
+                              : 'bg-surface-800 text-surface-500 hover:bg-surface-700'
+                          }`}
+                        >
+                          {product.isActive ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+                          <span className="text-xs font-semibold">{product.isActive ? t('menu.active') : t('menu.inactive')}</span>
+                        </button>
+                      ) : (
+                        <span className={`badge ${product.isActive ? 'badge-success' : 'badge-danger'}`}>
+                          {product.isActive ? t('menu.active') : t('menu.inactive')}
+                        </span>
+                      )}
                     </td>
                     {canEdit && (
                       <td className="px-6 py-4 text-right">

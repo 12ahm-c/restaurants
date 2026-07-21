@@ -182,6 +182,7 @@ export class MenuService {
       price: number;
       prepTime: number;
       status: ProductStatus;
+      isActive: boolean;
       imageUrl: string;
       recipe: Array<{ inventoryId: string; quantity: number }>;
     }>

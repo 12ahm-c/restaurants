@@ -1,9 +1,9 @@
 import { create } from 'zustand';
-import { CartItem, OrderType, TableDTO } from '../types';
+import { CartItem, OrderType, TentDTO } from '../types';
 
 interface CartState {
   items: CartItem[];
-  selectedTable: TableDTO | null;
+  selectedTent: TentDTO | null;
   orderType: OrderType;
   customerId?: string;
   notes: string;
@@ -11,7 +11,7 @@ interface CartState {
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   updateItemNotes: (productId: string, notes: string) => void;
-  setSelectedTable: (table: TableDTO | null) => void;
+  setSelectedTent: (tent: TentDTO | null) => void;
   setOrderType: (type: OrderType) => void;
   setCustomerId: (id: string | undefined) => void;
   setNotes: (notes: string) => void;
@@ -22,18 +22,18 @@ interface CartState {
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
-  selectedTable: null,
+  selectedTent: null,
   orderType: 'dine-in',
   customerId: undefined,
   notes: '',
 
   addItem: (item) => {
     set((state) => {
-      const existing = state.items.find((i) => i.productId === item.productId);
+      const existing = state.items.find((i) => i.productId === item.productId && i.quantityTypeName === item.quantityTypeName);
       if (existing) {
         return {
           items: state.items.map((i) =>
-            i.productId === item.productId
+            i.productId === item.productId && i.quantityTypeName === item.quantityTypeName
               ? { ...i, quantity: i.quantity + item.quantity }
               : i
           ),
@@ -69,7 +69,7 @@ export const useCartStore = create<CartState>((set, get) => ({
     }));
   },
 
-  setSelectedTable: (table) => set({ selectedTable: table }),
+  setSelectedTent: (tent) => set({ selectedTent: tent }),
   setOrderType: (type) => set({ orderType: type }),
   setCustomerId: (id) => set({ customerId: id }),
   setNotes: (notes) => set({ notes }),
@@ -77,7 +77,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   clearCart: () =>
     set({
       items: [],
-      selectedTable: null,
+      selectedTent: null,
       orderType: 'dine-in',
       customerId: undefined,
       notes: '',

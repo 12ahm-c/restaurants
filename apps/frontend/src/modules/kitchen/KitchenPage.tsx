@@ -183,7 +183,7 @@ export function KitchenPage() {
                       </p>
                       <p className="text-sm text-surface-400 flex items-center gap-1 mt-0.5">
                         <UtensilsCrossed size={12} />
-                        {item.table?.name || t('orders.table')}
+                        {item.table?.tentNumber ? `خيمة #${item.table.tentNumber} - ${item.table.size === 'small' ? 'صغيرة' : item.table.size === 'large' ? 'كبيرة' : 'متوسطة'}` : t('orders.table')}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
