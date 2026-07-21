@@ -71,7 +71,7 @@ export function ReportsPage() {
 
   return (
     <div className="py-6">
-      <h1 className="text-2xl font-bold text-white mb-6">{t('reports.title')}</h1>
+      <h1 className="text-2xl font-bold dark:text-white text-surface-900 mb-6">{t('reports.title')}</h1>
 
       <div className="card rounded-lg shadow p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -116,7 +116,7 @@ export function ReportsPage() {
 
       {report && (
         <div className="card rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">{reportTypeLabels[reportType]}</h2>
+          <h2 className="text-lg font-semibold dark:text-white text-surface-900 mb-4">{reportTypeLabels[reportType]}</h2>
           {reportType === 'sales' && renderSalesReport(report as SalesReport, t)}
           {reportType === 'profitability' && renderProfitabilityReport(report as ProfitabilityReport, t)}
           {reportType === 'stock-usage' && renderStockUsageReport(report as StockUsageReport, t)}
@@ -150,8 +150,8 @@ function renderSalesReport(data: SalesReport, t: (key: string) => string) {
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-white/5">
-          <thead className="bg-white/5">
+        <table className="min-w-full divide-y dark:divide-white/5 divide-black/5">
+          <thead className="dark:bg-white/5 bg-black/5">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('common.date')}</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('reports.totalSales')}</th>
@@ -161,11 +161,11 @@ function renderSalesReport(data: SalesReport, t: (key: string) => string) {
               <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('finance.mobile')}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y dark:divide-white/5 divide-black/5">
             {data.sales.map((day: any, i: number) => (
-              <tr key={i} className="hover:bg-white/5">
-                <td className="px-4 py-3 text-sm font-medium text-white">{day.date}</td>
-                <td className="px-4 py-3 text-sm text-white text-right font-semibold">{day.totalSales.toLocaleString()} MRU</td>
+              <tr key={i} className="dark:hover:bg-white/5 hover:bg-black/5">
+                <td className="px-4 py-3 text-sm font-medium dark:text-white text-surface-900">{day.date}</td>
+                <td className="px-4 py-3 text-sm dark:text-white text-surface-900 text-right font-semibold">{day.totalSales.toLocaleString()} MRU</td>
                 <td className="px-4 py-3 text-sm text-surface-400 text-right">{day.ordersCount}</td>
                 <td className="px-4 py-3 text-sm text-brand-400 text-right">{day.cashSales.toLocaleString()}</td>
                 <td className="px-4 py-3 text-sm text-blue-400 text-right">{day.cardSales.toLocaleString()}</td>
@@ -205,8 +205,8 @@ function renderProfitabilityReport(data: ProfitabilityReport, t: (key: string) =
 function renderStockUsageReport(data: StockUsageReport, t: (key: string) => string) {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-white/5">
-        <thead className="bg-white/5">
+      <table className="min-w-full divide-y dark:divide-white/5 divide-black/5">
+        <thead className="dark:bg-white/5 bg-black/5">
           <tr>
             <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('menu.product')}</th>
             <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('reports.consumed')}</th>
@@ -214,10 +214,10 @@ function renderStockUsageReport(data: StockUsageReport, t: (key: string) => stri
             <th className="px-4 py-3 text-right text-xs font-medium text-surface-400 uppercase">{t('reports.waste')}</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5">
+        <tbody className="divide-y dark:divide-white/5 divide-black/5">
           {data.items.map((item: any, i: number) => (
-            <tr key={i} className="hover:bg-white/5">
-              <td className="px-4 py-3 text-sm font-medium text-white">{item.name}</td>
+            <tr key={i} className="dark:hover:bg-white/5 hover:bg-black/5">
+              <td className="px-4 py-3 text-sm font-medium dark:text-white text-surface-900">{item.name}</td>
               <td className="px-4 py-3 text-sm text-blue-400 text-right font-semibold">{item.consumed}</td>
               <td className="px-4 py-3 text-sm text-brand-400 text-right font-semibold">{item.replenished}</td>
               <td className="px-4 py-3 text-sm text-coral-400 text-right font-semibold">{item.waste}</td>

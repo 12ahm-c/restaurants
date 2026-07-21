@@ -45,10 +45,10 @@ export function ProfilePage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-display font-bold text-white mb-4">{t('profile.title')}</h1>
+      <h1 className="text-xl font-display font-bold dark:text-white text-surface-900 mb-4">{t('profile.title')}</h1>
 
       <div className="max-w-lg space-y-4">
-        <form onSubmit={handleSubmit} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5 space-y-4">
           <div>
             <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('profile.name')}</label>
             <input
@@ -82,7 +82,7 @@ export function ProfilePage() {
         </form>
 
         {/* Language Selector */}
-        <div className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-3">
+        <div className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5 space-y-3">
           <h2 className="text-sm font-semibold text-surface-300">{t('profile.language')}</h2>
           <div className="flex gap-2">
             {(['fr', 'en', 'ar'] as const).map((lang) => (

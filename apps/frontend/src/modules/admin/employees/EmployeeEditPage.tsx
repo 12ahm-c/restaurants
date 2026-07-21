@@ -104,11 +104,11 @@ export function EmployeeEditPage() {
         >
           &larr; {t('common.back')}
         </button>
-        <h1 className="mt-2 text-xl font-display font-bold text-white">{t('employees.edit')}</h1>
+        <h1 className="mt-2 text-xl font-display font-bold dark:text-white text-surface-900">{t('employees.edit')}</h1>
       </div>
 
       <div className="max-w-lg">
-        <form onSubmit={handleSubmit} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5 space-y-4">
           <div>
             <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.name')}</label>
             <input
@@ -153,7 +153,7 @@ export function EmployeeEditPage() {
               type="checkbox"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="h-4 w-4 rounded border-white/10 bg-surface-800 text-brand-500 focus:ring-brand-500"
+              className="h-4 w-4 rounded dark:border-white/10 border-black/10 dark:bg-surface-800 bg-white text-brand-500 focus:ring-brand-500"
             />
             <label htmlFor="isActive" className="text-sm font-medium text-surface-300">{t('form.active')}</label>
           </div>

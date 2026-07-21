@@ -107,7 +107,7 @@ export function ImageUpload({ currentImage, onUpload, onRemove, disabled }: Imag
           <img
             src={preview}
             alt="Preview"
-            className="w-full h-48 object-cover rounded-lg border border-white/10"
+            className="w-full h-48 object-cover rounded-lg border dark:border-white/10 border-black/10"
           />
           {!disabled && (
             <button
@@ -132,7 +132,7 @@ export function ImageUpload({ currentImage, onUpload, onRemove, disabled }: Imag
           className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
             isDragging
               ? 'border-brand-500 bg-brand-500/10'
-              : 'border-white/10 hover:border-brand-400 hover:bg-white/5'
+              : 'dark:border-white/10 border-black/10 hover:border-brand-400 dark:hover:bg-white/5 hover:bg-black/5'
           } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <div className="flex flex-col items-center">

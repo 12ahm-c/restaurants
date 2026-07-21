@@ -39,7 +39,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-[200px] flex items-center justify-center p-6">
           <div className="text-center">
-            <h2 className="text-lg font-semibold text-white mb-2">
+            <h2 className="text-lg font-semibold dark:text-white text-surface-900 mb-2">
               Something went wrong
             </h2>
             <p className="text-sm text-surface-400 mb-4">

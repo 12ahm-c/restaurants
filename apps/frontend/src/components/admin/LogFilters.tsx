@@ -17,7 +17,7 @@ export const LogFilters: React.FC<LogFiltersProps> = ({
   onClearFilters,
 }) => {
   return (
-    <div className="bg-surface-900 rounded-lg shadow p-4 mb-6">
+    <div className="dark:bg-surface-900 bg-white rounded-lg shadow p-4 mb-6">
       <div className="grid grid-cols-4 gap-4">
         <div>
           <label className="block text-sm font-medium text-surface-300 mb-1">User ID</label>
@@ -25,7 +25,7 @@ export const LogFilters: React.FC<LogFiltersProps> = ({
             type="text"
             value={filters.userId || ''}
             onChange={(e) => onFilterChange('userId', e.target.value)}
-            className="w-full border border-white/10 bg-surface-800 rounded px-3 py-2 text-sm text-white"
+            className="w-full border dark:border-white/10 border-black/10 dark:bg-surface-800 bg-surface-100 rounded px-3 py-2 text-sm dark:text-white text-surface-900"
             placeholder="Filter by user ID"
           />
         </div>
@@ -34,7 +34,7 @@ export const LogFilters: React.FC<LogFiltersProps> = ({
           <select
             value={filters.action || ''}
             onChange={(e) => onFilterChange('action', e.target.value)}
-            className="w-full border border-white/10 bg-surface-800 rounded px-3 py-2 text-sm text-white"
+            className="w-full border dark:border-white/10 border-black/10 dark:bg-surface-800 bg-surface-100 rounded px-3 py-2 text-sm dark:text-white text-surface-900"
           >
             <option value="">All actions</option>
             <option value="CREATE">Create</option>
@@ -50,7 +50,7 @@ export const LogFilters: React.FC<LogFiltersProps> = ({
             type="date"
             value={filters.from || ''}
             onChange={(e) => onFilterChange('from', e.target.value)}
-            className="w-full border border-white/10 bg-surface-800 rounded px-3 py-2 text-sm text-white"
+            className="w-full border dark:border-white/10 border-black/10 dark:bg-surface-800 bg-surface-100 rounded px-3 py-2 text-sm dark:text-white text-surface-900"
           />
         </div>
         <div>
@@ -59,7 +59,7 @@ export const LogFilters: React.FC<LogFiltersProps> = ({
             type="date"
             value={filters.to || ''}
             onChange={(e) => onFilterChange('to', e.target.value)}
-            className="w-full border border-white/10 bg-surface-800 rounded px-3 py-2 text-sm text-white"
+            className="w-full border dark:border-white/10 border-black/10 dark:bg-surface-800 bg-surface-100 rounded px-3 py-2 text-sm dark:text-white text-surface-900"
           />
         </div>
       </div>

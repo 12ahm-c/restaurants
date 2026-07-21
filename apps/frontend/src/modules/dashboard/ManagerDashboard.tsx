@@ -46,7 +46,7 @@ export const ManagerDashboard: React.FC = () => {
   return (
     <div className="p-6 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-display font-bold text-white">Manager Dashboard</h1>
+        <h1 className="text-2xl font-display font-bold dark:text-white text-surface-900">Manager Dashboard</h1>
         <PeriodSelector selected={selectedPeriod} onChange={setPeriod} />
       </div>
 
@@ -54,7 +54,7 @@ export const ManagerDashboard: React.FC = () => {
         <div className="stat-card">
           <div className="relative z-10">
             <h3 className="text-sm font-medium text-surface-400">Revenue</h3>
-            <p className="text-3xl font-bold text-white mt-2">
+            <p className="text-3xl font-bold dark:text-white text-surface-900 mt-2">
               {(managerKPIs?.revenue.total || 0).toFixed(2)} MRU
             </p>
             {managerKPIs?.revenue.change !== undefined && (
@@ -68,7 +68,7 @@ export const ManagerDashboard: React.FC = () => {
         <div className="stat-card">
           <div className="relative z-10">
             <h3 className="text-sm font-medium text-surface-400">Total Orders</h3>
-            <p className="text-3xl font-bold text-white mt-2">{managerKPIs?.orders.total || 0}</p>
+            <p className="text-3xl font-bold dark:text-white text-surface-900 mt-2">{managerKPIs?.orders.total || 0}</p>
             <p className="text-sm text-surface-500 mt-2">
               Avg: {(managerKPIs?.orders.averageTicket || 0).toFixed(2)} MRU
             </p>
@@ -78,7 +78,7 @@ export const ManagerDashboard: React.FC = () => {
         <div className="stat-card">
           <div className="relative z-10">
             <h3 className="text-sm font-medium text-surface-400">Table Utilization</h3>
-            <p className="text-3xl font-bold text-white mt-2">
+            <p className="text-3xl font-bold dark:text-white text-surface-900 mt-2">
               {(managerKPIs?.tableUtilization || 0).toFixed(0)}%
             </p>
           </div>
@@ -95,21 +95,21 @@ export const ManagerDashboard: React.FC = () => {
       </div>
 
       <div className="card p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Top Products</h2>
+        <h2 className="text-lg font-semibold dark:text-white text-surface-900 mb-4">Top Products</h2>
         {managerKPIs?.topProducts && managerKPIs.topProducts.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="dark:border-b dark:border-white/5 border-b border-black/5">
                   <th className="text-left py-3 text-xs font-semibold text-surface-400 uppercase">Product</th>
                   <th className="text-right py-3 text-xs font-semibold text-surface-400 uppercase">Quantity Sold</th>
                   <th className="text-right py-3 text-xs font-semibold text-surface-400 uppercase">Revenue</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="dark:divide-y dark:divide-white/5 divide-y divide-black/5">
                 {managerKPIs.topProducts.map((product: { name: string; quantity: number; revenue: number }, index: number) => (
                   <tr key={index} className="table-row">
-                    <td className="py-3 text-sm text-white">{product.name}</td>
+                    <td className="py-3 text-sm dark:text-white text-surface-900">{product.name}</td>
                     <td className="text-right py-3 text-sm text-surface-300">{product.quantity}</td>
                     <td className="text-right py-3 text-sm font-semibold text-brand-400">{product.revenue.toFixed(2)} MRU</td>
                   </tr>

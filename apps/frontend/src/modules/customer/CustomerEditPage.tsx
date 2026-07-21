@@ -83,11 +83,11 @@ export function CustomerEditPage() {
         <button onClick={() => navigate(`/customers/${id}`)} className="text-brand-600 hover:text-brand-700 text-sm font-medium">
           &larr; {t('common.back')}
         </button>
-        <h1 className="mt-2 text-xl font-display font-bold text-white">{t('customers.edit')}</h1>
+        <h1 className="mt-2 text-xl font-display font-bold dark:text-white text-surface-900">{t('customers.edit')}</h1>
       </div>
 
       <div className="max-w-lg">
-        <form onSubmit={handleSubmit} className="card rounded-2xl border border-white/5 shadow-card p-5">
+        <form onSubmit={handleSubmit} className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5">
           {submitError && (
             <div className="mb-4 p-3 bg-coral-500/10 rounded-xl text-sm text-coral-400">{submitError}</div>
           )}

@@ -13,7 +13,7 @@ export function LoyaltyRankingPage() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Loyalty Ranking</h1>
+        <h1 className="text-2xl font-bold dark:text-white text-surface-900">Loyalty Ranking</h1>
         <p className="text-surface-400">Top customers by loyalty points</p>
       </div>
 
@@ -35,9 +35,9 @@ export function LoyaltyRankingPage() {
         <div className="mb-4 rounded-md bg-coral-500/10 p-4 text-coral-400">{error}</div>
       )}
 
-      <div className="overflow-hidden rounded-lg border border-white/5 card shadow">
-        <table className="min-w-full divide-y divide-white/5">
-          <thead className="bg-white/5">
+      <div className="overflow-hidden rounded-lg border dark:border-white/5 border-black/5 card shadow">
+        <table className="min-w-full divide-y dark:divide-white/5 divide-black/5">
+          <thead className="dark:bg-white/5 bg-black/5">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase tracking-wider">
                 Rank
@@ -56,7 +56,7 @@ export function LoyaltyRankingPage() {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5 bg-surface-900">
+          <tbody className="divide-y dark:divide-white/5 divide-black/5 dark:bg-surface-900 bg-white">
             {loading ? (
               <tr>
                 <td colSpan={5} className="px-6 py-4 text-center text-surface-400">
@@ -88,7 +88,7 @@ export function LoyaltyRankingPage() {
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
-                    <div className="text-sm font-medium text-white">
+                    <div className="text-sm font-medium dark:text-white text-surface-900">
                       {customer.firstName} {customer.lastName}
                     </div>
                   </td>

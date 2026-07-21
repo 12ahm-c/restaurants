@@ -298,7 +298,7 @@ export function EmployeeLayout() {
 
       {/* Page content - scrollable */}
       <main className="flex-1 overflow-y-auto" role="main">
-        <div className="p-4">
+        <div className="p-4 pb-24">
           <Outlet />
         </div>
       </main>

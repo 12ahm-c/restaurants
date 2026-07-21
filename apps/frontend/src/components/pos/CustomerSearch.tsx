@@ -71,18 +71,18 @@ export function CustomerSearch({ onSelect, selectedCustomer, onRemove }: Custome
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search customer by phone or name..."
-        className="w-full rounded-md border border-white/10 bg-surface-800 px-3 py-2 text-sm text-white placeholder-surface-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+        className="w-full rounded-md border dark:border-white/10 border-black/10 dark:bg-surface-800 bg-surface-100 px-3 py-2 text-sm dark:text-white text-surface-900 placeholder-surface-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
       />
       {isOpen && searchResults.length > 0 && (
-        <div className="absolute z-10 mt-1 w-full rounded-md border border-white/10 bg-surface-900 shadow-lg">
+        <div className="absolute z-10 mt-1 w-full rounded-md border dark:border-white/10 border-black/10 dark:bg-surface-900 bg-white shadow-lg">
           <ul className="max-h-60 overflow-auto">
             {searchResults.map((customer) => (
               <li
                 key={customer._id}
-                className="cursor-pointer border-b border-white/5 px-3 py-2 hover:bg-white/5 last:border-b-0"
+                className="cursor-pointer border-b dark:border-white/5 border-black/5 px-3 py-2 dark:hover:bg-white/5 hover:bg-black/5 last:border-b-0"
                 onClick={() => handleSelect(customer)}
               >
-                <div className="text-sm font-medium text-white">
+                <div className="text-sm font-medium dark:text-white text-surface-900">
                   {customer.firstName} {customer.lastName}
                 </div>
                 <div className="text-xs text-surface-400">{customer.phone}</div>

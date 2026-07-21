@@ -42,8 +42,8 @@ export function RedemptionModal({ customerId, customerName, currentPoints, order
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-md rounded-lg bg-surface-900 p-6 shadow-xl">
-        <h2 className="mb-4 text-lg font-semibold text-white">Redeem Loyalty Points</h2>
+      <div className="w-full max-w-md rounded-lg dark:bg-surface-900 bg-white p-6 shadow-xl">
+        <h2 className="mb-4 text-lg font-semibold dark:text-white text-surface-900">Redeem Loyalty Points</h2>
         <p className="mb-4 text-sm text-surface-300">Customer: {customerName}</p>
 
         {error && (
@@ -66,7 +66,7 @@ export function RedemptionModal({ customerId, customerName, currentPoints, order
               max={currentPoints}
               value={points}
               onChange={(e) => setPoints(e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-surface-800 px-3 py-2 text-white placeholder-surface-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full rounded-md border dark:border-white/10 border-black/10 dark:bg-surface-800 bg-surface-100 px-3 py-2 dark:text-white text-surface-900 placeholder-surface-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               placeholder="Enter points to redeem"
             />
           </div>
@@ -89,7 +89,7 @@ export function RedemptionModal({ customerId, customerName, currentPoints, order
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-white/10 bg-surface-800 px-4 py-2 text-sm font-medium text-surface-300 hover:bg-white/5"
+              className="rounded-md border dark:border-white/10 border-black/10 dark:bg-surface-800 bg-surface-100 px-4 py-2 text-sm font-medium text-surface-300 dark:hover:bg-white/5 hover:bg-black/5"
             >
               Cancel
             </button>

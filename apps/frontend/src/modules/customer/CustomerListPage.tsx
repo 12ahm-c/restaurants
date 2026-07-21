@@ -39,7 +39,7 @@ export function CustomerListPage() {
   return (
     <div className="animate-fade-in">
       <div className="mb-4">
-        <h1 className="text-xl font-display font-bold text-white">{t('customers.title')}</h1>
+        <h1 className="text-xl font-display font-bold dark:text-white text-surface-900">{t('customers.title')}</h1>
         <p className="text-sm text-surface-400 mt-0.5">{total} {t('customers.title').toLowerCase()}</p>
       </div>
 
@@ -74,7 +74,7 @@ export function CustomerListPage() {
           <div className="w-8 h-8 border-2 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
         </div>
       ) : customers.length === 0 ? (
-        <div className="card rounded-2xl border border-white/5 shadow-card p-12 text-center">
+        <div className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-12 text-center">
           <Users size={40} className="text-surface-300 mx-auto mb-3" />
           <p className="text-surface-400 font-medium">{t('customers.noCustomers')}</p>
           <Link to="/customers/new" className="btn-primary inline-flex items-center gap-2 mt-4 text-sm">
@@ -90,14 +90,14 @@ export function CustomerListPage() {
               <Link
                 key={customer._id}
                 to={`/customers/${customer._id}`}
-                className="block card rounded-xl border border-white/5 shadow-sm p-4 active:scale-[0.98] transition-transform"
+                className="block card rounded-xl border dark:border-white/5 border-black/5 shadow-sm p-4 active:scale-[0.98] transition-transform"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-sm shrink-0">
                     {customer.firstName?.charAt(0)}{customer.lastName?.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-white text-sm truncate">
+                    <p className="font-semibold dark:text-white text-surface-900 text-sm truncate">
                       {customer.firstName} {customer.lastName}
                     </p>
                     <p className="text-xs text-surface-400">{customer.phone}</p>
@@ -111,10 +111,10 @@ export function CustomerListPage() {
           </div>
 
           {/* Desktop: Table view */}
-          <div className="hidden md:block card rounded-2xl border border-white/5 shadow-card overflow-hidden">
+          <div className="hidden md:block card rounded-2xl border dark:border-white/5 border-black/5 shadow-card overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="border-b dark:border-white/5 border-black/5">
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('common.name')}</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('common.phone')}</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('customers.loyaltyPoints')}</th>
@@ -125,7 +125,7 @@ export function CustomerListPage() {
                 {customers.map((customer) => (
                   <tr key={customer._id} className="table-row">
                     <td className="px-5 py-3">
-                      <span className="font-semibold text-sm text-white">
+                      <span className="font-semibold text-sm dark:text-white text-surface-900">
                         {customer.firstName} {customer.lastName}
                       </span>
                     </td>

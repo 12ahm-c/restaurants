@@ -77,13 +77,13 @@ export function CustomerDetailPage() {
       </div>
 
       {/* Customer header */}
-      <div className="card rounded-2xl border border-white/5 shadow-card p-5 mb-4">
+      <div className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5 mb-4">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-xl shrink-0">
             {selectedCustomer.firstName?.charAt(0)}{selectedCustomer.lastName?.charAt(0)}
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-display font-bold text-white truncate">
+            <h1 className="text-lg font-display font-bold dark:text-white text-surface-900 truncate">
               {selectedCustomer.firstName} {selectedCustomer.lastName}
             </h1>
             <div className="flex items-center gap-1.5 text-sm text-surface-400 mt-0.5">
@@ -127,14 +127,14 @@ export function CustomerDetailPage() {
       </div>
 
       {/* Loyalty History */}
-      <div className="card rounded-2xl border border-white/5 shadow-card p-5">
-        <h2 className="text-sm font-bold text-white mb-3">{t('form.loyaltyHistory')}</h2>
+      <div className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5">
+        <h2 className="text-sm font-bold dark:text-white text-surface-900 mb-3">{t('form.loyaltyHistory')}</h2>
         {loyaltyHistory.length === 0 ? (
           <p className="text-sm text-surface-400 text-center py-6">{t('form.noLoyaltyHistory')}</p>
         ) : (
           <div className="space-y-2">
             {loyaltyHistory.map((transaction) => (
-              <div key={transaction._id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+              <div key={transaction._id} className="flex items-center justify-between py-2 border-b dark:border-white/5 border-black/5 last:border-0">
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${
                     transaction.type === 'earn' ? 'bg-brand-400' :

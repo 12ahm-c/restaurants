@@ -73,7 +73,7 @@ export const LogsPage: React.FC = () => {
 
       <div className="card rounded-lg shadow overflow-hidden">
         <table className="w-full">
-          <thead className="bg-white/5">
+          <thead className="dark:bg-white/5 bg-black/5">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">Timestamp</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">User</th>
@@ -82,17 +82,17 @@ export const LogsPage: React.FC = () => {
               <th className="px-4 py-3 text-left text-xs font-medium text-surface-400 uppercase">Details</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y dark:divide-white/5 divide-black/5">
             {logs.map((log) => (
               <React.Fragment key={log._id}>
                 <tr
-                  className="hover:bg-white/5 cursor-pointer"
+                  className="dark:hover:bg-white/5 hover:bg-black/5 cursor-pointer"
                   onClick={() => setExpandedRow(expandedRow === log._id ? null : log._id)}
                 >
-                  <td className="px-4 py-3 text-sm text-white">
+                  <td className="px-4 py-3 text-sm dark:text-white text-surface-900">
                     {new Date(log.timestamp).toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-sm text-white">
+                  <td className="px-4 py-3 text-sm dark:text-white text-surface-900">
                     {log.userId?.name || 'Unknown'}
                   </td>
                   <td className="px-4 py-3">
@@ -100,14 +100,14 @@ export const LogsPage: React.FC = () => {
                       {log.action}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-white">{log.entity}</td>
+                  <td className="px-4 py-3 text-sm dark:text-white text-surface-900">{log.entity}</td>
                   <td className="px-4 py-3 text-sm text-surface-400">
                     {log.details ? 'Click to expand' : '-'}
                   </td>
                 </tr>
                 {expandedRow === log._id && log.details && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-3 bg-white/5">
+                    <td colSpan={5} className="px-4 py-3 dark:bg-white/5 bg-black/5">
                       <pre className="text-xs text-surface-300 whitespace-pre-wrap">
                         {JSON.stringify(log.details, null, 2)}
                       </pre>

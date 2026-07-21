@@ -75,7 +75,7 @@ export const EmployeeDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white">
+          <h1 className="text-2xl font-display font-bold dark:text-white text-surface-900">
             {isCashier ? t('dashboard.title') : t('dashboard.title')}
           </h1>
           <p className="text-sm text-surface-400 mt-1 flex items-center gap-2">
@@ -103,7 +103,7 @@ export const EmployeeDashboard: React.FC = () => {
                 +12.5%
               </span>
             </div>
-            <p className="text-3xl font-bold text-white mb-1">{formatCurrency(employeeKPIs.todaySales)}</p>
+            <p className="text-3xl font-bold dark:text-white text-surface-900 mb-1">{formatCurrency(employeeKPIs.todaySales)}</p>
             <p className="text-surface-400 text-sm">{t('dashboard.revenue')}</p>
           </div>
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full -translate-y-16 translate-x-16" />
@@ -121,7 +121,7 @@ export const EmployeeDashboard: React.FC = () => {
                 {t('common.active')}
               </span>
             </div>
-            <p className="text-3xl font-bold text-white mb-1">{employeeKPIs.totalOrders}</p>
+            <p className="text-3xl font-bold dark:text-white text-surface-900 mb-1">{employeeKPIs.totalOrders}</p>
             <p className="text-surface-400 text-sm">{t('dashboard.totalOrders')}</p>
           </div>
           <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full -translate-y-12 translate-x-12" />
@@ -137,7 +137,7 @@ export const EmployeeDashboard: React.FC = () => {
                     <Users size={22} className="text-purple-400" />
                   </div>
                 </div>
-                <p className="text-3xl font-bold text-white mb-1">{employeeKPIs.totalCustomers}</p>
+                <p className="text-3xl font-bold dark:text-white text-surface-900 mb-1">{employeeKPIs.totalCustomers}</p>
                 <p className="text-surface-400 text-sm">{t('dashboard.customers')}</p>
               </div>
               <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full -translate-y-12 translate-x-12" />
@@ -151,7 +151,7 @@ export const EmployeeDashboard: React.FC = () => {
                     <Table2 size={22} className="text-amber-400" />
                   </div>
                 </div>
-                <p className="text-3xl font-bold text-white mb-1">{employeeKPIs.occupiedTables}</p>
+                <p className="text-3xl font-bold dark:text-white text-surface-900 mb-1">{employeeKPIs.occupiedTables}</p>
                 <p className="text-surface-400 text-sm">{t('tables.occupied')}</p>
               </div>
               <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full -translate-y-12 translate-x-12" />
@@ -168,7 +168,7 @@ export const EmployeeDashboard: React.FC = () => {
               <Flame size={20} className="text-amber-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{employeeKPIs.newOrders}</p>
+              <p className="text-2xl font-bold dark:text-white text-surface-900">{employeeKPIs.newOrders}</p>
               <p className="text-xs text-surface-400 font-medium">{t('orders.new')}</p>
             </div>
           </div>
@@ -180,7 +180,7 @@ export const EmployeeDashboard: React.FC = () => {
               <ChefHat size={20} className="text-orange-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{employeeKPIs.preparingOrders}</p>
+              <p className="text-2xl font-bold dark:text-white text-surface-900">{employeeKPIs.preparingOrders}</p>
               <p className="text-xs text-surface-400 font-medium">{t('orders.preparing')}</p>
             </div>
           </div>
@@ -192,7 +192,7 @@ export const EmployeeDashboard: React.FC = () => {
               <CheckCircle size={20} className="text-brand-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{employeeKPIs.readyOrders}</p>
+              <p className="text-2xl font-bold dark:text-white text-surface-900">{employeeKPIs.readyOrders}</p>
               <p className="text-xs text-surface-400 font-medium">{t('orders.ready')}</p>
             </div>
           </div>
@@ -204,7 +204,7 @@ export const EmployeeDashboard: React.FC = () => {
               <Truck size={20} className="text-blue-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{employeeKPIs.deliveryOrders}</p>
+              <p className="text-2xl font-bold dark:text-white text-surface-900">{employeeKPIs.deliveryOrders}</p>
               <p className="text-xs text-surface-400 font-medium">{t('nav.orders')}</p>
             </div>
           </div>
@@ -223,7 +223,7 @@ export const EmployeeDashboard: React.FC = () => {
                   : <TrendingDown size={20} className="text-coral-400" />
                 }
               </div>
-              <h3 className="font-semibold text-white">{t('finance.profit')}</h3>
+              <h3 className="font-semibold dark:text-white text-surface-900">{t('finance.profit')}</h3>
             </div>
             <p className={`text-3xl font-bold ${employeeKPIs.todayProfit >= 0 ? 'text-brand-400' : 'text-coral-400'}`}>
               {formatCurrency(employeeKPIs.todayProfit)}
@@ -236,7 +236,7 @@ export const EmployeeDashboard: React.FC = () => {
               <div className="p-2.5 bg-brand-500/15 rounded-xl">
                 <Zap size={20} className="text-brand-400" />
               </div>
-              <h3 className="font-semibold text-white">{t('nav.menu')}</h3>
+              <h3 className="font-semibold dark:text-white text-surface-900">{t('nav.menu')}</h3>
             </div>
             {employeeKPIs.topProducts.length === 0 ? (
               <p className="text-sm text-surface-500">{t('common.noData')}</p>
@@ -246,11 +246,11 @@ export const EmployeeDashboard: React.FC = () => {
                   <div key={index} className="flex items-center gap-3">
                     <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold
                       ${index === 0 ? 'bg-brand-500/20 text-brand-400 border border-brand-500/20'
-                        : index === 1 ? 'bg-surface-700 text-surface-300 border border-surface-600'
-                        : 'bg-surface-800 text-surface-400 border border-surface-700'}`}>
+                        : index === 1 ? 'dark:bg-surface-700 bg-surface-200 text-surface-300 dark:border-surface-600 border-surface-300 border'
+                        : 'dark:bg-surface-800 bg-surface-200 text-surface-400 dark:border-surface-700 border-surface-300 border'}`}>
                       {index + 1}
                     </span>
-                    <span className="text-sm text-surface-200 flex-1 truncate">{product.name}</span>
+                    <span className="text-sm dark:text-surface-200 text-surface-700 flex-1 truncate">{product.name}</span>
                     <span className="text-sm font-semibold text-brand-400">{product.quantity}x</span>
                   </div>
                 ))}
@@ -264,7 +264,7 @@ export const EmployeeDashboard: React.FC = () => {
               <div className="p-2.5 bg-amber-500/15 rounded-xl">
                 <AlertTriangle size={20} className="text-amber-400" />
               </div>
-              <h3 className="font-semibold text-white">{t('nav.kitchen')}</h3>
+              <h3 className="font-semibold dark:text-white text-surface-900">{t('nav.kitchen')}</h3>
             </div>
             {employeeKPIs.stockAlerts.length === 0 ? (
               <div className="text-center py-4">
@@ -275,7 +275,7 @@ export const EmployeeDashboard: React.FC = () => {
               <div className="space-y-3">
                 {employeeKPIs.stockAlerts.map((alert, index) => (
                   <div key={index} className="flex items-center justify-between p-3 bg-coral-500/5 rounded-xl border border-coral-500/10">
-                    <span className="text-sm text-surface-200 truncate">{alert.name}</span>
+                    <span className="text-sm dark:text-surface-200 text-surface-700 truncate">{alert.name}</span>
                     <span className="text-sm font-semibold text-coral-400">
                       {alert.quantity}/{alert.threshold}
                     </span>

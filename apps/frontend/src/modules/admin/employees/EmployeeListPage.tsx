@@ -51,7 +51,7 @@ export function EmployeeListPage() {
   return (
     <div className="animate-fade-in">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-display font-bold text-white">{t('employees.title')}</h1>
+        <h1 className="text-xl font-display font-bold dark:text-white text-surface-900">{t('employees.title')}</h1>
         <Link
           to="/admin/employees/new"
           className="btn-primary flex items-center gap-2 text-sm"
@@ -90,7 +90,7 @@ export function EmployeeListPage() {
           <div className="w-8 h-8 border-2 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
         </div>
       ) : filteredEmployees.length === 0 ? (
-        <div className="card rounded-2xl border border-white/5 shadow-card p-12 text-center">
+        <div className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-12 text-center">
           <p className="text-surface-300 font-medium">{t('employees.noEmployees')}</p>
         </div>
       ) : (
@@ -98,13 +98,13 @@ export function EmployeeListPage() {
           {/* Mobile: Card view */}
           <div className="md:hidden space-y-2">
             {filteredEmployees.map((employee) => (
-              <div key={employee._id} className="card rounded-xl border border-white/5 shadow-sm p-4">
+              <div key={employee._id} className="card rounded-xl border dark:border-white/5 border-black/5 shadow-sm p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-sm shrink-0">
                     {employee.name?.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-white text-sm truncate">{employee.name}</p>
+                    <p className="font-semibold dark:text-white text-surface-900 text-sm truncate">{employee.name}</p>
                     <p className="text-xs text-surface-400">{employee.phone || '-'}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -128,10 +128,10 @@ export function EmployeeListPage() {
           </div>
 
           {/* Desktop: Table view - fits screen */}
-          <div className="hidden md:block card rounded-2xl border border-white/5 shadow-card overflow-hidden">
+          <div className="hidden md:block card rounded-2xl border dark:border-white/5 border-black/5 shadow-card overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="border-b dark:border-white/5 border-black/5">
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('common.name')}</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('common.phone')}</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('employees.role')}</th>
@@ -143,7 +143,7 @@ export function EmployeeListPage() {
                 {filteredEmployees.map((employee) => (
                   <tr key={employee._id} className="table-row">
                     <td className="px-5 py-3">
-                      <span className="font-semibold text-sm text-white">{employee.name}</span>
+                      <span className="font-semibold text-sm dark:text-white text-surface-900">{employee.name}</span>
                     </td>
                     <td className="px-5 py-3 text-sm text-surface-400">{employee.phone || '-'}</td>
                     <td className="px-5 py-3">

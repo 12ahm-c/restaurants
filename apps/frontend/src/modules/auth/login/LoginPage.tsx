@@ -86,18 +86,18 @@ export function LoginPage() {
       </div>
 
       {/* Right side - Login form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-surface-950">
+      <div className="flex-1 flex items-center justify-center p-8 dark:bg-surface-950 bg-surface-50">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
             <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/20">
               <Utensils size={24} className="text-white" />
             </div>
-            <span className="text-2xl font-display font-bold text-white">RestoManager</span>
+            <span className="text-2xl font-display font-bold dark:text-white text-surface-900">RestoManager</span>
           </div>
 
           <div className="mb-8">
-            <h2 className="text-3xl font-display font-bold text-white mb-2">{t('auth.login')}</h2>
+            <h2 className="text-3xl font-display font-bold dark:text-white text-surface-900 mb-2">{t('auth.login')}</h2>
             <p className="text-surface-400">{t('auth.phoneNumber')}</p>
           </div>
 

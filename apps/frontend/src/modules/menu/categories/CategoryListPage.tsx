@@ -71,7 +71,7 @@ export function CategoryListPage() {
   return (
     <div className="py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">{t('menu.title')}</h1>
+        <h1 className="text-2xl font-bold dark:text-white text-surface-900">{t('menu.title')}</h1>
         <button
           onClick={() => handleOpenModal()}
           className="flex items-center space-x-2 bg-brand-500 text-white px-4 py-2 rounded-md hover:bg-brand-600"
@@ -82,8 +82,8 @@ export function CategoryListPage() {
       </div>
 
       <div className="card rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-white/5">
-          <thead className="bg-white/5">
+        <table className="min-w-full divide-y dark:divide-white/5 divide-black/5">
+          <thead className="dark:bg-white/5 bg-black/5">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase tracking-wider">
                 {t('common.name')}
@@ -96,11 +96,11 @@ export function CategoryListPage() {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y dark:divide-white/5 divide-black/5">
             {categories.map((category) => (
-              <tr key={category._id} className="hover:bg-white/5">
+              <tr key={category._id} className="dark:hover:bg-white/5 hover:bg-black/5">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-white">{category.name}</div>
+                  <div className="text-sm font-medium dark:text-white text-surface-900">{category.name}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-surface-400">{category.sortOrder}</div>
@@ -129,8 +129,8 @@ export function CategoryListPage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-surface-900 rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-medium text-white mb-4">
+          <div className="dark:bg-surface-900 bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-medium dark:text-white text-surface-900 mb-4">
               {editingCategory ? t('form.editCategory') : t('form.createCategory')}
             </h3>
             <form onSubmit={handleSubmit}>
@@ -142,7 +142,7 @@ export function CategoryListPage() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
-                    className="w-full border border-white/10 bg-surface-800 rounded-md px-3 py-2 text-white placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full border dark:border-white/10 border-black/10 dark:bg-surface-800 bg-surface-100 rounded-md px-3 py-2 dark:text-white text-surface-900 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
                 <div>
@@ -152,7 +152,7 @@ export function CategoryListPage() {
                     value={formData.sortOrder}
                     onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
                     min="0"
-                    className="w-full border border-white/10 bg-surface-800 rounded-md px-3 py-2 text-white placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full border dark:border-white/10 border-black/10 dark:bg-surface-800 bg-surface-100 rounded-md px-3 py-2 dark:text-white text-surface-900 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   />
                 </div>
               </div>
@@ -160,7 +160,7 @@ export function CategoryListPage() {
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-4 py-2 border border-white/10 rounded-md text-surface-300 hover:bg-white/5"
+                  className="px-4 py-2 border dark:border-white/10 border-black/10 rounded-md text-surface-300 dark:hover:bg-white/5 hover:bg-black/5"
                 >
                   {t('common.cancel')}
                 </button>

@@ -47,11 +47,11 @@ export function EmployeeCreatePage() {
         >
           &larr; {t('common.back')}
         </button>
-        <h1 className="mt-2 text-xl font-display font-bold text-white">{t('employees.add')}</h1>
+        <h1 className="mt-2 text-xl font-display font-bold dark:text-white text-surface-900">{t('employees.add')}</h1>
       </div>
 
       <div className="max-w-lg">
-        <form onSubmit={handleSubmit} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5 space-y-4">
           <div>
             <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.name')}</label>
             <input

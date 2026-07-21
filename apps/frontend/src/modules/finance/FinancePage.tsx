@@ -39,7 +39,7 @@ export function FinancePage() {
     marketing: 'bg-pink-400/10 text-pink-400',
     insurance: 'bg-teal-400/10 text-teal-400',
     tax: 'bg-coral-400/10 text-coral-400',
-    other: 'bg-white/5 text-surface-300',
+    other: 'dark:bg-white/5 dark:text-surface-300 bg-black/5 text-surface-600',
   };
 
   const [formData, setFormData] = useState({
@@ -117,7 +117,7 @@ export function FinancePage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 dark:border-white border-surface-900"></div>
       </div>
     );
   }
@@ -126,8 +126,8 @@ export function FinancePage() {
     <div className="py-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">{t('finance.title')}</h1>
-          <p className="text-surface-300">{t('finance.subtitle')}</p>
+          <h1 className="text-2xl font-bold dark:text-white text-surface-900">{t('finance.title')}</h1>
+          <p className="dark:text-surface-300 text-surface-500">{t('finance.subtitle')}</p>
         </div>
         <button onClick={() => setShowAddExpense(true)} className="btn-primary flex items-center space-x-2 px-4 py-2 rounded-md">
           <Plus size={20} />
@@ -163,7 +163,7 @@ export function FinancePage() {
           <div className="mt-4">
             <div className="flex flex-wrap gap-2">
               {Object.entries(summary?.expensesByCategory || {}).map(([cat, amount]) => (
-                <span key={cat} className={`px-2 py-0.5 text-xs font-medium rounded-full ${categoryColors[cat] || 'bg-white/5 text-surface-300'}`}>
+                <span key={cat} className={`px-2 py-0.5 text-xs font-medium rounded-full ${categoryColors[cat] || 'dark:bg-white/5 dark:text-surface-300 bg-surface-100 text-surface-600'}`}>
                   {categoryLabels[cat] || cat}: {amount.toLocaleString()}
                 </span>
               ))}
@@ -194,7 +194,7 @@ export function FinancePage() {
       {/* Tabs */}
       <div className="flex space-x-2 mb-6">
         {(['overview', 'expenses', 'income'] as const).map((tab) => (
-          <button key={tab} onClick={() => setActiveTab(tab)} className={`px-4 py-2 rounded-full text-sm font-medium ${activeTab === tab ? 'bg-brand-500 text-white' : 'bg-white/5 text-surface-300 hover:bg-white/10'}`}>
+          <button key={tab} onClick={() => setActiveTab(tab)} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === tab ? 'bg-brand-500 text-white' : 'dark:bg-white/5 dark:text-surface-300 bg-black/5 text-surface-600 dark:hover:bg-white/10 hover:bg-black/10'}`}>
             {t(`finance.${tab}`)}
           </button>
         ))}
@@ -214,7 +214,7 @@ export function FinancePage() {
                 const max = getMaxDailyAmount();
                 return (
                   <div key={day} className="flex items-center space-x-3">
-                    <div className="w-20 text-xs text-surface-400">{new Date(day).toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                    <div className="w-20 text-xs dark:text-surface-400 text-surface-500">{new Date(day).toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center">
                         <div className="h-4 bg-brand-400 rounded" style={{ width: `${(income / max) * 100}%`, minWidth: income > 0 ? '4px' : '0' }} />
@@ -250,14 +250,14 @@ export function FinancePage() {
               ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
               .slice(0, 15)
               .map((tx) => (
-                <div key={tx.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                <div key={tx.id} className="flex items-center justify-between p-3 dark:bg-white/5 bg-surface-100 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className={`p-2 rounded-full ${tx.type === 'income' ? 'bg-brand-400/10' : 'bg-coral-400/10'}`}>
                       {tx.type === 'income' ? <TrendingUp size={16} className="text-brand-400" /> : <TrendingDown size={16} className="text-coral-400" />}
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-white">{tx.description}</div>
-                      <div className="text-xs text-surface-400">{new Date(tx.date).toLocaleDateString()} {tx.user && `- ${tx.user}`}</div>
+                      <div className="text-sm font-medium dark:text-white text-surface-900">{tx.description}</div>
+                      <div className="text-xs dark:text-surface-400 text-surface-500">{new Date(tx.date).toLocaleDateString()} {tx.user && `- ${tx.user}`}</div>
                     </div>
                   </div>
                   <div className={`font-bold ${tx.type === 'income' ? 'text-brand-400' : 'text-coral-400'}`}>
@@ -273,28 +273,28 @@ export function FinancePage() {
       {/* Expenses Tab */}
       {activeTab === 'expenses' && (
         <div className="card rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-white/5">
-            <thead className="bg-white/5">
+          <table className="min-w-full divide-y dark:divide-white/5 divide-black/5">
+            <thead className="dark:bg-white/5 bg-surface-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('finance.description')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('finance.category')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('common.amount')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('common.date')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('common.actions')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium dark:text-surface-400 text-surface-500 uppercase">{t('finance.description')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium dark:text-surface-400 text-surface-500 uppercase">{t('finance.category')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium dark:text-surface-400 text-surface-500 uppercase">{t('common.amount')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium dark:text-surface-400 text-surface-500 uppercase">{t('common.date')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium dark:text-surface-400 text-surface-500 uppercase">{t('common.actions')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y dark:divide-white/5 divide-black/5">
               {(summary?.recentExpenses || []).length === 0 ? (
-                <tr><td colSpan={5} className="px-6 py-8 text-center text-surface-400">{t('finance.noExpenses')}</td></tr>
+                <tr><td colSpan={5} className="px-6 py-8 text-center dark:text-surface-400 text-surface-500">{t('finance.noExpenses')}</td></tr>
               ) : (
                 (summary?.recentExpenses || []).map((expense) => (
-                  <tr key={expense._id} className="hover:bg-white/5">
+                  <tr key={expense._id} className="dark:hover:bg-white/5 hover:bg-surface-100">
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-white">{expense.description}</div>
-                      {expense.vendor && <div className="text-xs text-surface-400">{expense.vendor}</div>}
+                      <div className="text-sm font-medium dark:text-white text-surface-900">{expense.description}</div>
+                      {expense.vendor && <div className="text-xs dark:text-surface-400 text-surface-500">{expense.vendor}</div>}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${categoryColors[expense.category] || 'bg-white/5'}`}>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${categoryColors[expense.category] || 'dark:bg-white/5 dark:text-surface-300 bg-surface-100 text-surface-600'}`}>
                         {categoryLabels[expense.category] || expense.category}
                       </span>
                     </td>
@@ -314,22 +314,22 @@ export function FinancePage() {
       {/* Income Tab */}
       {activeTab === 'income' && (
         <div className="card rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-white/5">
-            <thead className="bg-white/5">
+          <table className="min-w-full divide-y dark:divide-white/5 divide-black/5">
+            <thead className="dark:bg-white/5 bg-surface-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase">Invoice</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('common.amount')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('finance.category')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-surface-400 uppercase">{t('common.date')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium dark:text-surface-400 text-surface-500 uppercase">Invoice</th>
+                <th className="px-6 py-3 text-left text-xs font-medium dark:text-surface-400 text-surface-500 uppercase">{t('common.amount')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium dark:text-surface-400 text-surface-500 uppercase">{t('finance.category')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium dark:text-surface-400 text-surface-500 uppercase">{t('common.date')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y dark:divide-white/5 divide-black/5">
               {(summary?.recentPayments || []).length === 0 ? (
-                <tr><td colSpan={4} className="px-6 py-8 text-center text-surface-400">{t('finance.noIncome')}</td></tr>
+                <tr><td colSpan={4} className="px-6 py-8 text-center dark:text-surface-400 text-surface-500">{t('finance.noIncome')}</td></tr>
               ) : (
                 (summary?.recentPayments || []).map((payment: any) => (
-                  <tr key={payment._id} className="hover:bg-white/5">
-                    <td className="px-6 py-4 text-sm font-medium text-white">#{payment.orderId?.orderNumber || payment._id.slice(-6).toUpperCase()}</td>
+                  <tr key={payment._id} className="dark:hover:bg-white/5 hover:bg-surface-100">
+                    <td className="px-6 py-4 text-sm font-medium dark:text-white text-surface-900">#{payment.orderId?.orderNumber || payment._id.slice(-6).toUpperCase()}</td>
                     <td className="px-6 py-4 text-sm font-bold text-brand-400">{payment.amount.toLocaleString()} MRU</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -350,24 +350,24 @@ export function FinancePage() {
       {/* Add Expense Modal */}
       {showAddExpense && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="card rounded-lg p-6 max-w-md w-full">
+          <div className="card rounded-lg p-6 max-w-md w-full mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-white">{t('finance.addExpense')}</h3>
-              <button onClick={() => setShowAddExpense(false)} className="text-surface-400 hover:text-surface-300"><X size={20} /></button>
+              <h3 className="text-lg font-medium dark:text-white text-surface-900">{t('finance.addExpense')}</h3>
+              <button onClick={() => setShowAddExpense(false)} className="dark:text-surface-400 text-surface-500 dark:hover:text-surface-300 hover:text-surface-700"><X size={20} /></button>
             </div>
             <form onSubmit={handleAddExpense}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-300 mb-1">{t('finance.description')} *</label>
+                  <label className="block text-sm font-medium dark:text-surface-300 text-surface-600 mb-1">{t('finance.description')} *</label>
                   <input type="text" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required className="input-field w-full rounded-md" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-300 mb-1">{t('common.amount')} (MRU) *</label>
+                    <label className="block text-sm font-medium dark:text-surface-300 text-surface-600 mb-1">{t('common.amount')} (MRU) *</label>
                     <input type="number" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} required min="0.01" step="0.01" className="input-field w-full rounded-md" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-300 mb-1">{t('finance.category')} *</label>
+                    <label className="block text-sm font-medium dark:text-surface-300 text-surface-600 mb-1">{t('finance.category')} *</label>
                     <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="input-field w-full rounded-md">
                       {Object.entries(categoryLabels).map(([key, label]) => (
                         <option key={key} value={key}>{label}</option>
@@ -377,16 +377,16 @@ export function FinancePage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-300 mb-1">{t('finance.vendor')}</label>
+                    <label className="block text-sm font-medium dark:text-surface-300 text-surface-600 mb-1">{t('finance.vendor')}</label>
                     <input type="text" value={formData.vendor} onChange={(e) => setFormData({ ...formData, vendor: e.target.value })} className="input-field w-full rounded-md" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-300 mb-1">{t('common.date')}</label>
+                    <label className="block text-sm font-medium dark:text-surface-300 text-surface-600 mb-1">{t('common.date')}</label>
                     <input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} className="input-field w-full rounded-md" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-300 mb-1">{t('finance.category')}</label>
+                  <label className="block text-sm font-medium dark:text-surface-300 text-surface-600 mb-1">{t('finance.category')}</label>
                   <select value={formData.paymentMethod} onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })} className="input-field w-full rounded-md">
                     <option value="cash">{t('finance.cash')}</option>
                     <option value="card">{t('finance.card')}</option>
@@ -395,7 +395,7 @@ export function FinancePage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-300 mb-1">{t('finance.notes')}</label>
+                  <label className="block text-sm font-medium dark:text-surface-300 text-surface-600 mb-1">{t('finance.notes')}</label>
                   <textarea value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="input-field w-full rounded-md" rows={2} />
                 </div>
               </div>

@@ -27,7 +27,7 @@ export const KPICard: React.FC<KPICardProps> = ({ title, value, change, icon, lo
           <h3 className="text-sm font-medium text-surface-400">{title}</h3>
           {icon && <span className="text-surface-500">{icon}</span>}
         </div>
-        <p className="text-3xl font-bold text-white">
+        <p className="text-3xl font-bold dark:text-white text-surface-900">
           {value}{suffix && <span className="text-lg text-surface-500 ml-1">{suffix}</span>}
         </p>
         {change !== undefined && (

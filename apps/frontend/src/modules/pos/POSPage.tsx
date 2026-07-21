@@ -363,7 +363,7 @@ export function POSPage() {
             className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all
               ${selectedCategory === ''
                 ? 'bg-brand-500 text-white shadow-md'
-                : 'bg-surface-900 text-surface-300 hover:bg-white/5 border border-white/5'
+                : 'dark:bg-surface-900 bg-surface-100 text-surface-300 dark:hover:bg-white/5 hover:bg-black/5 border dark:border-white/5 border-black/5'
               }`}
           >
             {t('pos.all')}
@@ -375,7 +375,7 @@ export function POSPage() {
               className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all
                 ${selectedCategory === cat._id
                   ? 'bg-brand-500 text-white shadow-md'
-                  : 'bg-surface-900 text-surface-300 hover:bg-white/5 border border-white/5'
+                  : 'dark:bg-surface-900 bg-surface-100 text-surface-300 dark:hover:bg-white/5 hover:bg-black/5 border dark:border-white/5 border-black/5'
                 }`}
             >
               {cat.name}
@@ -416,7 +416,7 @@ export function POSPage() {
                       {t('pos.inStock')}
                     </span>
                   )}
-                  <p className="font-semibold text-white text-xs md:text-sm truncate">{product.name}</p>
+                  <p className="font-semibold dark:text-white text-surface-900 text-xs md:text-sm truncate">{product.name}</p>
                   <p className="text-[10px] md:text-xs text-surface-400 truncate mt-0.5">{product.description}</p>
                   {product.hasQuantityTypes && (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-400/10 text-amber-400 text-[10px] md:text-xs font-semibold rounded-lg mt-1">
@@ -435,14 +435,14 @@ export function POSPage() {
       </div>
 
       {/* Cart Sidebar - Desktop */}
-      <div className={`w-full md:w-96 bg-surface-900 border-l border-white/5 flex flex-col ${showCart ? 'block' : 'hidden md:flex'}`}>
+      <div className={`w-full md:w-96 dark:bg-surface-900 bg-white border-l dark:border-white/5 border-black/5 flex flex-col ${showCart ? 'block' : 'hidden md:flex'}`}>
         {/* Order Header */}
-        <div className="p-4 md:p-5 border-b border-white/5">
+        <div className="p-4 md:p-5 border-b dark:border-white/5 border-black/5">
           <div className="flex items-center justify-between">
-            <button onClick={() => setShowCart(false)} className="md:hidden p-1 rounded-lg hover:bg-white/5">
+            <button onClick={() => setShowCart(false)} className="md:hidden p-1 rounded-lg dark:hover:bg-white/5 hover:bg-black/5">
               <ArrowLeft size={20} className="text-surface-300" />
             </button>
-            <h2 className="font-display font-bold text-lg text-white">{t('pos.newOrder')}</h2>
+            <h2 className="font-display font-bold text-lg dark:text-white text-surface-900">{t('pos.newOrder')}</h2>
             <div className="w-8" />
           </div>
 
@@ -456,7 +456,7 @@ export function POSPage() {
                   className={`p-2 rounded-xl text-xs font-semibold transition-all ${
                     rentalMode === 'sit-in'
                       ? 'bg-brand-500 text-white'
-                      : 'bg-surface-800 text-surface-300 hover:bg-surface-700 border border-white/5'
+                      : 'dark:bg-surface-800 bg-surface-100 text-surface-300 hover:bg-surface-700 border dark:border-white/5 border-black/5'
                   }`}
                 >
                   {t('pos.sitInTent')}
@@ -466,7 +466,7 @@ export function POSPage() {
                   className={`p-2 rounded-xl text-xs font-semibold transition-all ${
                     rentalMode === 'rent-only'
                       ? 'bg-amber-500 text-white'
-                      : 'bg-surface-800 text-surface-300 hover:bg-surface-700 border border-white/5'
+                      : 'dark:bg-surface-800 bg-surface-100 text-surface-300 hover:bg-surface-700 border dark:border-white/5 border-black/5'
                   }`}
                 >
                   {t('pos.rentOnly')}
@@ -476,7 +476,7 @@ export function POSPage() {
                   className={`p-2 rounded-xl text-xs font-semibold transition-all ${
                     rentalMode === 'takeaway'
                       ? 'bg-emerald-500 text-white'
-                      : 'bg-surface-800 text-surface-300 hover:bg-surface-700 border border-white/5'
+                      : 'dark:bg-surface-800 bg-surface-100 text-surface-300 hover:bg-surface-700 border dark:border-white/5 border-black/5'
                   }`}
                 >
                   {t('pos.takeawayOnly')}
@@ -551,11 +551,11 @@ export function POSPage() {
                 <button
                   type="button"
                   onClick={handleOpenProductPicker}
-                  className="w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-surface-800 px-3 py-3 text-left hover:bg-surface-700 transition-colors"
+                  className="w-full flex items-center justify-between gap-3 rounded-xl border dark:border-white/10 border-black/10 dark:bg-surface-800 bg-surface-100 px-3 py-3 text-left hover:bg-surface-700 transition-colors"
                 >
                   <span className="flex items-center gap-2 min-w-0">
                     <PackagePlus size={18} className="text-brand-400 shrink-0" />
-                    <span className="text-sm font-semibold text-white truncate">
+                    <span className="text-sm font-semibold dark:text-white text-surface-900 truncate">
                       {items.length > 0
                         ? `${getItemCount()} ${t('pos.items')} - ${getTotal()} MRU`
                         : t('pos.chooseProducts')}
@@ -578,7 +578,7 @@ export function POSPage() {
         <div className="flex-1 overflow-auto p-4">
           {items.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 dark:bg-white/5 bg-black/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <ShoppingBag size={28} className="text-surface-500" />
               </div>
               <p className="text-surface-400 font-medium">
@@ -591,10 +591,10 @@ export function POSPage() {
           ) : (
             <div className="space-y-3">
               {items.map((item: CartItem) => (
-                <div key={`${item.productId}-${item.quantityTypeName || ''}`} className="bg-white/5 rounded-xl p-3 transition-all">
+                <div key={`${item.productId}-${item.quantityTypeName || ''}`} className="dark:bg-white/5 bg-black/5 rounded-xl p-3 transition-all">
                   <div className="flex justify-between items-start">
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-sm truncate">{item.name}</p>
+                      <p className="font-semibold dark:text-white text-surface-900 text-sm truncate">{item.name}</p>
                       <p className="text-xs text-surface-400">{item.price} MRU each</p>
                       {item.quantityTypeLabel && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-400/10 text-amber-400 text-[10px] font-semibold rounded-lg mt-1">
@@ -619,16 +619,16 @@ export function POSPage() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-1 bg-surface-900 rounded-lg border border-white/5">
-                      <button onClick={() => updateQuantity(item.productId, item.quantity - 1, item.quantityTypeName)} className="p-1.5 rounded-l-lg hover:bg-white/5 transition-colors">
+<div className="flex items-center gap-1 dark:bg-surface-900 bg-white rounded-lg border dark:border-white/5 border-black/5">
+                      <button onClick={() => updateQuantity(item.productId, item.quantity - 1, item.quantityTypeName)} className="p-1.5 rounded-l-lg dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
                         <Minus size={14} className="text-surface-300" />
                       </button>
-                      <span className="w-8 text-center font-semibold text-sm text-white">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.productId, item.quantity + 1, item.quantityTypeName)} className="p-1.5 rounded-r-lg hover:bg-white/5 transition-colors">
+                      <span className="w-8 text-center font-semibold text-sm dark:text-white text-surface-900">{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item.productId, item.quantity + 1, item.quantityTypeName)} className="p-1.5 rounded-r-lg dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
                         <Plus size={14} className="text-surface-300" />
                       </button>
                     </div>
-                    <p className="font-bold text-white">{item.price * item.quantity} MRU</p>
+                    <p className="font-bold dark:text-white text-surface-900">{item.price * item.quantity} MRU</p>
                   </div>
                 </div>
               ))}
@@ -637,7 +637,7 @@ export function POSPage() {
         </div>
 
         {/* Order Summary */}
-        <div className="p-4 md:p-5 border-t border-white/5 bg-surface-900">
+        <div className="p-4 md:p-5 border-t dark:border-white/5 border-black/5 dark:bg-surface-900 bg-white">
           {selectedCustomer && (
             <div className="mb-3 p-3 bg-brand-500/10 rounded-xl">
               <div className="flex justify-between text-sm">
@@ -673,7 +673,7 @@ export function POSPage() {
               {t('pos.total')} ({getItemCount()} {t('pos.items')})
               {rentalMode === 'rent-only' && ` + ${t('pos.rental')}`}
             </span>
-            <span className="text-2xl font-bold text-white">
+            <span className="text-2xl font-bold dark:text-white text-surface-900">
               {getTotal() + (rentalMode === 'rent-only' ? rentalPrice : 0)} MRU
             </span>
           </div>
@@ -722,15 +722,15 @@ export function POSPage() {
       {showProductPicker && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in p-3">
           <div className="w-full max-w-5xl max-h-[90dvh] card animate-scale-in flex flex-col overflow-hidden">
-            <div className="p-4 md:p-5 border-b border-white/5">
+<div className="p-4 md:p-5 border-b dark:border-white/5 border-black/5">
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="text-lg font-display font-bold text-white">{t('pos.chooseProducts')}</h3>
+                  <h3 className="text-lg font-display font-bold dark:text-white text-surface-900">{t('pos.chooseProducts')}</h3>
                   <p className="text-sm text-surface-400 mt-1">
                     {draftItemCount} {t('pos.items')} - {draftTotal} MRU
                   </p>
                 </div>
-                <button onClick={() => setShowProductPicker(false)} className="p-2 rounded-lg hover:bg-white/5 text-surface-400 hover:text-surface-300 transition-colors">
+<button onClick={() => setShowProductPicker(false)} className="p-2 rounded-lg dark:hover:bg-white/5 hover:bg-black/5 text-surface-400 hover:text-surface-300 transition-colors">
                   <X size={20} />
                 </button>
               </div>
@@ -752,7 +752,7 @@ export function POSPage() {
                   className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
                     pickerCategory === ''
                       ? 'bg-brand-500 text-white shadow-md'
-                      : 'bg-surface-900 text-surface-300 hover:bg-white/5 border border-white/5'
+                      : 'dark:bg-surface-900 bg-surface-100 text-surface-300 dark:hover:bg-white/5 hover:bg-black/5 border dark:border-white/5 border-black/5'
                   }`}
                 >
                   {t('pos.all')}
@@ -764,7 +764,7 @@ export function POSPage() {
                     className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
                       pickerCategory === cat._id
                         ? 'bg-brand-500 text-white shadow-md'
-                        : 'bg-surface-900 text-surface-300 hover:bg-white/5 border border-white/5'
+                        : 'dark:bg-surface-900 bg-surface-100 text-surface-300 dark:hover:bg-white/5 hover:bg-black/5 border dark:border-white/5 border-black/5'
                     }`}
                   >
                     {cat.name}
@@ -787,7 +787,7 @@ export function POSPage() {
                       : [undefined];
 
                     return (
-                      <div key={product._id} className={`bg-white/5 border border-white/5 rounded-xl p-3 ${!isAvailable ? 'opacity-50' : ''}`}>
+                      <div key={product._id} className={`dark:bg-white/5 bg-black/5 border dark:border-white/5 border-black/5 rounded-xl p-3 ${!isAvailable ? 'opacity-50' : ''}`}>
                         <div className="flex gap-3">
                           <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-brand-500/10 to-orange-500/10 flex items-center justify-center overflow-hidden shrink-0">
                             {product.imageUrl ? (
@@ -798,7 +798,7 @@ export function POSPage() {
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-start justify-between gap-2">
-                              <p className="font-semibold text-white text-sm truncate">{product.name}</p>
+<p className="font-semibold dark:text-white text-surface-900 text-sm truncate">{product.name}</p>
                               {isOutOfStock && (
                                 <span className="px-2 py-0.5 bg-coral-400/10 text-coral-400 text-[10px] font-semibold rounded-lg shrink-0">
                                   {t('pos.outOfStock')}
@@ -813,21 +813,21 @@ export function POSPage() {
                           {quantityTypes.map((quantityType) => {
                             const quantity = getDraftQuantity(product._id, quantityType?.name);
                             return (
-                              <div key={quantityType?.name || product._id} className="flex items-center justify-between gap-3 rounded-lg bg-surface-900/80 border border-white/5 p-2">
+                              <div key={quantityType?.name || product._id} className="flex items-center justify-between gap-3 rounded-lg dark:bg-surface-900/80 bg-white/80 border dark:border-white/5 border-black/5 p-2">
                                 <div className="min-w-0">
-                                  <p className="text-sm font-semibold text-white truncate">
+<p className="text-sm font-semibold dark:text-white text-surface-900 truncate">
                                     {quantityType?.label || `${product.price} MRU`}
                                   </p>
                                   {quantityType && (
                                     <p className="text-xs text-surface-400">{quantityType.price} MRU / {quantityType.unit}</p>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-1 rounded-lg border border-white/5 bg-surface-950">
+<div className="flex items-center gap-1 rounded-lg dark:border-white/5 border-black/5 dark:bg-surface-950 bg-surface-50">
                                   <button
                                     type="button"
                                     disabled={!isAvailable || quantity === 0}
                                     onClick={() => setDraftQuantity(product, quantity - 1, quantityType)}
-                                    className="p-1.5 rounded-l-lg text-surface-300 hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="p-1.5 rounded-l-lg text-surface-300 dark:hover:bg-white/5 hover:bg-black/5 disabled:opacity-40 disabled:cursor-not-allowed"
                                   >
                                     <Minus size={14} />
                                   </button>
@@ -837,13 +837,13 @@ export function POSPage() {
                                     value={quantity}
                                     disabled={!isAvailable}
                                     onChange={(e) => setDraftQuantity(product, Math.max(0, parseInt(e.target.value) || 0), quantityType)}
-                                    className="w-12 bg-transparent text-center text-sm font-semibold text-white outline-none disabled:opacity-40"
+                                    className="w-12 bg-transparent text-center text-sm font-semibold dark:text-white text-surface-900 outline-none disabled:opacity-40"
                                   />
                                   <button
                                     type="button"
                                     disabled={!isAvailable}
                                     onClick={() => setDraftQuantity(product, quantity + 1, quantityType)}
-                                    className="p-1.5 rounded-r-lg text-surface-300 hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="p-1.5 rounded-r-lg text-surface-300 dark:hover:bg-white/5 hover:bg-black/5 disabled:opacity-40 disabled:cursor-not-allowed"
                                   >
                                     <Plus size={14} />
                                   </button>
@@ -859,9 +859,9 @@ export function POSPage() {
               )}
             </div>
 
-            <div className="p-4 md:p-5 border-t border-white/5 bg-surface-900 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+<div className="p-4 md:p-5 border-t dark:border-white/5 border-black/5 dark:bg-surface-900 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="text-sm text-surface-300">
-                <span className="font-semibold text-white">{draftItemCount}</span> {t('pos.items')} - <span className="font-semibold text-white">{draftTotal} MRU</span>
+                <span className="font-semibold dark:text-white text-surface-900">{draftItemCount}</span> {t('pos.items')} - <span className="font-semibold dark:text-white text-surface-900">{draftTotal} MRU</span>
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setShowProductPicker(false)} className="btn-secondary flex-1 sm:flex-none">{t('common.cancel')}</button>
@@ -880,8 +880,8 @@ export function POSPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-md card p-6 animate-scale-in">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-display font-bold text-white">{selectedProduct.name}</h3>
-              <button onClick={() => setShowQuantityModal(false)} className="p-2 rounded-lg hover:bg-white/5 text-surface-400 hover:text-surface-300 transition-colors">
+              <h3 className="text-lg font-display font-bold dark:text-white text-surface-900">{selectedProduct.name}</h3>
+              <button onClick={() => setShowQuantityModal(false)} className="p-2 rounded-lg dark:hover:bg-white/5 hover:bg-black/5 text-surface-400 hover:text-surface-300 transition-colors">
                 <X size={18} />
               </button>
             </div>
@@ -898,7 +898,7 @@ export function POSPage() {
                       className={`p-3 rounded-xl border-2 transition-all ${
                         selectedQuantityType?.name === qt.name
                           ? 'border-brand-500 bg-brand-500/10 text-brand-400'
-                          : 'border-white/10 bg-white/5 text-surface-300 hover:border-white/20'
+                          : 'dark:border-white/10 border-black/10 dark:bg-white/5 bg-black/5 text-surface-300 hover:border-white/20'
                       }`}
                     >
                       <p className="font-semibold text-sm">{qt.label}</p>
@@ -914,7 +914,7 @@ export function POSPage() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setQuantityTypeQuantity(Math.max(1, quantityTypeQuantity - 1))}
-                    className="p-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-300 transition-colors"
+                    className="p-2 rounded-xl dark:bg-surface-800 bg-surface-100 hover:bg-surface-700 text-surface-300 transition-colors"
                   >
                     <Minus size={20} />
                   </button>
@@ -927,7 +927,7 @@ export function POSPage() {
                   />
                   <button
                     onClick={() => setQuantityTypeQuantity(quantityTypeQuantity + 1)}
-                    className="p-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-300 transition-colors"
+                    className="p-2 rounded-xl dark:bg-surface-800 bg-surface-100 hover:bg-surface-700 text-surface-300 transition-colors"
                   >
                     <Plus size={20} />
                   </button>
@@ -965,8 +965,8 @@ export function POSPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-md card p-6 animate-scale-in">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-display font-bold text-white">{t('pos.itemNotes')}</h3>
-              <button onClick={() => setEditingItemNotes(null)} className="p-2 rounded-lg hover:bg-white/5 text-surface-400 hover:text-surface-300 transition-colors">
+              <h3 className="text-lg font-display font-bold dark:text-white text-surface-900">{t('pos.itemNotes')}</h3>
+              <button onClick={() => setEditingItemNotes(null)} className="p-2 rounded-lg dark:hover:bg-white/5 hover:bg-black/5 text-surface-400 hover:text-surface-300 transition-colors">
                 <X size={18} />
               </button>
             </div>

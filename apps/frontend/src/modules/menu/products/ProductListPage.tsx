@@ -60,7 +60,7 @@ export function ProductListPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white">{t('menu.title')}</h1>
+          <h1 className="text-2xl font-display font-bold dark:text-white text-surface-900">{t('menu.title')}</h1>
           <p className="text-sm text-surface-400 mt-1">{products.length} {t('menu.title').toLowerCase()}</p>
         </div>
         {canEdit && (
@@ -132,9 +132,9 @@ export function ProductListPage() {
       ) : (
         <div className="card overflow-hidden">
           {/* Mobile: Card view */}
-          <div className="md:hidden divide-y divide-white/5">
+          <div className="md:hidden divide-y dark:divide-white/5 divide-black/5">
             {products.map((product) => (
-              <div key={product._id} className="p-4 hover:bg-white/5 transition-colors">
+              <div key={product._id} className="p-4 dark:hover:bg-white/5 hover:bg-black/5 transition-colors">
                 <div className="flex items-start gap-3">
                   {product.imageUrl ? (
                     <img src={product.imageUrl} alt={product.name} className="w-14 h-14 rounded-xl object-cover" />
@@ -146,7 +146,7 @@ export function ProductListPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-sm font-semibold text-white truncate">{product.name}</p>
+                        <p className="text-sm font-semibold dark:text-white text-surface-900 truncate">{product.name}</p>
                         {product.description && (
                           <p className="text-xs text-surface-500 truncate mt-0.5">{product.description}</p>
                         )}
@@ -176,13 +176,13 @@ export function ProductListPage() {
                       <span className="text-sm font-bold text-brand-400">{product.price} MRU</span>
                       {canEdit && (
                         <div className="flex items-center gap-1">
-                          <Link to={`/menu/products/${product._id}`} className="p-1.5 rounded-lg hover:bg-white/5 text-surface-400 hover:text-white transition-colors">
+                          <Link to={`/menu/products/${product._id}`} className="p-1.5 rounded-lg dark:hover:bg-white/5 hover:bg-black/5 text-surface-400 dark:hover:text-white hover:text-surface-900 transition-colors">
                             <Eye size={16} />
                           </Link>
-                          <Link to={`/menu/products/${product._id}/edit`} className="p-1.5 rounded-lg hover:bg-white/5 text-surface-400 hover:text-amber-400 transition-colors">
+                          <Link to={`/menu/products/${product._id}/edit`} className="p-1.5 rounded-lg dark:hover:bg-white/5 hover:bg-black/5 text-surface-400 hover:text-amber-400 transition-colors">
                             <Edit size={16} />
                           </Link>
-                          <button onClick={() => setShowDeleteModal(product._id)} className="p-1.5 rounded-lg hover:bg-white/5 text-surface-400 hover:text-coral-400 transition-colors">
+                          <button onClick={() => setShowDeleteModal(product._id)} className="p-1.5 rounded-lg dark:hover:bg-white/5 hover:bg-black/5 text-surface-400 hover:text-coral-400 transition-colors">
                             <Trash2 size={16} />
                           </button>
                         </div>
@@ -198,7 +198,7 @@ export function ProductListPage() {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="border-b dark:border-white/5 border-black/5">
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.product')}</th>
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.category')}</th>
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.price')}</th>
@@ -206,7 +206,7 @@ export function ProductListPage() {
                   {canEdit && <th className="text-right px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.actions')}</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y dark:divide-white/5 divide-black/5">
                 {products.map((product) => (
                   <tr key={product._id} className="table-row">
                     <td className="px-6 py-4">
@@ -219,7 +219,7 @@ export function ProductListPage() {
                           </div>
                         )}
                         <div>
-                          <p className="text-sm font-semibold text-white">{product.name}</p>
+                          <p className="text-sm font-semibold dark:text-white text-surface-900">{product.name}</p>
                           {product.description && (
                             <p className="text-xs text-surface-500 truncate max-w-xs">{product.description}</p>
                           )}
@@ -254,13 +254,13 @@ export function ProductListPage() {
                     {canEdit && (
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <Link to={`/menu/products/${product._id}`} className="p-2 rounded-lg hover:bg-white/5 text-surface-400 hover:text-white transition-colors">
+                          <Link to={`/menu/products/${product._id}`} className="p-2 rounded-lg dark:hover:bg-white/5 hover:bg-black/5 text-surface-400 dark:hover:text-white hover:text-surface-900 transition-colors">
                             <Eye size={18} />
                           </Link>
-                          <Link to={`/menu/products/${product._id}/edit`} className="p-2 rounded-lg hover:bg-white/5 text-surface-400 hover:text-amber-400 transition-colors">
+                          <Link to={`/menu/products/${product._id}/edit`} className="p-2 rounded-lg dark:hover:bg-white/5 hover:bg-black/5 text-surface-400 hover:text-amber-400 transition-colors">
                             <Edit size={18} />
                           </Link>
-                          <button onClick={() => setShowDeleteModal(product._id)} className="p-2 rounded-lg hover:bg-white/5 text-surface-400 hover:text-coral-400 transition-colors">
+                          <button onClick={() => setShowDeleteModal(product._id)} className="p-2 rounded-lg dark:hover:bg-white/5 hover:bg-black/5 text-surface-400 hover:text-coral-400 transition-colors">
                             <Trash2 size={18} />
                           </button>
                         </div>
@@ -277,11 +277,11 @@ export function ProductListPage() {
       {/* Delete Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-surface-900 border border-white/5 rounded-2xl p-6 max-w-md w-full animate-scale-in">
+          <div className="dark:bg-surface-900 bg-white border dark:border-white/5 border-black/5 rounded-2xl p-6 max-w-md w-full animate-scale-in">
             <div className="w-12 h-12 bg-coral-500/15 rounded-xl flex items-center justify-center mx-auto mb-4">
               <Trash2 size={24} className="text-coral-400" />
             </div>
-            <h3 className="text-lg font-display font-bold text-white text-center mb-2">{t('menu.deleteTitle')}</h3>
+            <h3 className="text-lg font-display font-bold dark:text-white text-surface-900 text-center mb-2">{t('menu.deleteTitle')}</h3>
             <p className="text-surface-400 text-center mb-6">{t('menu.deleteConfirm')}</p>
             <div className="flex gap-3">
               <button onClick={() => setShowDeleteModal(null)} className="btn-secondary flex-1">

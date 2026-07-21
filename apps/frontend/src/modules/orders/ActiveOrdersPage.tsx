@@ -107,7 +107,7 @@ export function ActiveOrdersPage() {
       <div className="space-y-6 animate-fade-in">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-display font-bold text-white">{t('orders.ready')}</h1>
+            <h1 className="text-2xl font-display font-bold dark:text-white text-surface-900">{t('orders.ready')}</h1>
             <p className="text-sm text-surface-400 mt-1">{orders.length} {t('orders.pending').toLowerCase()}</p>
           </div>
           <button onClick={loadOrders} className="btn-secondary flex items-center gap-2">
@@ -136,7 +136,7 @@ export function ActiveOrdersPage() {
                   <div className="p-5">
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <p className="text-lg font-bold text-white">
+                        <p className="text-lg font-bold dark:text-white text-surface-900">
                           #{order.orderNumber}
                         </p>
                         <p className="text-sm text-surface-400">
@@ -193,7 +193,7 @@ export function ActiveOrdersPage() {
     <div className="space-y-4 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white">{t('orders.active')}</h1>
+          <h1 className="text-2xl font-display font-bold dark:text-white text-surface-900">{t('orders.active')}</h1>
           <p className="text-sm text-surface-400 mt-1">{orders.length} {t('orders.active').toLowerCase()}</p>
         </div>
         <button onClick={loadOrders} className="btn-secondary flex items-center gap-2">
@@ -219,10 +219,10 @@ export function ActiveOrdersPage() {
                 <div key={order._id} className="card p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-white">
-                        #{order.orderNumber}
-                      </span>
-                      <span className="text-xs text-surface-500 capitalize">{order.type}</span>
+<span className="font-bold text-sm dark:text-white text-surface-900">
+                          #{order.orderNumber}
+                        </span>
+                        <span className="text-xs text-surface-500 capitalize">{order.type}</span>
                     </div>
                     <span className={`badge text-[10px] ${status.bg} ${status.text}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${status.dot} mr-1`} />
@@ -248,7 +248,7 @@ export function ActiveOrdersPage() {
           <div className="hidden md:block card overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/5">
+                <tr className="border-b dark:border-white/5 border-black/5">
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('orders.active')}</th>
                     <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('orders.tent')}</th>
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.status')}</th>
@@ -256,13 +256,13 @@ export function ActiveOrdersPage() {
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.time')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y dark:divide-white/5 divide-black/5">
                 {orders.map((order) => {
                   const status = statusConfig[order.status] || statusConfig.new;
                   return (
                     <tr key={order._id} className="table-row">
                       <td className="px-6 py-4">
-                        <span className="font-bold text-sm text-white">
+                        <span className="font-bold text-sm dark:text-white text-surface-900">
                           #{order.orderNumber}
                         </span>
                       </td>

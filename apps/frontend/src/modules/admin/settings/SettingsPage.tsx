@@ -155,14 +155,14 @@ export function SettingsPage() {
 
   return (
     <div className="p-4 space-y-4 pb-8">
-      <h1 className="text-xl font-display font-bold text-white">{t('settings.title')}</h1>
+      <h1 className="text-xl font-display font-bold dark:text-white text-surface-900">{t('settings.title')}</h1>
 
       {/* Logo */}
-      <div className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
-        <h2 className="text-lg font-semibold text-white">{t('settings.restaurantLogo')}</h2>
+      <div className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold dark:text-white text-surface-900">{t('settings.restaurantLogo')}</h2>
         <div className="flex items-center gap-4">
           <div
-            className="w-20 h-20 rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden bg-surface-900 cursor-pointer hover:border-brand-300 transition-colors"
+            className="w-20 h-20 rounded-xl border-2 border-dashed dark:border-white/10 border-black/10 flex items-center justify-center overflow-hidden dark:bg-surface-900 bg-white cursor-pointer hover:border-brand-300 transition-colors"
             onClick={() => fileInputRef.current?.click()}
           >
             {logoPreview ? (
@@ -205,8 +205,8 @@ export function SettingsPage() {
       </div>
 
       {/* Profile */}
-      <form onSubmit={handleSaveProfile} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
-        <h2 className="text-lg font-semibold text-white">{t('settings.yourProfile')}</h2>
+      <form onSubmit={handleSaveProfile} className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold dark:text-white text-surface-900">{t('settings.yourProfile')}</h2>
         <div>
           <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.name')}</label>
           <input
@@ -233,8 +233,8 @@ export function SettingsPage() {
       </form>
 
       {/* Change Password */}
-      <form onSubmit={handleChangePassword} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
-        <h2 className="text-lg font-semibold text-white">{t('settings.changePassword')}</h2>
+      <form onSubmit={handleChangePassword} className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold dark:text-white text-surface-900">{t('settings.changePassword')}</h2>
         <div>
           <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('settings.currentPassword')}</label>
           <input
@@ -275,8 +275,8 @@ export function SettingsPage() {
       </form>
 
       {/* General Settings */}
-      <form onSubmit={handleSaveGeneral} className="card rounded-2xl border border-white/5 shadow-card p-5 space-y-4">
-        <h2 className="text-lg font-semibold text-white">{t('settings.restaurant')}</h2>
+      <form onSubmit={handleSaveGeneral} className="card rounded-2xl border dark:border-white/5 border-black/5 shadow-card p-5 space-y-4">
+        <h2 className="text-lg font-semibold dark:text-white text-surface-900">{t('settings.restaurant')}</h2>
         <div>
           <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('settings.restaurantName')}</label>
           <input

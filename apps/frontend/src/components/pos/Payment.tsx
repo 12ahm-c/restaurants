@@ -34,7 +34,7 @@ export const Payment: React.FC<PaymentProps> = ({ orderId, totalAmount, onSucces
   if (currentPayment) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-surface-900 rounded-lg p-6 w-full max-w-md">
+        <div className="dark:bg-surface-900 bg-white rounded-lg p-6 w-full max-w-md">
           <h2 className="text-xl font-bold mb-4 text-brand-400">Payment Successful!</h2>
           <div className="space-y-3">
             {currentPayment.changeAmount > 0 && (
@@ -66,8 +66,8 @@ export const Payment: React.FC<PaymentProps> = ({ orderId, totalAmount, onSucces
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-surface-900 rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4 text-white">Process Payment</h2>
+        <div className="dark:bg-surface-900 bg-white rounded-lg p-6 w-full max-w-md">
+          <h2 className="text-xl font-bold mb-4 dark:text-white text-surface-900">Process Payment</h2>
         <div className="mb-4">
           <p className="text-surface-300">Total Amount:</p>
           <p className="text-2xl font-bold">{totalAmount.toFixed(2)} MRU</p>
@@ -80,9 +80,9 @@ export const Payment: React.FC<PaymentProps> = ({ orderId, totalAmount, onSucces
               <button
                 key={m}
                 onClick={() => setMethod(m)}
-                className={`flex-1 py-2 rounded border ${
-                  method === m ? 'bg-brand-500 text-white' : 'bg-surface-800 text-surface-300 border-white/10'
-                }`}
+                  className={`flex-1 py-2 rounded border ${
+                    method === m ? 'bg-brand-500 text-white' : 'dark:bg-surface-800 bg-surface-100 text-surface-300 dark:border-white/10 border-black/10'
+                  }`}
               >
                 {m.charAt(0).toUpperCase() + m.slice(1)}
               </button>
@@ -99,7 +99,7 @@ export const Payment: React.FC<PaymentProps> = ({ orderId, totalAmount, onSucces
               onChange={(e) => setCashGiven(e.target.value)}
               min={totalAmount}
               step="0.01"
-              className="w-full border border-white/10 rounded px-3 py-2 bg-surface-800 text-white placeholder-surface-400"
+              className="w-full border dark:border-white/10 border-black/10 rounded px-3 py-2 dark:bg-surface-800 bg-surface-100 dark:text-white text-surface-900 placeholder-surface-400"
               placeholder="Enter amount"
             />
             {cashGiven && parseFloat(cashGiven) >= totalAmount && (
@@ -113,7 +113,7 @@ export const Payment: React.FC<PaymentProps> = ({ orderId, totalAmount, onSucces
         <div className="flex gap-2">
           <button
             onClick={onCancel}
-            className="flex-1 py-2 border border-white/10 rounded hover:bg-white/5 text-surface-300"
+            className="flex-1 py-2 border dark:border-white/10 border-black/10 rounded dark:hover:bg-white/5 hover:bg-black/5 text-surface-300"
           >
             Cancel
           </button>

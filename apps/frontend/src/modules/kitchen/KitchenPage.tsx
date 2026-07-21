@@ -121,7 +121,7 @@ export function KitchenPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white">{t('kitchen.title')}</h1>
+          <h1 className="text-2xl font-display font-bold dark:text-white text-surface-900">{t('kitchen.title')}</h1>
           <div className="flex items-center gap-2 mt-1">
             <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-brand-400' : 'bg-coral-400'}`} />
             <span className="text-sm text-surface-400">{isConnected ? t('common.active') : t('common.inactive')}</span>
@@ -144,7 +144,7 @@ export function KitchenPage() {
                 ? f.key === 'pending' ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20'
                   : f.key === 'preparing' ? 'bg-amber-500 text-white border-amber-500 shadow-lg shadow-amber-500/20'
                   : f.key === 'ready' ? 'bg-brand-500 text-white border-brand-500 shadow-lg shadow-brand-500/20'
-                  : 'bg-white/10 text-white border-white/20 shadow-lg'
+                  : 'dark:bg-white/10 bg-black/10 text-white border-white/20 shadow-lg'
                 : f.color + ' hover:opacity-80'
               }`}
           >
@@ -178,7 +178,7 @@ export function KitchenPage() {
                 <div className="p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <p className="text-lg font-bold text-white">
+                      <p className="text-lg font-bold dark:text-white text-surface-900">
                         #{item.order?.orderNumber || item.orderId.slice(-6).toUpperCase()}
                       </p>
                       <p className="text-sm text-surface-400 flex items-center gap-1 mt-0.5">
@@ -206,7 +206,7 @@ export function KitchenPage() {
                   </div>
 
                   {item.items && item.items.length > 0 && (
-                    <div className="mb-4 p-3 bg-surface-800/50 rounded-xl border border-white/5">
+                    <div className="mb-4 p-3 bg-surface-800/50 rounded-xl border dark:border-white/5 border-black/5">
                       <p className="text-xs font-semibold text-surface-500 uppercase mb-2">{t('orders.items')}</p>
                       <div className="space-y-1.5">
                         {item.items.map((orderItem, index) => (

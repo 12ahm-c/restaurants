@@ -38,7 +38,7 @@ export const ToastNotification: React.FC<ToastNotificationProps> = ({ toasts, on
       case 'payment_received':
         return 'bg-blue-500/90 backdrop-blur-sm border border-blue-400/20';
       default:
-        return 'bg-surface-700/90 backdrop-blur-sm border border-white/5';
+        return 'dark:bg-surface-700/90 bg-surface-200/90 backdrop-blur-sm border dark:border-white/5 border-black/5';
     }
   };
 
@@ -67,7 +67,7 @@ export const ToastNotification: React.FC<ToastNotificationProps> = ({ toasts, on
         <div
           key={toast.id}
           onClick={() => handleClick(toast)}
-          className={`${getTypeStyles(toast.type)} text-white px-4 py-3 rounded-xl shadow-elevated cursor-pointer transform transition-all hover:scale-105 animate-slide-in`}
+          className={`${getTypeStyles(toast.type)} dark:text-white text-surface-900 px-4 py-3 rounded-xl shadow-elevated cursor-pointer transform transition-all hover:scale-105 animate-slide-in`}
         >
           <div className="font-semibold">{toast.title}</div>
           <div className="text-sm opacity-90">{toast.message}</div>
