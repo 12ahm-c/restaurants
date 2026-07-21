@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardService = void 0;
 const Order_1 = require("../../models/Order");
-const Table_1 = require("../../models/Table");
+const Tent_1 = require("../../models/Tent");
 const Inventory_1 = require("../../models/Inventory");
 const Payment_1 = require("../../models/Payment");
 const Customer_1 = require("../../models/Customer");
@@ -19,14 +19,14 @@ class DashboardService {
         today.setHours(0, 0, 0, 0);
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
-        const [salesResult, totalOrders, totalCustomers, occupiedTables, newOrders, preparingOrders, readyOrders, deliveryOrders, costResult, topProducts, stockAlerts,] = await Promise.all([
+        const [salesResult, totalOrders, totalCustomers, occupiedTents, newOrders, preparingOrders, readyOrders, deliveryOrders, costResult, topProducts, stockAlerts,] = await Promise.all([
             Payment_1.Payment.aggregate([
                 { $match: { createdAt: { $gte: today, $lt: tomorrow }, status: 'completed' } },
                 { $group: { _id: null, total: { $sum: '$amount' } } },
             ]),
             Order_1.Order.countDocuments({ createdAt: { $gte: today, $lt: tomorrow } }),
             Customer_1.Customer.countDocuments({}),
-            Table_1.Table.countDocuments({ status: 'occupied' }),
+            Tent_1.Tent.countDocuments({ status: 'occupied' }),
             Order_1.Order.countDocuments({ createdAt: { $gte: today, $lt: tomorrow }, status: 'new' }),
             Order_1.Order.countDocuments({ createdAt: { $gte: today, $lt: tomorrow }, status: 'preparing' }),
             Order_1.Order.countDocuments({ createdAt: { $gte: today, $lt: tomorrow }, status: 'ready' }),
@@ -68,7 +68,7 @@ class DashboardService {
             todaySales,
             totalOrders,
             totalCustomers,
-            occupiedTables,
+            occupiedTents,
             newOrders,
             preparingOrders,
             readyOrders,
@@ -90,7 +90,7 @@ class DashboardService {
                 return JSON.parse(cached);
         }
         const { startDate, endDate, prevStartDate, prevEndDate } = this.getDateRanges(period);
-        const [revenueResult, prevRevenueResult, ordersCount, topProducts, activeTables, totalTables, criticalAlerts] = await Promise.all([
+        const [revenueResult, prevRevenueResult, ordersCount, topProducts, activeTents, totalTents, criticalAlerts] = await Promise.all([
             Payment_1.Payment.aggregate([
                 { $match: { createdAt: { $gte: startDate, $lt: endDate }, status: 'completed' } },
                 { $group: { _id: null, total: { $sum: '$amount' } } },
@@ -122,20 +122,20 @@ class DashboardService {
                 { $sort: { quantity: -1 } },
                 { $limit: 10 },
             ]),
-            Table_1.Table.countDocuments({ status: { $in: ['occupied', 'reserved'] } }),
-            Table_1.Table.countDocuments({}),
+            Tent_1.Tent.countDocuments({ status: { $in: ['occupied', 'reserved'] } }),
+            Tent_1.Tent.countDocuments({}),
             Inventory_1.Inventory.countDocuments({ $expr: { $lte: ['$quantity', '$threshold'] } }),
         ]);
         const currentRevenue = revenueResult.length > 0 ? revenueResult[0].total : 0;
         const prevRevenue = prevRevenueResult.length > 0 ? prevRevenueResult[0].total : 0;
         const change = prevRevenue > 0 ? ((currentRevenue - prevRevenue) / prevRevenue) * 100 : 0;
         const averageTicket = ordersCount > 0 ? currentRevenue / ordersCount : 0;
-        const tableUtilization = totalTables > 0 ? (activeTables / totalTables) * 100 : 0;
+        const tentUtilization = totalTents > 0 ? (activeTents / totalTents) * 100 : 0;
         const result = {
             revenue: { total: currentRevenue, change },
             orders: { total: ordersCount, averageTicket },
             topProducts: topProducts.map((p) => ({ name: p._id, quantity: p.quantity, revenue: p.revenue })),
-            tableUtilization,
+            tentUtilization,
             alertsCount: criticalAlerts,
         };
         if ((0, redis_1.isRedisAvailable)()) {

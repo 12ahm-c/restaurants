@@ -245,6 +245,7 @@ export class MenuService {
     }
 
     product.status = status;
+    product.isActive = status === 'available';
     await product.save();
 
     return product;

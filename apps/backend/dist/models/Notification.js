@@ -41,7 +41,17 @@ const notificationSchema = new mongoose_1.Schema({
     message: { type: String, required: true },
     type: {
         type: String,
-        enum: ['order_ready', 'stock_critical', 'loyalty_earned', 'loyalty_redeemed', 'system', 'payment_received'],
+        enum: [
+            'new_order',
+            'order_ready',
+            'order_served',
+            'payment_received',
+            'stock_critical',
+            'loyalty_earned',
+            'manager_morning',
+            'daily_summary',
+            'system',
+        ],
         required: true,
     },
     isRead: { type: Boolean, default: false },

@@ -8,7 +8,7 @@ export interface TokenPair {
 export interface UserDTO {
     _id: string;
     name: string;
-    email: string;
+    phone: string;
     role: string;
     isActive: boolean;
     branchId?: string;
@@ -17,7 +17,7 @@ export interface UserDTO {
     createdAt: string;
 }
 export declare class AuthService {
-    static login(email: string, password: string, ip?: string, userAgent?: string): Promise<{
+    static login(phone: string, password: string, ip?: string, userAgent?: string): Promise<{
         user: UserDTO;
         tokens: TokenPair;
     }>;

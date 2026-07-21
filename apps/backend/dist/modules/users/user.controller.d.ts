@@ -4,5 +4,6 @@ export declare class UserController {
     static getEmployees(req: Request, res: Response): Promise<void>;
     static createEmployee(req: Request, res: Response): Promise<void>;
     static updateEmployee(req: Request, res: Response): Promise<void>;
+    static changePassword(req: Request, res: Response): Promise<void>;
 }
 //# sourceMappingURL=user.controller.d.ts.map

@@ -7,6 +7,8 @@ export type NotificationType =
   | 'payment_received'
   | 'stock_critical'
   | 'loyalty_earned'
+  | 'manager_morning'
+  | 'daily_summary'
   | 'system';
 
 export interface INotification extends Document {
@@ -29,7 +31,17 @@ const notificationSchema = new Schema<INotification>(
     message: { type: String, required: true },
     type: {
       type: String,
-      enum: ['new_order', 'order_ready', 'order_served', 'payment_received', 'stock_critical', 'loyalty_earned', 'system'],
+      enum: [
+        'new_order',
+        'order_ready',
+        'order_served',
+        'payment_received',
+        'stock_critical',
+        'loyalty_earned',
+        'manager_morning',
+        'daily_summary',
+        'system',
+      ],
       required: true,
     },
     isRead: { type: Boolean, default: false },

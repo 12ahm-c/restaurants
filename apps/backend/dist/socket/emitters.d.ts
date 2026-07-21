@@ -1,7 +1,7 @@
 import { Server as SocketIOServer } from 'socket.io';
 export interface NewOrderEvent {
     orderId: string;
-    tableName: string;
+    tentName: string;
     items: Array<{
         name: string;
         quantity: number;
@@ -12,7 +12,7 @@ export interface NewOrderEvent {
 export interface OrderStatusUpdateEvent {
     orderId: string;
     status: string;
-    tableName: string;
+    tentName: string;
     timestamp: Date;
 }
 export interface OrderCancelledEvent {
@@ -61,6 +61,9 @@ export interface NotificationNewEvent {
     message: string;
     type: string;
     createdAt: Date;
+    entity?: string;
+    entityId?: string;
+    metadata?: Record<string, unknown>;
 }
 export declare function emitNewOrder(io: SocketIOServer, data: NewOrderEvent): void;
 export declare function emitOrderStatusUpdate(io: SocketIOServer, data: OrderStatusUpdateEvent, serverId?: string): void;

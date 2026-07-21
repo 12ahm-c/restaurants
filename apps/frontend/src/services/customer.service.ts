@@ -92,7 +92,7 @@ export const customerService = {
 
   async createCustomer(data: {
     firstName: string;
-    lastName: string;
+    lastName?: string;
     phone: string;
     email?: string;
     address?: string;
@@ -102,9 +102,9 @@ export const customerService = {
   }): Promise<Customer> {
     const payload: Record<string, string> = {
       firstName: data.firstName,
-      lastName: data.lastName,
       phone: data.phone,
     };
+    if (data.lastName) payload.lastName = data.lastName;
     if (data.email) payload.email = data.email;
     if (data.address) payload.address = data.address;
     if (data.preferences) payload.preferences = data.preferences;

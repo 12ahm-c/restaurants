@@ -6,12 +6,6 @@ import { useUIStore } from '../../../stores/uiStore';
 import { useI18n } from '../../../i18n/I18nContext';
 import { Plus, Search, Edit, Trash2, Eye, Package, Filter, ToggleLeft, ToggleRight } from 'lucide-react';
 
-const statusColors: Record<string, string> = {
-  available: 'badge-success',
-  unavailable: 'badge-warning',
-  discontinued: 'badge-danger',
-};
-
 export function ProductListPage() {
   const { products, categories, isLoading, fetchProducts, fetchCategories, deleteProduct, setFilters } = useMenuStore();
   const { addToast } = useUIStore();
@@ -22,6 +16,7 @@ export function ProductListPage() {
   const [showDeleteModal, setShowDeleteModal] = useState<string | null>(null);
 
   const canEdit = user?.role === 'owner' || user?.role === 'manager';
+  const canToggleStatus = canEdit || user?.role === 'chef';
 
   useEffect(() => {
     fetchProducts();
@@ -52,18 +47,12 @@ export function ProductListPage() {
   const handleToggleActive = async (productId: string, currentIsActive: boolean) => {
     try {
       const { menuService } = await import('../../../services/menu.service');
-      await menuService.updateProduct(productId, { isActive: !currentIsActive } as any);
+      await menuService.updateProductStatus(productId, currentIsActive ? 'unavailable' : 'available');
       fetchProducts();
       addToast('success', t('common.success'));
     } catch (error) {
       addToast('error', error instanceof Error ? error.message : t('common.error'));
     }
-  };
-
-  const statusLabels: Record<string, string> = {
-    available: t('menu.available'),
-    unavailable: t('menu.unavailable'),
-    discontinued: t('menu.discontinued'),
   };
 
   return (
@@ -163,22 +152,23 @@ export function ProductListPage() {
                         )}
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`badge text-[10px] ${statusColors[product.status]}`}>
-                          {statusLabels[product.status] || product.status}
-                        </span>
-                        {/* Activation Toggle */}
-                        {canEdit && (
+                        {canToggleStatus ? (
                           <button
                             onClick={() => handleToggleActive(product._id, product.isActive)}
-                            className={`p-1 rounded-lg transition-colors ${
+                            className={`flex items-center gap-1.5 px-2 py-1 rounded-lg transition-colors ${
                               product.isActive
-                                ? 'text-emerald-400 hover:text-emerald-300'
-                                : 'text-surface-500 hover:text-surface-400'
+                                ? 'bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25'
+                                : 'bg-surface-800 text-surface-500 hover:bg-surface-700'
                             }`}
                             title={product.isActive ? t('menu.deactivate') : t('menu.activate')}
                           >
-                            {product.isActive ? <ToggleRight size={22} /> : <ToggleLeft size={22} />}
+                            {product.isActive ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+                            <span className="text-[10px] font-semibold">{product.isActive ? t('menu.active') : t('menu.inactive')}</span>
                           </button>
+                        ) : (
+                          <span className={`badge text-[10px] ${product.isActive ? 'badge-success' : 'badge-danger'}`}>
+                            {product.isActive ? t('menu.active') : t('menu.inactive')}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -213,7 +203,6 @@ export function ProductListPage() {
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.category')}</th>
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.price')}</th>
                   <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.status')}</th>
-                  <th className="text-left px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('menu.activeInPOS')}</th>
                   {canEdit && <th className="text-right px-6 py-4 text-xs font-semibold text-surface-400 uppercase tracking-wider">{t('common.actions')}</th>}
                 </tr>
               </thead>
@@ -244,12 +233,7 @@ export function ProductListPage() {
                       <span className="text-sm font-semibold text-brand-400">{product.price} MRU</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`badge ${statusColors[product.status]}`}>
-                        {statusLabels[product.status] || product.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      {canEdit ? (
+                      {canToggleStatus ? (
                         <button
                           onClick={() => handleToggleActive(product._id, product.isActive)}
                           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all ${

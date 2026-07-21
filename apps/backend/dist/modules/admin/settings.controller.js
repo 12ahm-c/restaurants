@@ -15,18 +15,20 @@ class SettingsController {
     }
     static async updateSettings(req, res) {
         try {
-            const userId = req.user._id;
+            const userId = req.user?.sub;
             const updateData = req.body;
             const settings = await settings_service_1.SettingsService.updateSettings(updateData);
-            await Log_1.Log.createLog({
-                userId,
-                action: 'UPDATE',
-                entity: 'Settings',
-                entityId: settings._id,
-                details: { updatedFields: Object.keys(updateData) },
-                ipAddress: req.ip,
-                userAgent: req.headers['user-agent'],
-            });
+            if (userId) {
+                await Log_1.Log.createLog({
+                    userId,
+                    action: 'UPDATE',
+                    entity: 'Settings',
+                    entityId: settings._id,
+                    details: { updatedFields: Object.keys(updateData) },
+                    ipAddress: req.ip,
+                    userAgent: req.headers['user-agent'],
+                }).catch(() => { });
+            }
             res.json({ success: true, data: settings });
         }
         catch (error) {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTentStore } from '../../stores/tentStore';
 import { useUIStore } from '../../stores/uiStore';
+import { useAuthStore } from '../../stores/authStore';
 import { useI18n } from '../../i18n/I18nContext';
 import { TentDTO, TentStatus, TentSize } from '../../types';
 import { Plus, X, Filter, Tent, Bell } from 'lucide-react';
@@ -9,6 +10,7 @@ import { Plus, X, Filter, Tent, Bell } from 'lucide-react';
 export function TentMapPage() {
   const { tents, statusSummary, fetchTents, fetchTentStatusSummary, isLoading, createTent, markTentEmpty } = useTentStore();
   const { addToast } = useUIStore();
+  const { user } = useAuthStore();
   const { t } = useI18n();
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
@@ -60,6 +62,8 @@ export function TentMapPage() {
   useEffect(() => { fetchTents(); fetchTentStatusSummary(); }, [fetchTents, fetchTentStatusSummary]);
 
   const filteredTents = selectedSize ? tents.filter((t) => t.size === selectedSize) : tents;
+  const canCreateTent = user?.role === 'owner' || user?.role === 'manager';
+  const canMarkTentEmpty = user?.role === 'owner' || user?.role === 'manager' || user?.role === 'cashier' || user?.role === 'server';
 
   const handleTentClick = (tent: TentDTO) => {
     if (tent.status === 'free') navigate('/pos', { state: { selectedTent: tent } });
@@ -122,10 +126,12 @@ export function TentMapPage() {
           </h1>
           <p className="text-sm text-surface-400 mt-1">{t('tents.manage')}</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn-primary flex items-center gap-2">
-          <Plus size={18} />
-          {t('tents.addTent')}
-        </button>
+        {canCreateTent && (
+          <button onClick={() => setShowModal(true)} className="btn-primary flex items-center gap-2">
+            <Plus size={18} />
+            {t('tents.addTent')}
+          </button>
+        )}
       </div>
 
       {/* Status Summary */}
@@ -238,7 +244,7 @@ export function TentMapPage() {
                 </div>
 
                 {/* Mark Empty Button */}
-                {tent.status !== 'free' && (
+                {tent.status !== 'free' && canMarkTentEmpty && (
                   <button
                     onClick={(e) => handleMarkEmpty(tent._id, e)}
                     className="absolute top-3 right-3 p-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 hover:text-emerald-300 transition-all shadow-sm backdrop-blur-sm"

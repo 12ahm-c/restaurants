@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KitchenController = void 0;
 const kitchen_service_1 = require("./kitchen.service");
+const order_service_1 = require("../orders/order.service");
 const response_1 = require("../../utils/response");
 class KitchenController {
     static async getQueue(req, res) {
@@ -14,6 +15,7 @@ class KitchenController {
             (0, response_1.sendSuccess)(res, queue);
         }
         catch (error) {
+            console.error('Kitchen queue error:', error);
             if (error instanceof response_1.AppError) {
                 res.status(error.statusCode).json({
                     success: false,
@@ -26,7 +28,7 @@ class KitchenController {
                 res.status(500).json({
                     success: false,
                     data: null,
-                    error: { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+                    error: { code: 'INTERNAL_ERROR', message: error instanceof Error ? error.message : 'Internal server error' },
                     meta: null,
                 });
             }
@@ -110,7 +112,7 @@ class KitchenController {
         try {
             const { id } = req.params;
             const { reason } = req.body;
-            await kitchen_service_1.KitchenService.cancelOrder(id, reason);
+            await order_service_1.OrderService.cancelOrder(id, reason);
             (0, response_1.sendSuccess)(res, { message: 'Order cancelled successfully' });
         }
         catch (error) {

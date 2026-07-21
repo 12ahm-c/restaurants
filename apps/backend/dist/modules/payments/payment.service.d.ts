@@ -23,6 +23,17 @@ export declare class PaymentService {
         cashSales: number;
     }>;
     static getPaymentsByOrder(orderId: string): Promise<IPayment[]>;
+    static getAllPayments(filters: {
+        method?: PaymentMethod;
+        status?: string;
+        from?: string;
+        to?: string;
+        page?: number;
+        limit?: number;
+    }): Promise<{
+        payments: IPayment[];
+        total: number;
+    }>;
     static refundPayment(paymentId: string): Promise<IPayment>;
 }
 export {};

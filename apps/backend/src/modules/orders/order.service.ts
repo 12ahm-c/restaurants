@@ -110,16 +110,16 @@ export class OrderService {
       const totalTTC = totalHT * (1 + taxRate);
       const changedInventoryItems: IInventory[] = [];
 
-      // Generate order number: ORD-YYYYMMDD-XXXX
-      const now = new Date();
-      const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
-      const countToday = await Order.countDocuments({
-        createdAt: {
-          $gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-          $lt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1),
-        },
-      });
-      const orderNumber = `ORD-${dateStr}-${String(countToday + 1).padStart(4, '0')}`;
+      // Generate simple sequential order number
+      const lastOrder = await Order.findOne().sort({ createdAt: -1 }).select('orderNumber');
+      let nextNumber = 1;
+      if (lastOrder?.orderNumber) {
+        const parsed = parseInt(lastOrder.orderNumber, 10);
+        if (!isNaN(parsed)) {
+          nextNumber = parsed + 1;
+        }
+      }
+      const orderNumber = String(nextNumber);
 
       const order = new Order({
         orderNumber,
@@ -387,6 +387,14 @@ export class OrderService {
 
       if (status === 'served') {
         await NotificationService.notifyOrderServed(
+          order._id.toString(),
+          order.orderNumber || order._id.toString().slice(-6).toUpperCase(),
+          tentName
+        );
+      }
+
+      if (status === 'ready') {
+        await NotificationService.notifyServersOrderReady(
           order._id.toString(),
           order.orderNumber || order._id.toString().slice(-6).toUpperCase(),
           tentName

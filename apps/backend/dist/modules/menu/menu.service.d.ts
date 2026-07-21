@@ -53,6 +53,7 @@ export declare class MenuService {
         price: number;
         prepTime: number;
         status: ProductStatus;
+        isActive: boolean;
         imageUrl: string;
         recipe: Array<{
             inventoryId: string;
@@ -61,5 +62,9 @@ export declare class MenuService {
     }>): Promise<IProduct>;
     static updateProductStatus(id: string, status: ProductStatus): Promise<IProduct>;
     static deleteProduct(id: string): Promise<void>;
+    static getProductsAvailability(): Promise<Record<string, {
+        inStock: boolean;
+        missingItems: string[];
+    }>>;
 }
 //# sourceMappingURL=menu.service.d.ts.map

@@ -38,27 +38,27 @@ const mongoose_1 = __importStar(require("mongoose"));
 const orderSchema = new mongoose_1.Schema({
     orderNumber: { type: String, unique: true },
     branchId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Branch' },
-    tableId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Table' },
+    tentId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Tent' },
     customerId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Customer' },
     userId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
     type: {
         type: String,
-        enum: ['dine-in', 'takeaway', 'delivery'],
+        enum: ['dine-in', 'takeaway', 'delivery', 'rental'],
         required: true,
     },
     status: {
         type: String,
-        enum: ['new', 'preparing', 'ready', 'served', 'paid', 'cancelled'],
+        enum: ['new', 'preparing', 'ready', 'served', 'cancelled', 'completed'],
         default: 'new',
     },
     totalHT: { type: Number, required: true, min: 0 },
     totalTTC: { type: Number, required: true, min: 0 },
-    paid: { type: Boolean, default: false },
-    paymentMethod: { type: String },
+    rentalDuration: { type: String },
+    rentalPrice: { type: Number, min: 0 },
     notes: { type: String, trim: true },
 }, { timestamps: true });
 orderSchema.index({ status: 1 });
-orderSchema.index({ tableId: 1 });
+orderSchema.index({ tentId: 1 });
 orderSchema.index({ userId: 1 });
 orderSchema.index({ createdAt: -1 });
 orderSchema.index({ branchId: 1, status: 1 });

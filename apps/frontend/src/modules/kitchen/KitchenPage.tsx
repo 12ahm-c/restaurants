@@ -179,7 +179,7 @@ export function KitchenPage() {
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <p className="text-lg font-bold text-white">
-                        #{item.orderId.slice(-6).toUpperCase()}
+                        #{item.order?.orderNumber || item.orderId.slice(-6).toUpperCase()}
                       </p>
                       <p className="text-sm text-surface-400 flex items-center gap-1 mt-0.5">
                         <UtensilsCrossed size={12} />

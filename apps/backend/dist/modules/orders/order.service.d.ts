@@ -1,10 +1,13 @@
 import { IOrder, OrderStatus } from '../../models/Order';
 import { IOrderItem } from '../../models/OrderItem';
 export interface CreateOrderInput {
-    tableId?: string;
+    tentId?: string;
     customerId?: string;
-    type: 'dine-in' | 'takeaway' | 'delivery';
-    items: Array<{
+    type: 'dine-in' | 'takeaway' | 'delivery' | 'rental';
+    paymentMethod?: 'cash' | 'card' | 'mobile';
+    rentalDuration?: string;
+    rentalPrice?: number;
+    items?: Array<{
         productId: string;
         quantity: number;
         variant?: string;
@@ -12,6 +15,8 @@ export interface CreateOrderInput {
             name: string;
             price: number;
         }>;
+        quantityTypeName?: string;
+        quantityTypeLabel?: string;
         notes?: string;
     }>;
     notes?: string;

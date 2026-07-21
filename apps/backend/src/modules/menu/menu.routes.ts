@@ -48,7 +48,7 @@ router.put(
 router.patch(
   '/menu/products/:id/status',
   authenticate,
-  requireRole('owner' as Role, 'manager' as Role),
+  requireRole('owner' as Role, 'manager' as Role, 'chef' as Role),
   MenuController.updateProductStatus
 );
 

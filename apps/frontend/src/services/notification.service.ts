@@ -7,6 +7,8 @@ export type NotificationType =
   | 'payment_received'
   | 'stock_critical'
   | 'loyalty_earned'
+  | 'manager_morning'
+  | 'daily_summary'
   | 'system';
 
 export interface Notification {

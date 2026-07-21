@@ -6,18 +6,18 @@ const user_service_1 = require("./user.service");
 const response_1 = require("../../utils/response");
 const updateProfileSchema = zod_1.z.object({
     name: zod_1.z.string().min(1).optional(),
-    email: zod_1.z.string().email().optional(),
+    phone: zod_1.z.string().min(1).optional(),
     language: zod_1.z.enum(['fr', 'en', 'ar']).optional(),
 });
 const createEmployeeSchema = zod_1.z.object({
     name: zod_1.z.string().min(1, 'Name is required'),
-    email: zod_1.z.string().email('Invalid email format'),
+    phone: zod_1.z.string().min(1, 'Phone number is required'),
     password: zod_1.z.string().min(6, 'Password must be at least 6 characters'),
     role: zod_1.z.enum(['owner', 'manager', 'cashier', 'server', 'chef', 'stock_manager']),
 });
 const updateEmployeeSchema = zod_1.z.object({
     name: zod_1.z.string().min(1).optional(),
-    email: zod_1.z.string().email().optional(),
+    phone: zod_1.z.string().min(1).optional(),
     role: zod_1.z.enum(['owner', 'manager', 'cashier', 'server', 'chef', 'stock_manager']).optional(),
     isActive: zod_1.z.boolean().optional(),
     password: zod_1.z.string().min(6).optional(),
@@ -100,6 +100,28 @@ class UserController {
         try {
             const employee = await user_service_1.UserService.updateEmployee(req.params.id, result.data, req.user.sub);
             (0, response_1.sendSuccess)(res, employee);
+        }
+        catch (error) {
+            handleError(res, error);
+        }
+    }
+    static async changePassword(req, res) {
+        const schema = zod_1.z.object({
+            currentPassword: zod_1.z.string().min(1, 'Current password is required'),
+            newPassword: zod_1.z.string().min(6, 'New password must be at least 6 characters'),
+        });
+        const result = schema.safeParse(req.body);
+        if (!result.success) {
+            const fields = {};
+            result.error.errors.forEach((e) => {
+                fields[e.path.join('.')] = e.message;
+            });
+            (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
+            return;
+        }
+        try {
+            await user_service_1.UserService.changePassword(req.user.sub, result.data.currentPassword, result.data.newPassword);
+            (0, response_1.sendSuccess)(res, { message: 'Password changed successfully' });
         }
         catch (error) {
             handleError(res, error);

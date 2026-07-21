@@ -10,6 +10,7 @@ export interface KitchenQueueDTO {
     updatedAt: Date;
     order?: {
         _id: string;
+        orderNumber: string;
         type: string;
         status: string;
         totalTTC: number;
@@ -18,8 +19,8 @@ export interface KitchenQueueDTO {
     };
     table?: {
         _id: string;
-        name: string;
-        zone: string;
+        tentNumber: number;
+        size: string;
     };
     items?: Array<{
         productId: string;
@@ -36,6 +37,5 @@ export declare class KitchenService {
     static getPriorityQueue(): Promise<KitchenQueueDTO[]>;
     static startPreparation(id: string): Promise<IKitchenQueue>;
     static markReady(id: string): Promise<IKitchenQueue>;
-    static cancelOrder(orderId: string, reason: string): Promise<void>;
 }
 //# sourceMappingURL=kitchen.service.d.ts.map

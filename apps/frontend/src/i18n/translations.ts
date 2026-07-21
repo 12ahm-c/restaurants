@@ -238,6 +238,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     'pos.rentOnlyNoItems': 'Sélectionnez une khayma et un prix',
     'pos.createRental': 'Créer la location',
     'pos.rental': 'Location',
+    'pos.orderProducts': 'Produits de la commande',
+    'pos.chooseProducts': 'Choisir les produits',
+    'pos.openProducts': 'Ouvrir',
 
     // Reports
     'reports.title': 'Rapports',
@@ -612,6 +615,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     'pos.rentOnlyNoItems': 'Select a tent and price',
     'pos.createRental': 'Create rental',
     'pos.rental': 'Rental',
+    'pos.orderProducts': 'Order products',
+    'pos.chooseProducts': 'Choose products',
+    'pos.openProducts': 'Open',
 
     // Reports
     'reports.title': 'Reports',
@@ -986,6 +992,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     'pos.rentOnlyNoItems': 'اختر خيمة وسعر الكراء',
     'pos.createRental': 'إنشاء الكراء',
     'pos.rental': 'كراء',
+    'pos.orderProducts': 'منتجات الطلب',
+    'pos.chooseProducts': 'اختيار المنتجات',
+    'pos.openProducts': 'فتح',
 
     // Reports
     'reports.title': 'التقارير',

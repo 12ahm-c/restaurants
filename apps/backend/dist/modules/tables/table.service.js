@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TableService = void 0;
 const Table_1 = require("../../models/Table");
+const Order_1 = require("../../models/Order");
 const response_1 = require("../../utils/response");
 class TableService {
     static async getTables(filters) {
@@ -40,6 +41,23 @@ class TableService {
         if (serverId) {
             table.serverId = table.serverId || table.serverId;
         }
+        await table.save();
+        return table;
+    }
+    static async clearTable(id) {
+        const table = await Table_1.Table.findById(id);
+        if (!table) {
+            throw new response_1.AppError(404, 'NOT_FOUND', 'Table not found');
+        }
+        if (table.status === 'free') {
+            throw new response_1.AppError(409, 'INVALID_STATE', 'Table is already free');
+        }
+        if (table.currentOrderId) {
+            await Order_1.Order.findByIdAndUpdate(table.currentOrderId, { status: 'completed' });
+        }
+        table.status = 'free';
+        table.currentOrderId = undefined;
+        table.serverId = undefined;
         await table.save();
         return table;
     }

@@ -42,7 +42,6 @@ const supplierSchema = new mongoose_1.Schema({
     balanceDue: { type: Number, default: 0, min: 0 },
     isActive: { type: Boolean, default: true },
 }, { timestamps: true });
-supplierSchema.index({ name: 1 });
 supplierSchema.index({ isActive: 1 });
 exports.Supplier = mongoose_1.default.model('Supplier', supplierSchema);
 //# sourceMappingURL=Supplier.js.map

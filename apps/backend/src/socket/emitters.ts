@@ -71,6 +71,9 @@ export interface NotificationNewEvent {
   message: string;
   type: string;
   createdAt: Date;
+  entity?: string;
+  entityId?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export function emitNewOrder(io: SocketIOServer, data: NewOrderEvent): void {

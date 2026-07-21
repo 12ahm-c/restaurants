@@ -10,5 +10,6 @@ export declare class MenuController {
     static updateProduct(req: Request, res: Response): Promise<void>;
     static updateProductStatus(req: Request, res: Response): Promise<void>;
     static deleteProduct(req: Request, res: Response): Promise<void>;
+    static getProductsAvailability(_req: Request, res: Response): Promise<void>;
 }
 //# sourceMappingURL=menu.controller.d.ts.map

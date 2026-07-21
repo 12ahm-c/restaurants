@@ -64,7 +64,7 @@ class CustomerService {
         }
         const customerData = {
             firstName: data.firstName,
-            lastName: data.lastName,
+            lastName: data.lastName || '',
             phone: data.phone,
         };
         if (data.email)

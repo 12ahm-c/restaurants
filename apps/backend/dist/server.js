@@ -17,11 +17,10 @@ const errorHandler_1 = require("./middlewares/errorHandler");
 const socket_server_1 = require("./socket/socket.server");
 const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
 const user_routes_1 = __importDefault(require("./modules/users/user.routes"));
-const table_routes_1 = __importDefault(require("./modules/tables/table.routes"));
+const tent_routes_1 = __importDefault(require("./modules/tents/tent.routes"));
 const menu_routes_1 = __importDefault(require("./modules/menu/menu.routes"));
 const order_routes_1 = __importDefault(require("./modules/orders/order.routes"));
 const kitchen_routes_1 = __importDefault(require("./modules/kitchen/kitchen.routes"));
-const inventory_routes_1 = __importDefault(require("./modules/inventory/inventory.routes"));
 const customer_routes_1 = __importDefault(require("./modules/customer/customer.routes"));
 const payment_routes_1 = __importDefault(require("./modules/payments/payment.routes"));
 const dashboard_routes_1 = __importDefault(require("./modules/dashboard/dashboard.routes"));
@@ -30,13 +29,15 @@ const notification_routes_1 = __importDefault(require("./modules/notifications/n
 const supplier_routes_1 = __importDefault(require("./modules/suppliers/supplier.routes"));
 const admin_routes_1 = __importDefault(require("./modules/admin/admin.routes"));
 const health_routes_1 = __importDefault(require("./modules/health/health.routes"));
+const finance_routes_1 = __importDefault(require("./modules/finance/finance.routes"));
 const health_service_1 = require("./modules/health/health.service");
+const notification_scheduler_1 = require("./jobs/notification.scheduler");
 const app = (0, express_1.default)();
 const httpServer = (0, http_1.createServer)(app);
 const io = (0, socket_server_1.initSocketIO)(httpServer);
 exports.io = io;
 app.use((0, helmet_1.default)());
-app.use((0, cors_1.default)({ origin: env_1.env.CORS_ORIGIN, credentials: true }));
+app.use((0, cors_1.default)({ origin: env_1.env.CORS_ORIGINS, credentials: true }));
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 app.use('/uploads', express_1.default.static('uploads'));
@@ -59,11 +60,10 @@ app.get('/health', (_req, res) => {
 app.use('/v1/auth', auth_routes_1.default);
 app.use('/v1/users', user_routes_1.default);
 app.use('/v1/admin', user_routes_1.default);
-app.use('/v1', table_routes_1.default);
+app.use('/v1', tent_routes_1.default);
 app.use('/v1', menu_routes_1.default);
 app.use('/v1', order_routes_1.default);
 app.use('/v1', kitchen_routes_1.default);
-app.use('/v1', inventory_routes_1.default);
 app.use('/v1', customer_routes_1.default);
 app.use('/v1/payments', payment_routes_1.default);
 app.use('/v1/dashboard', dashboard_routes_1.default);
@@ -71,11 +71,13 @@ app.use('/v1/reports', reports_routes_1.default);
 app.use('/v1/notifications', notification_routes_1.default);
 app.use('/v1', supplier_routes_1.default);
 app.use('/v1/admin', admin_routes_1.default);
+app.use('/v1', finance_routes_1.default);
 app.use(errorHandler_1.errorHandler);
 async function start() {
     try {
         await (0, db_1.connectMongoDB)();
         logger_1.logger.info('MongoDB connected');
+        (0, notification_scheduler_1.startNotificationScheduler)();
         httpServer.listen(env_1.env.PORT, () => {
             logger_1.logger.info(`Server running on port ${env_1.env.PORT}`);
         });

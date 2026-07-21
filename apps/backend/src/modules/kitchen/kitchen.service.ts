@@ -2,6 +2,7 @@ import { KitchenQueue, IKitchenQueue, KitchenStatus } from '../../models/Kitchen
 import { Order } from '../../models/Order';
 import { Tent } from '../../models/Tent';
 import { Inventory } from '../../models/Inventory';
+import { OrderItem } from '../../models/OrderItem';
 import { AppError } from '../../utils/response';
 import { getIO } from '../../socket/socket.server';
 import { emitOrderStatusUpdate } from '../../socket/emitters';
@@ -19,6 +20,7 @@ export interface KitchenQueueDTO {
   updatedAt: Date;
   order?: {
     _id: string;
+    orderNumber: string;
     type: string;
     status: string;
     totalTTC: number;
@@ -55,7 +57,7 @@ export class KitchenService {
     const queue = await KitchenQueue.find(query)
       .populate({
         path: 'orderId',
-        select: 'type status totalTTC notes createdAt',
+        select: 'orderNumber type status totalTTC notes createdAt',
           populate: {
             path: 'tentId',
             select: 'tentNumber size',
@@ -67,38 +69,53 @@ export class KitchenService {
       queue.map(async (entry) => {
         const orderData = entry.orderId as unknown as {
           _id: string;
+          orderNumber: string;
           type: string;
           status: string;
           totalTTC: number;
           notes?: string;
           createdAt: Date;
           tentId?: { _id: string; tentNumber: number; size: string };
-        };
+        } | null;
 
-        const OrderItem = (await import('../../models/OrderItem')).OrderItem;
-        const orderItems = await OrderItem.find({ orderId: entry.orderId })
+        if (!orderData || !orderData._id) {
+          return {
+            _id: entry._id.toString(),
+            orderId: entry.orderId?.toString() || '',
+            status: entry.status,
+            priority: entry.priority,
+            startTime: entry.startTime,
+            endTime: entry.endTime,
+            createdAt: entry.createdAt,
+            updatedAt: entry.updatedAt,
+            order: undefined,
+            table: undefined,
+            items: [],
+          };
+        }
+
+        const orderItems = await OrderItem.find({ orderId: orderData._id })
           .populate('productId', 'name');
 
         return {
           _id: entry._id.toString(),
-          orderId: entry.orderId.toString(),
+          orderId: orderData._id,
           status: entry.status,
           priority: entry.priority,
           startTime: entry.startTime,
           endTime: entry.endTime,
           createdAt: entry.createdAt,
           updatedAt: entry.updatedAt,
-          order: orderData
-            ? {
-                _id: orderData._id,
-                type: orderData.type,
-                status: orderData.status,
-                totalTTC: orderData.totalTTC,
-                notes: orderData.notes,
-                createdAt: orderData.createdAt,
-              }
-            : undefined,
-          table: orderData?.tentId
+          order: {
+            _id: orderData._id,
+            orderNumber: orderData.orderNumber || orderData._id,
+            type: orderData.type,
+            status: orderData.status,
+            totalTTC: orderData.totalTTC,
+            notes: orderData.notes,
+            createdAt: orderData.createdAt,
+          },
+          table: orderData.tentId
             ? {
                 _id: orderData.tentId._id,
                 tentNumber: orderData.tentId.tentNumber,
@@ -106,8 +123,8 @@ export class KitchenService {
               }
             : undefined,
           items: orderItems.map((item) => ({
-            productId: (item.productId as unknown as { _id: string })._id,
-            productName: (item.productId as unknown as { name: string }).name,
+            productId: (item.productId as unknown as { _id: string })?._id || '',
+            productName: (item.productId as unknown as { name: string })?.name || '',
             quantity: item.quantity,
             notes: item.notes,
           })),
@@ -196,8 +213,13 @@ export class KitchenService {
           tentName,
           timestamp: new Date(),
         });
+        await NotificationService.notifyServersOrderReady(
+          order._id.toString(),
+          order.orderNumber || order._id.toString().slice(-6).toUpperCase(),
+          tentName
+        );
       } catch (socketError) {
-        // ignore
+        logger.warn({ err: socketError }, 'Failed to emit ready status or notify servers');
       }
     }
 

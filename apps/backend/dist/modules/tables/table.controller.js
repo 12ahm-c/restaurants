@@ -75,6 +75,15 @@ class TableController {
             handleError(res, error);
         }
     }
+    static async clearTable(req, res) {
+        try {
+            const table = await table_service_1.TableService.clearTable(req.params.id);
+            (0, response_1.sendSuccess)(res, table);
+        }
+        catch (error) {
+            handleError(res, error);
+        }
+    }
     static async createTable(req, res) {
         const result = createTableSchema.safeParse(req.body);
         if (!result.success) {

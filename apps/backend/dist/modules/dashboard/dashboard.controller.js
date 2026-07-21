@@ -14,7 +14,7 @@ class DashboardController {
                 todaySales: 0,
                 totalOrders: 0,
                 totalCustomers: 0,
-                occupiedTables: 0,
+                occupiedTents: 0,
                 newOrders: 0,
                 preparingOrders: 0,
                 readyOrders: 0,
@@ -36,7 +36,7 @@ class DashboardController {
                 revenue: { total: 0, change: 0 },
                 orders: { total: 0, averageTicket: 0 },
                 topProducts: [],
-                tableUtilization: 0,
+                tentUtilization: 0,
                 alertsCount: 0,
             });
         }

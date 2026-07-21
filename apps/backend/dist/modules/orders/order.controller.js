@@ -5,9 +5,12 @@ const zod_1 = require("zod");
 const order_service_1 = require("./order.service");
 const response_1 = require("../../utils/response");
 const createOrderSchema = zod_1.z.object({
-    tableId: zod_1.z.string().optional(),
+    tentId: zod_1.z.string().optional(),
     customerId: zod_1.z.string().optional(),
-    type: zod_1.z.enum(['dine-in', 'takeaway', 'delivery']),
+    type: zod_1.z.enum(['dine-in', 'takeaway', 'delivery', 'rental']),
+    paymentMethod: zod_1.z.enum(['cash', 'card', 'mobile']).optional(),
+    rentalDuration: zod_1.z.string().optional(),
+    rentalPrice: zod_1.z.number().min(0).optional(),
     items: zod_1.z
         .array(zod_1.z.object({
         productId: zod_1.z.string().min(1),
@@ -19,13 +22,15 @@ const createOrderSchema = zod_1.z.object({
             price: zod_1.z.number(),
         }))
             .optional(),
+        quantityTypeName: zod_1.z.string().optional(),
+        quantityTypeLabel: zod_1.z.string().optional(),
         notes: zod_1.z.string().optional(),
     }))
-        .min(1, 'At least one item is required'),
+        .optional(),
     notes: zod_1.z.string().optional(),
 });
 const updateStatusSchema = zod_1.z.object({
-    status: zod_1.z.enum(['new', 'preparing', 'ready', 'served', 'paid', 'cancelled']),
+    status: zod_1.z.enum(['new', 'preparing', 'ready', 'served', 'cancelled', 'completed']),
 });
 function handleError(res, error) {
     if (error instanceof response_1.AppError) {
@@ -51,7 +56,7 @@ class OrderController {
             (0, response_1.sendSuccess)(res, {
                 orderId: order._id,
                 orderNumber: order.orderNumber,
-                tableStatus: order.tableId ? 'occupied' : 'n/a',
+                tentStatus: order.tentId ? 'occupied' : 'n/a',
                 kitchenQueueId,
                 ticketUrl: null,
             }, 201);

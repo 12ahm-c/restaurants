@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
+import mongoose from 'mongoose';
 import { CustomerService } from './customer.service';
 import { sendSuccess, sendError, AppError } from '../../utils/response';
 
 const createCustomerSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(50),
-  lastName: z.string().min(1, 'Last name is required').max(50),
+  lastName: z.string().max(50).optional(),
   phone: z.string().min(1, 'Phone is required').max(20),
   email: z.string().email().optional(),
   address: z.string().max(200).optional(),
@@ -32,6 +33,22 @@ const redeemLoyaltySchema = z.object({
 function handleError(res: Response, error: unknown): void {
   if (error instanceof AppError) {
     sendError(res, error.statusCode, error.code, error.message);
+    return;
+  }
+  if (error instanceof mongoose.Error.ValidationError) {
+    const fields = Object.fromEntries(
+      Object.entries(error.errors).map(([field, value]) => [field, value.message])
+    );
+    sendError(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
+    return;
+  }
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (error as { code?: number }).code === 11000
+  ) {
+    sendError(res, 409, 'DUPLICATE', 'Duplicate value already exists');
     return;
   }
   sendError(res, 500, 'INTERNAL_ERROR', 'Internal server error');
@@ -66,7 +83,7 @@ export class CustomerController {
 
     if (!result.success) {
       const fields: Record<string, string> = {};
-      result.error.errors.forEach((e) => {
+      result.error.issues.forEach((e) => {
         fields[e.path.join('.')] = e.message;
       });
       sendError(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
@@ -86,7 +103,7 @@ export class CustomerController {
 
     if (!result.success) {
       const fields: Record<string, string> = {};
-      result.error.errors.forEach((e) => {
+      result.error.issues.forEach((e) => {
         fields[e.path.join('.')] = e.message;
       });
       sendError(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
@@ -121,7 +138,7 @@ export class CustomerController {
 
     if (!result.success) {
       const fields: Record<string, string> = {};
-      result.error.errors.forEach((e) => {
+      result.error.issues.forEach((e) => {
         fields[e.path.join('.')] = e.message;
       });
       sendError(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);

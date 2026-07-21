@@ -44,6 +44,7 @@ const updateProductSchema = zod_1.z.object({
     price: zod_1.z.number().min(0).optional(),
     prepTime: zod_1.z.number().min(0).optional(),
     status: zod_1.z.enum(['available', 'unavailable', 'discontinued']).optional(),
+    isActive: zod_1.z.boolean().optional(),
     imageUrl: zod_1.z.string().url().optional(),
     recipe: zod_1.z
         .array(zod_1.z.object({
@@ -164,7 +165,8 @@ class MenuController {
             result.error.errors.forEach((e) => {
                 fields[e.path.join('.')] = e.message;
             });
-            (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
+            const message = Object.values(fields).join(', ');
+            (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', message || 'Validation failed', fields);
             return;
         }
         try {
@@ -215,6 +217,15 @@ class MenuController {
         try {
             await menu_service_1.MenuService.deleteProduct(req.params.id);
             res.status(204).send();
+        }
+        catch (error) {
+            handleError(res, error);
+        }
+    }
+    static async getProductsAvailability(_req, res) {
+        try {
+            const availability = await menu_service_1.MenuService.getProductsAvailability();
+            (0, response_1.sendSuccess)(res, availability);
         }
         catch (error) {
             handleError(res, error);

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentController = void 0;
 const payment_service_1 = require("./payment.service");
+const response_1 = require("../../utils/response");
 class PaymentController {
     static async processPayment(req, res) {
         try {
@@ -67,6 +68,28 @@ class PaymentController {
         }
         catch (error) {
             res.status(500).json({ message: error.message || 'Failed to get payments' });
+        }
+    }
+    static async getAllPayments(req, res) {
+        try {
+            const { method, status, from, to, page, limit } = req.query;
+            const result = await payment_service_1.PaymentService.getAllPayments({
+                method: method,
+                status: status,
+                from: from,
+                to: to,
+                page: page ? parseInt(page) : 1,
+                limit: limit ? parseInt(limit) : 50,
+            });
+            (0, response_1.sendSuccess)(res, result.payments, 200, {
+                page: 1,
+                limit: result.payments.length,
+                total: result.total,
+                hasMore: false,
+            });
+        }
+        catch (error) {
+            (0, response_1.sendError)(res, 500, 'INTERNAL_ERROR', error.message || 'Failed to get payments');
         }
     }
     static async refundPayment(req, res) {

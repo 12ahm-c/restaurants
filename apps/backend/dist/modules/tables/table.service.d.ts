@@ -13,6 +13,7 @@ export declare class TableService {
     }>;
     static getTableById(id: string): Promise<ITable>;
     static updateTableStatus(id: string, status: TableStatus, serverId?: string): Promise<ITable>;
+    static clearTable(id: string): Promise<ITable>;
     static createTable(data: {
         name: string;
         capacity: number;

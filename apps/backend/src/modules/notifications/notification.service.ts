@@ -1,7 +1,10 @@
 import { Notification, INotification, NotificationType } from '../../models/Notification';
 import { User } from '../../models/User';
+import { Order } from '../../models/Order';
+import { Payment } from '../../models/Payment';
 import { emitNotificationNew } from '../../socket/emitters';
 import { getIO } from '../../socket/socket.server';
+import { FcmService } from '../../services/fcm.service';
 import { logger } from '../../utils/logger';
 
 export class NotificationService {
@@ -33,10 +36,23 @@ export class NotificationService {
         message,
         type,
         createdAt: notification.createdAt,
+        entity,
+        entityId,
+        metadata,
       });
     } catch (err) {
       logger.warn({ err: err as Error }, 'Failed to emit notification:new');
     }
+
+    FcmService.sendToUser(userId, title, message, {
+      notificationId: notification._id.toString(),
+      type,
+      entity,
+      entityId,
+      ...(metadata || {}),
+    }).catch((err) => {
+      logger.warn({ err, userId }, 'Failed to send FCM notification');
+    });
 
     return notification;
   }
@@ -198,6 +214,87 @@ export class NotificationService {
         );
       } catch (err) {
         logger.warn({ err, userId: user._id }, 'Failed to notify about stock');
+      }
+    }
+  }
+
+  static async notifyManagersMorningReminder(): Promise<void> {
+    const users = await User.find({ role: { $in: ['manager', 'owner'] }, isActive: true });
+
+    for (const user of users) {
+      try {
+        await this.createNotification(
+          user._id.toString(),
+          'صباح الخير',
+          'افتح التطبيق وراجع الطلبات، الخيام، والمبيعات لبدء يوم عمل منظم.',
+          'manager_morning',
+          'dashboard',
+          undefined,
+          { target: '/dashboard/manager' }
+        );
+      } catch (err) {
+        logger.warn({ err, userId: user._id }, 'Failed to send manager morning reminder');
+      }
+    }
+  }
+
+  static async notifyManagersDailySummary(referenceDate: Date = new Date()): Promise<void> {
+    const startOfDay = new Date(Date.UTC(
+      referenceDate.getUTCFullYear(),
+      referenceDate.getUTCMonth(),
+      referenceDate.getUTCDate(),
+      0,
+      0,
+      0,
+      0
+    ));
+    const endOfDay = new Date(Date.UTC(
+      referenceDate.getUTCFullYear(),
+      referenceDate.getUTCMonth(),
+      referenceDate.getUTCDate(),
+      23,
+      59,
+      59,
+      999
+    ));
+
+    const [ordersCount, completedOrdersCount, cancelledOrdersCount, revenueResult] = await Promise.all([
+      Order.countDocuments({ createdAt: { $gte: startOfDay, $lte: endOfDay } }),
+      Order.countDocuments({
+        status: { $in: ['served', 'completed'] },
+        createdAt: { $gte: startOfDay, $lte: endOfDay },
+      }),
+      Order.countDocuments({ status: 'cancelled', createdAt: { $gte: startOfDay, $lte: endOfDay } }),
+      Payment.aggregate([
+        { $match: { status: 'completed', createdAt: { $gte: startOfDay, $lte: endOfDay } } },
+        { $group: { _id: null, revenue: { $sum: '$amount' } } },
+      ]),
+    ]);
+
+    const revenue = revenueResult[0]?.revenue || 0;
+    const users = await User.find({ role: { $in: ['manager', 'owner'] }, isActive: true });
+    const message = `تقرير اليوم: ${ordersCount} طلب، ${completedOrdersCount} مكتمل، ${cancelledOrdersCount} ملغي، والإيرادات ${revenue} MRU.`;
+
+    for (const user of users) {
+      try {
+        await this.createNotification(
+          user._id.toString(),
+          'تقرير اليوم',
+          message,
+          'daily_summary',
+          'dashboard',
+          undefined,
+          {
+            target: '/dashboard/manager',
+            ordersCount,
+            completedOrdersCount,
+            cancelledOrdersCount,
+            revenue,
+            date: startOfDay.toISOString().slice(0, 10),
+          }
+        );
+      } catch (err) {
+        logger.warn({ err, userId: user._id }, 'Failed to send manager daily summary');
       }
     }
   }

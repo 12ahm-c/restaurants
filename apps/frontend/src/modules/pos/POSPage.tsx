@@ -6,7 +6,7 @@ import { orderService } from '../../services/order.service';
 import { useUIStore } from '../../stores/uiStore';
 import { useI18n } from '../../i18n/I18nContext';
 import { ProductDTO, CategoryDTO, CartItem, TentDTO, QuantityType } from '../../types';
-import { Search, Plus, Minus, Trash2, ShoppingBag, MessageSquare, X, Sparkles, ArrowLeft, Scale, Clock } from 'lucide-react';
+import { Search, Plus, Minus, Trash2, ShoppingBag, MessageSquare, X, Sparkles, ArrowLeft, Scale, Clock, PackagePlus, Check } from 'lucide-react';
 import { CustomerSearch } from '../../components/pos/CustomerSearch';
 
 const RENTAL_DURATIONS = [
@@ -32,6 +32,7 @@ export function POSPage() {
     customerId,
     notes: orderNotes,
     addItem,
+    setItems,
     removeItem,
     updateQuantity,
     updateItemNotes,
@@ -51,14 +52,20 @@ export function POSPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [editingItemNotes, setEditingItemNotes] = useState<string | null>(null);
+  const [editingItemQuantityTypeName, setEditingItemQuantityTypeName] = useState<string | undefined>(undefined);
   const [itemNoteText, setItemNoteText] = useState('');
   const [showOrderNotes, setShowOrderNotes] = useState(false);
-  const [showCart, setShowCart] = useState(false);
+  const [showCart, setShowCart] = useState(true);
   const [availability, setAvailability] = useState<Record<string, { inStock: boolean; missingItems: string[] }>>({});
   const [selectedProduct, setSelectedProduct] = useState<ProductDTO | null>(null);
   const [selectedQuantityType, setSelectedQuantityType] = useState<QuantityType | null>(null);
   const [quantityTypeQuantity, setQuantityTypeQuantity] = useState(1);
   const [showQuantityModal, setShowQuantityModal] = useState(false);
+  const [showProductPicker, setShowProductPicker] = useState(false);
+  const [pickerProducts, setPickerProducts] = useState<ProductDTO[]>([]);
+  const [pickerCategory, setPickerCategory] = useState('');
+  const [pickerSearchQuery, setPickerSearchQuery] = useState('');
+  const [draftItems, setDraftItems] = useState<CartItem[]>([]);
 
   // Rental mode state
   const [rentalMode, setRentalMode] = useState<'none' | 'rent-only' | 'sit-in' | 'takeaway'>('none');
@@ -104,6 +111,15 @@ export function POSPage() {
     }
   };
 
+  const loadPickerProducts = async (categoryId?: string, search?: string) => {
+    try {
+      const { products: data } = await orderService.getProducts({ categoryId, search });
+      setPickerProducts(data);
+    } catch (error) {
+      console.error('Failed to load picker products:', error);
+    }
+  };
+
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
     loadProducts(categoryId || undefined, searchQuery || undefined);
@@ -112,6 +128,61 @@ export function POSPage() {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     loadProducts(selectedCategory || undefined, query || undefined);
+  };
+
+  const getCartItemKey = (productId: string, quantityTypeName?: string) => `${productId}::${quantityTypeName || ''}`;
+
+  const createCartItemFromProduct = (product: ProductDTO, quantity: number, quantityType?: QuantityType): CartItem => ({
+    productId: product._id,
+    name: quantityType ? `${product.name} - ${quantityType.label}` : product.name,
+    price: quantityType ? quantityType.price : product.price,
+    quantity,
+    quantityTypeName: quantityType?.name,
+    quantityTypeLabel: quantityType?.label,
+  });
+
+  const handleOpenProductPicker = () => {
+    setDraftItems(items);
+    setPickerCategory('');
+    setPickerSearchQuery('');
+    loadPickerProducts();
+    setShowProductPicker(true);
+  };
+
+  const handlePickerCategoryChange = (categoryId: string) => {
+    setPickerCategory(categoryId);
+    loadPickerProducts(categoryId || undefined, pickerSearchQuery || undefined);
+  };
+
+  const handlePickerSearch = (query: string) => {
+    setPickerSearchQuery(query);
+    loadPickerProducts(pickerCategory || undefined, query || undefined);
+  };
+
+  const getDraftQuantity = (productId: string, quantityTypeName?: string) => {
+    const item = draftItems.find((i) => getCartItemKey(i.productId, i.quantityTypeName) === getCartItemKey(productId, quantityTypeName));
+    return item?.quantity || 0;
+  };
+
+  const setDraftQuantity = (product: ProductDTO, quantity: number, quantityType?: QuantityType) => {
+    setDraftItems((current) => {
+      const key = getCartItemKey(product._id, quantityType?.name);
+      const next = current.filter((item) => getCartItemKey(item.productId, item.quantityTypeName) !== key);
+
+      if (quantity <= 0) {
+        return next;
+      }
+
+      return [...next, createCartItemFromProduct(product, quantity, quantityType)];
+    });
+  };
+
+  const handleConfirmProductPicker = () => {
+    setItems(draftItems);
+    setShowProductPicker(false);
+    if (draftItems.length > 0) {
+      setShowCart(true);
+    }
   };
 
   const handleAddToCart = (product: ProductDTO) => {
@@ -158,15 +229,17 @@ export function POSPage() {
     setCustomerId(undefined);
   };
 
-  const handleOpenItemNotes = (productId: string, currentNotes?: string) => {
+  const handleOpenItemNotes = (productId: string, currentNotes?: string, quantityTypeName?: string) => {
     setEditingItemNotes(productId);
+    setEditingItemQuantityTypeName(quantityTypeName);
     setItemNoteText(currentNotes || '');
   };
 
   const handleSaveItemNotes = () => {
     if (editingItemNotes) {
-      updateItemNotes(editingItemNotes, itemNoteText);
+      updateItemNotes(editingItemNotes, itemNoteText, editingItemQuantityTypeName);
       setEditingItemNotes(null);
+      setEditingItemQuantityTypeName(undefined);
       setItemNoteText('');
     }
   };
@@ -263,6 +336,9 @@ export function POSPage() {
 
   // Filter products: only show active ones in POS
   const activeProducts = products.filter((p) => p.isActive);
+  const activePickerProducts = pickerProducts.filter((p) => p.isActive);
+  const draftItemCount = draftItems.reduce((count, item) => count + item.quantity, 0);
+  const draftTotal = draftItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <div className="flex h-[calc(100dvh-8rem)] md:h-[calc(100vh-8rem)] bg-surface-950 rounded-2xl overflow-hidden shadow-card">
@@ -466,6 +542,30 @@ export function POSPage() {
               </div>
             )}
 
+            {/* Product selection */}
+            {rentalMode !== 'rent-only' && (
+              <div>
+                <label className="block text-xs font-semibold text-surface-400 uppercase tracking-wider mb-1.5">
+                  {t('pos.orderProducts')} <span className="text-coral-400">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={handleOpenProductPicker}
+                  className="w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-surface-800 px-3 py-3 text-left hover:bg-surface-700 transition-colors"
+                >
+                  <span className="flex items-center gap-2 min-w-0">
+                    <PackagePlus size={18} className="text-brand-400 shrink-0" />
+                    <span className="text-sm font-semibold text-white truncate">
+                      {items.length > 0
+                        ? `${getItemCount()} ${t('pos.items')} - ${getTotal()} MRU`
+                        : t('pos.chooseProducts')}
+                    </span>
+                  </span>
+                  <span className="text-xs font-semibold text-brand-400">{t('pos.openProducts')}</span>
+                </button>
+              </div>
+            )}
+
             {/* Customer */}
             <div>
               <label className="block text-xs font-semibold text-surface-400 uppercase tracking-wider mb-1.5">{t('pos.customer')}</label>
@@ -510,21 +610,21 @@ export function POSPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-1 ml-2">
-                      <button onClick={() => handleOpenItemNotes(item.productId, item.notes)} className="p-1.5 rounded-lg text-surface-400 hover:text-brand-400 hover:bg-brand-500/10 transition-colors">
+                      <button onClick={() => handleOpenItemNotes(item.productId, item.notes, item.quantityTypeName)} className="p-1.5 rounded-lg text-surface-400 hover:text-brand-400 hover:bg-brand-500/10 transition-colors">
                         <MessageSquare size={14} />
                       </button>
-                      <button onClick={() => removeItem(item.productId)} className="p-1.5 rounded-lg text-surface-400 hover:text-coral-400 hover:bg-coral-400/10 transition-colors">
+                      <button onClick={() => removeItem(item.productId, item.quantityTypeName)} className="p-1.5 rounded-lg text-surface-400 hover:text-coral-400 hover:bg-coral-400/10 transition-colors">
                         <Trash2 size={14} />
                       </button>
                     </div>
                   </div>
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center gap-1 bg-surface-900 rounded-lg border border-white/5">
-                      <button onClick={() => updateQuantity(item.productId, item.quantity - 1)} className="p-1.5 rounded-l-lg hover:bg-white/5 transition-colors">
+                      <button onClick={() => updateQuantity(item.productId, item.quantity - 1, item.quantityTypeName)} className="p-1.5 rounded-l-lg hover:bg-white/5 transition-colors">
                         <Minus size={14} className="text-surface-300" />
                       </button>
                       <span className="w-8 text-center font-semibold text-sm text-white">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="p-1.5 rounded-r-lg hover:bg-white/5 transition-colors">
+                      <button onClick={() => updateQuantity(item.productId, item.quantity + 1, item.quantityTypeName)} className="p-1.5 rounded-r-lg hover:bg-white/5 transition-colors">
                         <Plus size={14} className="text-surface-300" />
                       </button>
                     </div>
@@ -616,6 +716,163 @@ export function POSPage() {
             </span>
           </div>
         </button>
+      )}
+
+      {/* Product Picker Modal */}
+      {showProductPicker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in p-3">
+          <div className="w-full max-w-5xl max-h-[90dvh] card animate-scale-in flex flex-col overflow-hidden">
+            <div className="p-4 md:p-5 border-b border-white/5">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="text-lg font-display font-bold text-white">{t('pos.chooseProducts')}</h3>
+                  <p className="text-sm text-surface-400 mt-1">
+                    {draftItemCount} {t('pos.items')} - {draftTotal} MRU
+                  </p>
+                </div>
+                <button onClick={() => setShowProductPicker(false)} className="p-2 rounded-lg hover:bg-white/5 text-surface-400 hover:text-surface-300 transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="relative mt-4">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-400" size={18} />
+                <input
+                  type="text"
+                  placeholder={t('pos.searchProducts')}
+                  value={pickerSearchQuery}
+                  onChange={(e) => handlePickerSearch(e.target.value)}
+                  className="input-field w-full pl-11 pr-4 py-3 rounded-xl"
+                />
+              </div>
+
+              <div className="flex gap-2 mt-3 overflow-x-auto pb-1 scrollbar-thin">
+                <button
+                  onClick={() => handlePickerCategoryChange('')}
+                  className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
+                    pickerCategory === ''
+                      ? 'bg-brand-500 text-white shadow-md'
+                      : 'bg-surface-900 text-surface-300 hover:bg-white/5 border border-white/5'
+                  }`}
+                >
+                  {t('pos.all')}
+                </button>
+                {categories.map((cat) => (
+                  <button
+                    key={cat._id}
+                    onClick={() => handlePickerCategoryChange(cat._id)}
+                    className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
+                      pickerCategory === cat._id
+                        ? 'bg-brand-500 text-white shadow-md'
+                        : 'bg-surface-900 text-surface-300 hover:bg-white/5 border border-white/5'
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-auto p-4 md:p-5">
+              {activePickerProducts.length === 0 ? (
+                <div className="text-center py-12 text-surface-400">{t('menu.noProducts')}</div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {activePickerProducts.map((product) => {
+                    const stock = availability[product._id];
+                    const isOutOfStock = stock && !stock.inStock;
+                    const isAvailable = product.status === 'available' && !isOutOfStock;
+                    const quantityTypes = product.hasQuantityTypes && product.quantityTypes.length > 0
+                      ? product.quantityTypes
+                      : [undefined];
+
+                    return (
+                      <div key={product._id} className={`bg-white/5 border border-white/5 rounded-xl p-3 ${!isAvailable ? 'opacity-50' : ''}`}>
+                        <div className="flex gap-3">
+                          <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-brand-500/10 to-orange-500/10 flex items-center justify-center overflow-hidden shrink-0">
+                            {product.imageUrl ? (
+                              <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
+                            ) : (
+                              <span className="text-2xl">{product.emoji || 'ðŸ½ï¸'}</span>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <p className="font-semibold text-white text-sm truncate">{product.name}</p>
+                              {isOutOfStock && (
+                                <span className="px-2 py-0.5 bg-coral-400/10 text-coral-400 text-[10px] font-semibold rounded-lg shrink-0">
+                                  {t('pos.outOfStock')}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-surface-400 truncate mt-0.5">{product.description}</p>
+                          </div>
+                        </div>
+
+                        <div className="mt-3 space-y-2">
+                          {quantityTypes.map((quantityType) => {
+                            const quantity = getDraftQuantity(product._id, quantityType?.name);
+                            return (
+                              <div key={quantityType?.name || product._id} className="flex items-center justify-between gap-3 rounded-lg bg-surface-900/80 border border-white/5 p-2">
+                                <div className="min-w-0">
+                                  <p className="text-sm font-semibold text-white truncate">
+                                    {quantityType?.label || `${product.price} MRU`}
+                                  </p>
+                                  {quantityType && (
+                                    <p className="text-xs text-surface-400">{quantityType.price} MRU / {quantityType.unit}</p>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-1 rounded-lg border border-white/5 bg-surface-950">
+                                  <button
+                                    type="button"
+                                    disabled={!isAvailable || quantity === 0}
+                                    onClick={() => setDraftQuantity(product, quantity - 1, quantityType)}
+                                    className="p-1.5 rounded-l-lg text-surface-300 hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                                  >
+                                    <Minus size={14} />
+                                  </button>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={quantity}
+                                    disabled={!isAvailable}
+                                    onChange={(e) => setDraftQuantity(product, Math.max(0, parseInt(e.target.value) || 0), quantityType)}
+                                    className="w-12 bg-transparent text-center text-sm font-semibold text-white outline-none disabled:opacity-40"
+                                  />
+                                  <button
+                                    type="button"
+                                    disabled={!isAvailable}
+                                    onClick={() => setDraftQuantity(product, quantity + 1, quantityType)}
+                                    className="p-1.5 rounded-r-lg text-surface-300 hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                                  >
+                                    <Plus size={14} />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 md:p-5 border-t border-white/5 bg-surface-900 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="text-sm text-surface-300">
+                <span className="font-semibold text-white">{draftItemCount}</span> {t('pos.items')} - <span className="font-semibold text-white">{draftTotal} MRU</span>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setShowProductPicker(false)} className="btn-secondary flex-1 sm:flex-none">{t('common.cancel')}</button>
+                <button onClick={handleConfirmProductPicker} className="btn-primary flex-1 sm:flex-none flex items-center justify-center gap-2">
+                  <Check size={18} />
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Quantity Type Modal */}

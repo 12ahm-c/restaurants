@@ -35,6 +35,12 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Product = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const quantityTypeSchema = new mongoose_1.Schema({
+    name: { type: String, required: true, trim: true },
+    label: { type: String, required: true, trim: true },
+    price: { type: Number, required: true, min: 0 },
+    unit: { type: String, required: true, trim: true },
+}, { _id: false });
 const productSchema = new mongoose_1.Schema({
     name: { type: String, required: true, trim: true },
     description: { type: String, trim: true },
@@ -47,12 +53,16 @@ const productSchema = new mongoose_1.Schema({
         enum: ['available', 'unavailable', 'discontinued'],
         default: 'available',
     },
+    isActive: { type: Boolean, default: true },
     recipe: [
         {
             inventoryId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Inventory', required: true },
             quantity: { type: Number, required: true, min: 0 },
         },
     ],
+    hasQuantityTypes: { type: Boolean, default: false },
+    quantityTypes: [quantityTypeSchema],
+    emoji: { type: String },
 }, { timestamps: true });
 productSchema.index({ name: 'text' });
 productSchema.index({ categoryId: 1 });

@@ -82,7 +82,7 @@ export class CustomerService {
 
   static async createCustomer(data: {
     firstName: string;
-    lastName: string;
+    lastName?: string;
     phone: string;
     email?: string;
     address?: string;
@@ -97,7 +97,7 @@ export class CustomerService {
 
     const customerData: any = {
       firstName: data.firstName,
-      lastName: data.lastName,
+      lastName: data.lastName || '',
       phone: data.phone,
     };
 

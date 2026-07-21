@@ -37,7 +37,7 @@ exports.Customer = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const customerSchema = new mongoose_1.Schema({
     firstName: { type: String, required: true, trim: true },
-    lastName: { type: String, required: true, trim: true },
+    lastName: { type: String, trim: true, default: '' },
     phone: { type: String, required: true, unique: true, trim: true },
     email: { type: String, trim: true, lowercase: true },
     address: { type: String, trim: true },

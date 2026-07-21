@@ -47,6 +47,8 @@ const orderItemSchema = new mongoose_1.Schema({
             price: { type: Number, required: true, min: 0 },
         },
     ],
+    quantityTypeName: { type: String, trim: true },
+    quantityTypeLabel: { type: String, trim: true },
     notes: { type: String, trim: true },
     total: { type: Number, required: true, min: 0 },
 }, { timestamps: true });

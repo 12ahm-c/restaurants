@@ -3,7 +3,7 @@ export type UserRole = 'owner' | 'manager' | 'cashier' | 'server' | 'chef' | 'st
 export interface IUser extends Document {
     _id: mongoose.Types.ObjectId;
     name: string;
-    email: string;
+    phone: string;
     passwordHash: string;
     role: UserRole;
     isActive: boolean;

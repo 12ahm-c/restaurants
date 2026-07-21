@@ -8,9 +8,10 @@ interface CartState {
   customerId?: string;
   notes: string;
   addItem: (item: CartItem) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  updateItemNotes: (productId: string, notes: string) => void;
+  setItems: (items: CartItem[]) => void;
+  removeItem: (productId: string, quantityTypeName?: string) => void;
+  updateQuantity: (productId: string, quantity: number, quantityTypeName?: string) => void;
+  updateItemNotes: (productId: string, notes: string, quantityTypeName?: string) => void;
   setSelectedTent: (tent: TentDTO | null) => void;
   setOrderType: (type: OrderType) => void;
   setCustomerId: (id: string | undefined) => void;
@@ -43,28 +44,30 @@ export const useCartStore = create<CartState>((set, get) => ({
     });
   },
 
-  removeItem: (productId) => {
+  setItems: (items) => set({ items }),
+
+  removeItem: (productId, quantityTypeName) => {
     set((state) => ({
-      items: state.items.filter((i) => i.productId !== productId),
+      items: state.items.filter((i) => !(i.productId === productId && i.quantityTypeName === quantityTypeName)),
     }));
   },
 
-  updateQuantity: (productId, quantity) => {
+  updateQuantity: (productId, quantity, quantityTypeName) => {
     if (quantity <= 0) {
-      get().removeItem(productId);
+      get().removeItem(productId, quantityTypeName);
       return;
     }
     set((state) => ({
       items: state.items.map((i) =>
-        i.productId === productId ? { ...i, quantity } : i
+        i.productId === productId && i.quantityTypeName === quantityTypeName ? { ...i, quantity } : i
       ),
     }));
   },
 
-  updateItemNotes: (productId, notes) => {
+  updateItemNotes: (productId, notes, quantityTypeName) => {
     set((state) => ({
       items: state.items.map((i) =>
-        i.productId === productId ? { ...i, notes } : i
+        i.productId === productId && i.quantityTypeName === quantityTypeName ? { ...i, notes } : i
       ),
     }));
   },

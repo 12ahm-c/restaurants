@@ -9,7 +9,7 @@ router.get('/tents/status', authenticate, TentController.getTentStatusSummary);
 router.get('/tents', authenticate, TentController.getTents);
 router.get('/tents/:id', authenticate, TentController.getTentById);
 router.patch('/tents/:id/status', authenticate, TentController.updateTentStatus);
-router.patch('/tents/:id/empty', authenticate, TentController.markTentEmpty);
+router.patch('/tents/:id/empty', authenticate, requireRole('owner', 'manager', 'cashier', 'server'), TentController.markTentEmpty);
 router.post('/tents', authenticate, requireRole('owner', 'manager'), TentController.createTent);
 
 export default router;

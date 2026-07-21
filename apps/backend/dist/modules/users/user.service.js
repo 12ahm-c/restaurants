@@ -15,16 +15,16 @@ class UserService {
         if (!user) {
             throw new response_1.AppError(404, 'NOT_FOUND', 'User not found');
         }
-        if (input.email && input.email !== user.email) {
-            const existingUser = await User_1.User.findOne({ email: input.email, _id: { $ne: user._id } });
+        if (input.phone && input.phone !== user.phone) {
+            const existingUser = await User_1.User.findOne({ phone: input.phone, _id: { $ne: user._id } });
             if (existingUser) {
-                throw new response_1.AppError(409, 'CONFLICT', 'Email already in use');
+                throw new response_1.AppError(409, 'CONFLICT', 'Phone number already in use');
             }
         }
         if (input.name)
             user.name = input.name;
-        if (input.email)
-            user.email = input.email;
+        if (input.phone)
+            user.phone = input.phone;
         if (input.language)
             user.language = input.language;
         await user.save();
@@ -57,13 +57,13 @@ class UserService {
         };
     }
     static async createEmployee(input, createdByUserId) {
-        const existingUser = await User_1.User.findOne({ email: input.email });
+        const existingUser = await User_1.User.findOne({ phone: input.phone });
         if (existingUser) {
-            throw new response_1.AppError(409, 'CONFLICT', 'Email already in use');
+            throw new response_1.AppError(409, 'CONFLICT', 'Phone number already in use');
         }
         const user = await User_1.User.create({
             name: input.name,
-            email: input.email,
+            phone: input.phone,
             passwordHash: input.password,
             role: input.role,
         });
@@ -72,7 +72,7 @@ class UserService {
             action: 'employee_created',
             entity: 'User',
             entityId: user._id,
-            details: { name: user.name, email: user.email, role: user.role },
+            details: { name: user.name, phone: user.phone, role: user.role },
         });
         return auth_service_1.AuthService.toUserDTO(user);
     }
@@ -81,16 +81,16 @@ class UserService {
         if (!user) {
             throw new response_1.AppError(404, 'NOT_FOUND', 'Employee not found');
         }
-        if (input.email && input.email !== user.email) {
-            const existingUser = await User_1.User.findOne({ email: input.email, _id: { $ne: user._id } });
+        if (input.phone && input.phone !== user.phone) {
+            const existingUser = await User_1.User.findOne({ phone: input.phone, _id: { $ne: user._id } });
             if (existingUser) {
-                throw new response_1.AppError(409, 'CONFLICT', 'Email already in use');
+                throw new response_1.AppError(409, 'CONFLICT', 'Phone number already in use');
             }
         }
         if (input.name)
             user.name = input.name;
-        if (input.email)
-            user.email = input.email;
+        if (input.phone)
+            user.phone = input.phone;
         if (input.role)
             user.role = input.role;
         if (input.isActive !== undefined)
@@ -113,6 +113,18 @@ class UserService {
             throw new response_1.AppError(404, 'NOT_FOUND', 'Employee not found');
         }
         return auth_service_1.AuthService.toUserDTO(user);
+    }
+    static async changePassword(userId, currentPassword, newPassword) {
+        const user = await User_1.User.findById(userId).select('+passwordHash');
+        if (!user) {
+            throw new response_1.AppError(404, 'NOT_FOUND', 'User not found');
+        }
+        const isPasswordValid = await user.comparePassword(currentPassword);
+        if (!isPasswordValid) {
+            throw new response_1.AppError(401, 'AUTH_REQUIRED', 'Current password is incorrect');
+        }
+        user.passwordHash = newPassword;
+        await user.save();
     }
 }
 exports.UserService = UserService;

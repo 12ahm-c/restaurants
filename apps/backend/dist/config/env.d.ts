@@ -4,6 +4,7 @@ export declare const env: {
     RATE_LIMIT_MAX: number;
     LOGIN_RATE_LIMIT_MAX: number;
     LOGIN_RATE_LIMIT_WINDOW_MS: number;
+    CORS_ORIGINS: string[];
     NODE_ENV: "development" | "production" | "test";
     MONGODB_URI: string;
     REDIS_URL: string;

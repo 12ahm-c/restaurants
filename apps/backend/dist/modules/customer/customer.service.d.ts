@@ -20,7 +20,7 @@ export declare class CustomerService {
     }>;
     static createCustomer(data: {
         firstName: string;
-        lastName: string;
+        lastName?: string;
         phone: string;
         email?: string;
         address?: string;

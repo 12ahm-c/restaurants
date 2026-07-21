@@ -8,9 +8,15 @@ export declare class NotificationService {
     }>;
     static markAsRead(userId: string, notificationId: string): Promise<INotification | null>;
     static markAllAsRead(userId: string): Promise<number>;
-    static createOrderReadyNotification(orderId: string, tableNumber: number, userId: string): Promise<void>;
+    static notifyChefsNewOrder(orderId: string, orderNumber: string, tableName: string, items: Array<{
+        name: string;
+        quantity: number;
+    }>): Promise<void>;
+    static notifyServersOrderReady(orderId: string, orderNumber: string, tableName: string): Promise<void>;
+    static notifyPaymentReceived(orderId: string, orderNumber: string, amount: number, method: string): Promise<void>;
+    static notifyOrderServed(orderId: string, orderNumber: string, tableName: string): Promise<void>;
     static createStockCriticalNotification(inventoryId: string, productName: string, quantity: number, threshold: number): Promise<void>;
-    static createLoyaltyEarnedNotification(customerId: string, customerName: string, points: number, orderId: string): Promise<void>;
-    static createPaymentReceivedNotification(orderId: string, amount: number, method: string, userId: string): Promise<void>;
+    static notifyManagersMorningReminder(): Promise<void>;
+    static notifyManagersDailySummary(referenceDate?: Date): Promise<void>;
 }
 //# sourceMappingURL=notification.service.d.ts.map

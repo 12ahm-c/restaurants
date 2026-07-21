@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../stores/authStore';
 import { useI18n } from '../../../i18n/I18nContext';
+import { getDefaultRouteForRole } from '../../../utils/defaultRoute';
 import { Utensils, Eye, EyeOff, ArrowRight, Shield, Zap, Clock } from 'lucide-react';
 
 export function LoginPage() {
@@ -15,8 +16,8 @@ export function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(phone, password);
-      navigate('/dashboard');
+      const user = await login(phone, password);
+      navigate(getDefaultRouteForRole(user.role));
     } catch {
       // Error is handled by the store
     }

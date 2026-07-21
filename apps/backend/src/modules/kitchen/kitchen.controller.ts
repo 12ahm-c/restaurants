@@ -13,6 +13,7 @@ export class KitchenController {
       });
       sendSuccess(res, queue);
     } catch (error) {
+      console.error('Kitchen queue error:', error);
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
           success: false,
@@ -24,7 +25,7 @@ export class KitchenController {
         res.status(500).json({
           success: false,
           data: null,
-          error: { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+          error: { code: 'INTERNAL_ERROR', message: error instanceof Error ? error.message : 'Internal server error' },
           meta: null,
         });
       }

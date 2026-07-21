@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNotificationStore } from '../../stores/notificationStore';
-import { Bell, ShoppingCart, CheckCircle, DollarSign, AlertTriangle, Star, Info } from 'lucide-react';
+import { Bell, ShoppingCart, CheckCircle, DollarSign, AlertTriangle, Star, Info, Sun, BarChart3 } from 'lucide-react';
 
 const typeConfig: Record<string, { icon: typeof Bell; color: string; bg: string }> = {
   new_order: { icon: ShoppingCart, color: 'text-brand-400', bg: 'bg-brand-500/10' },
@@ -9,6 +9,8 @@ const typeConfig: Record<string, { icon: typeof Bell; color: string; bg: string 
   payment_received: { icon: DollarSign, color: 'text-brand-400', bg: 'bg-brand-500/10' },
   stock_critical: { icon: AlertTriangle, color: 'text-coral-400', bg: 'bg-coral-500/10' },
   loyalty_earned: { icon: Star, color: 'text-amber-400', bg: 'bg-amber-400/10' },
+  manager_morning: { icon: Sun, color: 'text-amber-400', bg: 'bg-amber-400/10' },
+  daily_summary: { icon: BarChart3, color: 'text-blue-400', bg: 'bg-blue-500/10' },
   system: { icon: Info, color: 'text-surface-400', bg: 'bg-surface-800' },
 };
 

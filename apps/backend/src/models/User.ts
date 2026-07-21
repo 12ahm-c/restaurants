@@ -12,6 +12,7 @@ export interface IUser extends Document {
   isActive: boolean;
   branchId?: mongoose.Types.ObjectId;
   language: string;
+  fcmTokens: string[];
   lastLogin?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -31,6 +32,7 @@ const userSchema = new Schema<IUser>(
     isActive: { type: Boolean, default: true },
     branchId: { type: Schema.Types.ObjectId, ref: 'Branch' },
     language: { type: String, default: 'fr', enum: ['fr', 'en', 'ar'] },
+    fcmTokens: { type: [String], default: [] },
     lastLogin: { type: Date },
   },
   {

@@ -1,12 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CustomerController = void 0;
 const zod_1 = require("zod");
+const mongoose_1 = __importDefault(require("mongoose"));
 const customer_service_1 = require("./customer.service");
 const response_1 = require("../../utils/response");
 const createCustomerSchema = zod_1.z.object({
     firstName: zod_1.z.string().min(1, 'First name is required').max(50),
-    lastName: zod_1.z.string().min(1, 'Last name is required').max(50),
+    lastName: zod_1.z.string().max(50).optional(),
     phone: zod_1.z.string().min(1, 'Phone is required').max(20),
     email: zod_1.z.string().email().optional(),
     address: zod_1.z.string().max(200).optional(),
@@ -30,6 +34,18 @@ const redeemLoyaltySchema = zod_1.z.object({
 function handleError(res, error) {
     if (error instanceof response_1.AppError) {
         (0, response_1.sendError)(res, error.statusCode, error.code, error.message);
+        return;
+    }
+    if (error instanceof mongoose_1.default.Error.ValidationError) {
+        const fields = Object.fromEntries(Object.entries(error.errors).map(([field, value]) => [field, value.message]));
+        (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
+        return;
+    }
+    if (typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        error.code === 11000) {
+        (0, response_1.sendError)(res, 409, 'DUPLICATE', 'Duplicate value already exists');
         return;
     }
     (0, response_1.sendError)(res, 500, 'INTERNAL_ERROR', 'Internal server error');
@@ -62,7 +78,7 @@ class CustomerController {
         const result = createCustomerSchema.safeParse(req.body);
         if (!result.success) {
             const fields = {};
-            result.error.errors.forEach((e) => {
+            result.error.issues.forEach((e) => {
                 fields[e.path.join('.')] = e.message;
             });
             (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
@@ -80,7 +96,7 @@ class CustomerController {
         const result = updateCustomerSchema.safeParse(req.body);
         if (!result.success) {
             const fields = {};
-            result.error.errors.forEach((e) => {
+            result.error.issues.forEach((e) => {
                 fields[e.path.join('.')] = e.message;
             });
             (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
@@ -112,7 +128,7 @@ class CustomerController {
         const result = redeemLoyaltySchema.safeParse(req.body);
         if (!result.success) {
             const fields = {};
-            result.error.errors.forEach((e) => {
+            result.error.issues.forEach((e) => {
                 fields[e.path.join('.')] = e.message;
             });
             (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);

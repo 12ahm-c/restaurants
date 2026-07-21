@@ -8,7 +8,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (phone: string, password: string) => Promise<void>;
+  login: (phone: string, password: string) => Promise<UserDTO>;
   logout: () => Promise<void>;
   loadUser: () => Promise<void>;
   updateUser: (user: UserDTO) => void;
@@ -26,6 +26,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const { user } = await authService.login(phone, password);
       set({ user, isAuthenticated: true, isLoading: false });
+      return user;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
       set({ error: message, isLoading: false });

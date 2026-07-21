@@ -6,13 +6,7 @@ export interface ISettings extends Document {
     taxRate: number;
     currency: string;
     company_name: string;
-    whatsapp_business_phone_id?: string;
-    whatsapp_token?: string;
-    smtp_host?: string;
-    smtp_port?: number;
-    smtp_user?: string;
-    smtp_pass?: string;
-    fcm_server_key?: string;
+    logo: string;
     createdAt: Date;
     updatedAt: Date;
 }

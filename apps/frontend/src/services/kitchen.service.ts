@@ -12,6 +12,7 @@ export interface KitchenQueueItem {
   updatedAt: string;
   order?: {
     _id: string;
+    orderNumber: string;
     type: string;
     status: string;
     totalTTC: number;

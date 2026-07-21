@@ -137,7 +137,7 @@ export function ActiveOrdersPage() {
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <p className="text-lg font-bold text-white">
-                          #{order._id.slice(-6).toUpperCase()}
+                          #{order.orderNumber}
                         </p>
                         <p className="text-sm text-surface-400">
                            {t('orders.tent')}: {(() => { const t = order.tentId as unknown as { tentNumber?: number; size?: string }; if (!t?.tentNumber) return 'N/A'; const sizeLabel = t.size === 'small' ? 'صغيرة' : t.size === 'large' ? 'كبيرة' : 'متوسطة'; return `خيمة #${t.tentNumber} - ${sizeLabel}`; })()}
@@ -220,7 +220,7 @@ export function ActiveOrdersPage() {
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-sm text-white">
-                        #{order._id.slice(-6).toUpperCase()}
+                        #{order.orderNumber}
                       </span>
                       <span className="text-xs text-surface-500 capitalize">{order.type}</span>
                     </div>
@@ -263,7 +263,7 @@ export function ActiveOrdersPage() {
                     <tr key={order._id} className="table-row">
                       <td className="px-6 py-4">
                         <span className="font-bold text-sm text-white">
-                          #{order._id.slice(-6).toUpperCase()}
+                          #{order.orderNumber}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-surface-300">

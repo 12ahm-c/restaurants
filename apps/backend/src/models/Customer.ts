@@ -18,7 +18,7 @@ export interface ICustomer extends Document {
 const customerSchema = new Schema<ICustomer>(
   {
     firstName: { type: String, required: true, trim: true },
-    lastName: { type: String, required: true, trim: true },
+    lastName: { type: String, trim: true, default: '' },
     phone: { type: String, required: true, unique: true, trim: true },
     email: { type: String, trim: true, lowercase: true },
     address: { type: String, trim: true },

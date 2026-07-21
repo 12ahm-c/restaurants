@@ -111,6 +111,7 @@ export type OrderStatus = 'new' | 'preparing' | 'ready' | 'served' | 'cancelled'
 
 export interface OrderDTO {
   _id: string;
+  orderNumber: string;
   branchId?: string;
   tentId: string;
   customerId?: string;

@@ -2,18 +2,18 @@ import { UserRole } from '../../models/User';
 import { AuthService } from '../auth/auth.service';
 export interface UpdateProfileInput {
     name?: string;
-    email?: string;
+    phone?: string;
     language?: string;
 }
 export interface CreateEmployeeInput {
     name: string;
-    email: string;
+    phone: string;
     password: string;
     role: UserRole;
 }
 export interface UpdateEmployeeInput {
     name?: string;
-    email?: string;
+    phone?: string;
     role?: UserRole;
     isActive?: boolean;
     password?: string;
@@ -30,5 +30,6 @@ export declare class UserService {
     static createEmployee(input: CreateEmployeeInput, createdByUserId: string): Promise<ReturnType<typeof AuthService.toUserDTO>>;
     static updateEmployee(employeeId: string, input: UpdateEmployeeInput, updatedByUserId: string): Promise<ReturnType<typeof AuthService.toUserDTO>>;
     static getEmployeeById(employeeId: string): Promise<ReturnType<typeof AuthService.toUserDTO>>;
+    static changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void>;
 }
 //# sourceMappingURL=user.service.d.ts.map

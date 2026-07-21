@@ -175,17 +175,18 @@ export class MenuController {
     }
   }
 
-  static async createProduct(req: Request, res: Response): Promise<void> {
-    const result = createProductSchema.safeParse(req.body);
+static async createProduct(req: Request, res: Response): Promise<void> {
+  const result = createProductSchema.safeParse(req.body);
 
-    if (!result.success) {
-      const fields: Record<string, string> = {};
-      result.error.errors.forEach((e) => {
-        fields[e.path.join('.')] = e.message;
-      });
-      sendError(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
-      return;
-    }
+  if (!result.success) {
+    const fields: Record<string, string> = {};
+    result.error.errors.forEach((e) => {
+      fields[e.path.join('.')] = e.message;
+    });
+    const message = Object.values(fields).join(', ');
+    sendError(res, 400, 'VALIDATION_ERROR', message || 'Validation failed', fields);
+    return;
+  }
 
     try {
       const product = await MenuService.createProduct(result.data);

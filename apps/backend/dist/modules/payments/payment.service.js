@@ -22,7 +22,9 @@ class PaymentService {
             const order = await Order_1.Order.findById(orderId).session(session);
             if (!order)
                 throw { status: 404, message: 'Order not found' };
-            if (order.paid)
+            // Check if payment already exists for this order
+            const existingPayment = await Payment_1.Payment.findOne({ orderId: order._id, status: 'completed' }).session(session);
+            if (existingPayment)
                 throw { status: 400, message: 'Order already paid' };
             if (Math.abs(amount - order.totalTTC) > 0.01) {
                 throw { status: 400, message: 'Amount does not match order total' };
@@ -45,7 +47,7 @@ class PaymentService {
                     userId: new mongoose_1.default.Types.ObjectId(userId),
                     branchId: order.branchId,
                 }], { session });
-            await Order_1.Order.findByIdAndUpdate(orderId, { status: 'paid', paid: true }, { session });
+            await Order_1.Order.findByIdAndUpdate(orderId, { status: 'completed' }, { session });
             const openDrawer = await CashDrawer_1.CashDrawer.findOne({
                 branchId: order.branchId,
                 status: 'open',
@@ -166,6 +168,39 @@ class PaymentService {
     }
     static async getPaymentsByOrder(orderId) {
         return Payment_1.Payment.find({ orderId });
+    }
+    static async getAllPayments(filters) {
+        const query = {};
+        if (filters.method) {
+            query.method = filters.method;
+        }
+        if (filters.status) {
+            query.status = filters.status;
+        }
+        if (filters.from || filters.to) {
+            query.createdAt = {};
+            if (filters.from) {
+                query.createdAt.$gte = new Date(filters.from);
+            }
+            if (filters.to) {
+                query.createdAt.$lte = new Date(filters.to);
+            }
+        }
+        const page = filters.page || 1;
+        const limit = Math.min(filters.limit || 50, 100);
+        const skip = (page - 1) * limit;
+        const total = await Payment_1.Payment.countDocuments(query);
+        const payments = await Payment_1.Payment.find(query)
+            .populate('orderId', 'orderNumber totalTTC type status tableId')
+            .populate({
+            path: 'orderId',
+            populate: { path: 'tableId', select: 'name' },
+        })
+            .populate('userId', 'name')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+        return { payments, total };
     }
     static async refundPayment(paymentId) {
         const payment = await Payment_1.Payment.findById(paymentId);

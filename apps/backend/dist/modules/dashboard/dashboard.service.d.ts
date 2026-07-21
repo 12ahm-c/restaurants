@@ -3,7 +3,7 @@ export declare class DashboardService {
         todaySales: number;
         totalOrders: number;
         totalCustomers: number;
-        occupiedTables: number;
+        occupiedTents: number;
         newOrders: number;
         preparingOrders: number;
         readyOrders: number;
@@ -35,7 +35,7 @@ export declare class DashboardService {
             quantity: number;
             revenue: number;
         }>;
-        tableUtilization: number;
+        tentUtilization: number;
         alertsCount: number;
     }>;
     private static getDateRanges;

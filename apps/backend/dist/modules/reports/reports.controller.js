@@ -3,15 +3,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportsController = void 0;
 const reports_service_1 = require("./reports.service");
 const export_service_1 = require("../../services/export.service");
+const response_1 = require("../../utils/response");
+function handleError(res, error) {
+    if (error instanceof response_1.AppError) {
+        (0, response_1.sendError)(res, error.statusCode, error.code, error.message);
+        return;
+    }
+    (0, response_1.sendError)(res, 500, 'INTERNAL_ERROR', 'Internal server error');
+}
 class ReportsController {
     static async getSalesReport(req, res) {
         try {
-            const { from, to, format } = req.query;
+            const { from, to, format, restaurantName } = req.query;
             if (!from || !to) {
-                res.status(400).json({ message: 'from and to query parameters are required' });
+                (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', 'from and to query parameters are required');
                 return;
             }
             const report = await reports_service_1.ReportsService.getSalesReport(from, to);
+            const name = restaurantName || 'RestoManager';
             if (format === 'pdf') {
                 const columns = [
                     { header: 'Date', key: 'date', width: 100 },
@@ -21,7 +30,7 @@ class ReportsController {
                     { header: 'Card', key: 'cardSales', width: 80 },
                     { header: 'Mobile', key: 'mobileSales', width: 80 },
                 ];
-                const pdf = await export_service_1.ExportService.generatePDF(report.sales, columns, `Sales Report ${from} to ${to}`);
+                const pdf = await export_service_1.ExportService.generatePDF(report.sales, columns, `Sales Report ${from} to ${to}`, name);
                 res.setHeader('Content-Type', 'application/pdf');
                 res.setHeader('Content-Disposition', `attachment; filename=sales-report-${from}-${to}.pdf`);
                 res.send(pdf);
@@ -35,27 +44,28 @@ class ReportsController {
                     { header: 'Card', key: 'cardSales' },
                     { header: 'Mobile', key: 'mobileSales' },
                 ];
-                const xlsx = await export_service_1.ExportService.generateExcel(report.sales, columns, `Sales Report`);
+                const xlsx = await export_service_1.ExportService.generateExcel(report.sales, columns, `Sales Report`, name);
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 res.setHeader('Content-Disposition', `attachment; filename=sales-report-${from}-${to}.xlsx`);
                 res.send(xlsx);
             }
             else {
-                res.json(report);
+                (0, response_1.sendSuccess)(res, report);
             }
         }
         catch (error) {
-            res.status(500).json({ message: error.message || 'Failed to get sales report' });
+            handleError(res, error);
         }
     }
     static async getProfitabilityReport(req, res) {
         try {
-            const { from, to, format } = req.query;
+            const { from, to, format, restaurantName } = req.query;
             if (!from || !to) {
-                res.status(400).json({ message: 'from and to query parameters are required' });
+                (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', 'from and to query parameters are required');
                 return;
             }
             const report = await reports_service_1.ReportsService.getProfitabilityReport(from, to);
+            const name = restaurantName || 'RestoManager';
             if (format === 'pdf') {
                 const data = [
                     { metric: 'Revenue', value: report.revenue },
@@ -67,7 +77,7 @@ class ReportsController {
                     { header: 'Metric', key: 'metric', width: 150 },
                     { header: 'Value (MRU)', key: 'value', width: 120 },
                 ];
-                const pdf = await export_service_1.ExportService.generatePDF(data, columns, `Profitability Report ${from} to ${to}`);
+                const pdf = await export_service_1.ExportService.generatePDF(data, columns, `Profitability Report ${from} to ${to}`, name);
                 res.setHeader('Content-Type', 'application/pdf');
                 res.setHeader('Content-Disposition', `attachment; filename=profitability-report-${from}-${to}.pdf`);
                 res.send(pdf);
@@ -83,27 +93,28 @@ class ReportsController {
                     { header: 'Metric', key: 'metric' },
                     { header: 'Value (MRU)', key: 'value' },
                 ];
-                const xlsx = await export_service_1.ExportService.generateExcel(data, columns, `Profitability Report`);
+                const xlsx = await export_service_1.ExportService.generateExcel(data, columns, `Profitability Report`, name);
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 res.setHeader('Content-Disposition', `attachment; filename=profitability-report-${from}-${to}.xlsx`);
                 res.send(xlsx);
             }
             else {
-                res.json(report);
+                (0, response_1.sendSuccess)(res, report);
             }
         }
         catch (error) {
-            res.status(500).json({ message: error.message || 'Failed to get profitability report' });
+            handleError(res, error);
         }
     }
     static async getStockUsageReport(req, res) {
         try {
-            const { from, to, format } = req.query;
+            const { from, to, format, restaurantName } = req.query;
             if (!from || !to) {
-                res.status(400).json({ message: 'from and to query parameters are required' });
+                (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', 'from and to query parameters are required');
                 return;
             }
             const report = await reports_service_1.ReportsService.getStockUsageReport(from, to);
+            const name = restaurantName || 'RestoManager';
             if (format === 'pdf') {
                 const columns = [
                     { header: 'Item', key: 'name', width: 150 },
@@ -111,7 +122,7 @@ class ReportsController {
                     { header: 'Replenished', key: 'replenished', width: 80 },
                     { header: 'Waste', key: 'waste', width: 80 },
                 ];
-                const pdf = await export_service_1.ExportService.generatePDF(report.items, columns, `Stock Usage Report ${from} to ${to}`);
+                const pdf = await export_service_1.ExportService.generatePDF(report.items, columns, `Stock Usage Report ${from} to ${to}`, name);
                 res.setHeader('Content-Type', 'application/pdf');
                 res.setHeader('Content-Disposition', `attachment; filename=stock-usage-report-${from}-${to}.pdf`);
                 res.send(pdf);
@@ -123,17 +134,17 @@ class ReportsController {
                     { header: 'Replenished', key: 'replenished' },
                     { header: 'Waste', key: 'waste' },
                 ];
-                const xlsx = await export_service_1.ExportService.generateExcel(report.items, columns, `Stock Usage Report`);
+                const xlsx = await export_service_1.ExportService.generateExcel(report.items, columns, `Stock Usage Report`, name);
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 res.setHeader('Content-Disposition', `attachment; filename=stock-usage-report-${from}-${to}.xlsx`);
                 res.send(xlsx);
             }
             else {
-                res.json(report);
+                (0, response_1.sendSuccess)(res, report);
             }
         }
         catch (error) {
-            res.status(500).json({ message: error.message || 'Failed to get stock usage report' });
+            handleError(res, error);
         }
     }
 }

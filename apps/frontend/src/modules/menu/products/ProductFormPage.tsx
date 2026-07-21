@@ -119,11 +119,21 @@ export function ProductFormPage() {
     setIsLoading(true);
 
     try {
+      const payload: Record<string, unknown> = {
+        name: formData.name,
+        categoryId: formData.categoryId,
+        price: formData.price,
+      };
+      if (formData.description) payload.description = formData.description;
+      if (formData.imageUrl) payload.imageUrl = formData.imageUrl;
+      if (formData.prepTime) payload.prepTime = formData.prepTime;
+      if (formData.recipe.length > 0) payload.recipe = formData.recipe;
+
       if (id) {
-        await updateProduct(id, formData as unknown as Record<string, unknown>);
+        await updateProduct(id, payload);
         addToast('success', t('common.success'));
       } else {
-        await createProduct(formData as unknown as Record<string, unknown>);
+        await createProduct(payload as unknown as Record<string, unknown>);
         addToast('success', t('common.success'));
       }
       navigate('/menu/products');

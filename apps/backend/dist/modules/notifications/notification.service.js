@@ -1,42 +1,13 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationService = void 0;
 const Notification_1 = require("../../models/Notification");
+const User_1 = require("../../models/User");
+const Order_1 = require("../../models/Order");
+const Payment_1 = require("../../models/Payment");
 const emitters_1 = require("../../socket/emitters");
-const server_1 = require("../../server");
+const socket_server_1 = require("../../socket/socket.server");
+const logger_1 = require("../../utils/logger");
 class NotificationService {
     static async createNotification(userId, title, message, type, entity, entityId, metadata) {
         const notification = await Notification_1.Notification.create({
@@ -49,17 +20,21 @@ class NotificationService {
             metadata,
         });
         try {
-            (0, emitters_1.emitNotificationNew)(server_1.io, {
+            const io = (0, socket_server_1.getIO)();
+            (0, emitters_1.emitNotificationNew)(io, {
                 userId,
                 notificationId: notification._id.toString(),
                 title,
                 message,
                 type,
                 createdAt: notification.createdAt,
+                entity,
+                entityId,
+                metadata,
             });
         }
         catch (err) {
-            console.error('Failed to emit notification:new', err);
+            logger_1.logger.warn({ err: err }, 'Failed to emit notification:new');
         }
         return notification;
     }
@@ -83,29 +58,106 @@ class NotificationService {
         const result = await Notification_1.Notification.updateMany({ userId, isRead: false }, { isRead: true });
         return result.modifiedCount;
     }
-    static async createOrderReadyNotification(orderId, tableNumber, userId) {
-        await this.createNotification(userId, 'Order Ready', `Order for table ${tableNumber} is ready to serve`, 'order_ready', 'order', orderId, { tableNumber });
+    static async notifyChefsNewOrder(orderId, orderNumber, tableName, items) {
+        const chefs = await User_1.User.find({ role: 'chef' });
+        const itemList = items.map((i) => `${i.quantity}x ${i.name}`).join(', ');
+        for (const chef of chefs) {
+            try {
+                await this.createNotification(chef._id.toString(), 'New Order', `${orderNumber} — Table ${tableName}: ${itemList}`, 'new_order', 'order', orderId, { orderNumber, tableName, items });
+            }
+            catch (err) {
+                logger_1.logger.warn({ err, chefId: chef._id }, 'Failed to notify chef');
+            }
+        }
+    }
+    static async notifyServersOrderReady(orderId, orderNumber, tableName) {
+        const servers = await User_1.User.find({ role: 'server' });
+        for (const server of servers) {
+            try {
+                await this.createNotification(server._id.toString(), 'Order Ready', `${orderNumber} — Table ${tableName} is ready to serve`, 'order_ready', 'order', orderId, { orderNumber, tableName });
+            }
+            catch (err) {
+                logger_1.logger.warn({ err, serverId: server._id }, 'Failed to notify server');
+            }
+        }
+    }
+    static async notifyPaymentReceived(orderId, orderNumber, amount, method) {
+        const users = await User_1.User.find({ role: { $in: ['manager', 'owner', 'cashier'] } });
+        for (const user of users) {
+            try {
+                await this.createNotification(user._id.toString(), 'Payment Received', `${orderNumber} — ${amount} MRU via ${method}`, 'payment_received', 'order', orderId, { orderNumber, amount, method });
+            }
+            catch (err) {
+                logger_1.logger.warn({ err, userId: user._id }, 'Failed to notify about payment');
+            }
+        }
+    }
+    static async notifyOrderServed(orderId, orderNumber, tableName) {
+        const users = await User_1.User.find({ role: { $in: ['manager', 'owner'] } });
+        for (const user of users) {
+            try {
+                await this.createNotification(user._id.toString(), 'Order Served', `${orderNumber} — Table ${tableName} has been served`, 'order_served', 'order', orderId, { orderNumber, tableName });
+            }
+            catch (err) {
+                logger_1.logger.warn({ err, userId: user._id }, 'Failed to notify about served order');
+            }
+        }
     }
     static async createStockCriticalNotification(inventoryId, productName, quantity, threshold) {
-        const { User } = await Promise.resolve().then(() => __importStar(require('../../models/User')));
-        const managers = await User.find({ role: { $in: ['manager', 'owner', 'stock_manager'] } });
-        for (const manager of managers) {
-            await this.createNotification(manager._id.toString(), 'Stock Critical', `${productName} is critically low (${quantity}/${threshold})`, 'stock_critical', 'inventory', inventoryId, { productName, quantity, threshold });
-        }
-    }
-    static async createLoyaltyEarnedNotification(customerId, customerName, points, orderId) {
-        const { Customer } = await Promise.resolve().then(() => __importStar(require('../../models/Customer')));
-        const { User } = await Promise.resolve().then(() => __importStar(require('../../models/User')));
-        const customer = await Customer.findById(customerId);
-        if (!customer)
-            return;
-        const users = await User.find({});
+        const users = await User_1.User.find({ role: { $in: ['manager', 'owner', 'stock_manager'] } });
         for (const user of users) {
-            await this.createNotification(user._id.toString(), 'Loyalty Points Earned', `${customerName} earned ${points} loyalty points`, 'loyalty_earned', 'customer', customerId, { customerName, points, orderId });
+            try {
+                await this.createNotification(user._id.toString(), 'Stock Critical', `${productName} is critically low (${quantity}/${threshold})`, 'stock_critical', 'inventory', inventoryId, { productName, quantity, threshold });
+            }
+            catch (err) {
+                logger_1.logger.warn({ err, userId: user._id }, 'Failed to notify about stock');
+            }
         }
     }
-    static async createPaymentReceivedNotification(orderId, amount, method, userId) {
-        await this.createNotification(userId, 'Payment Received', `Payment of ${amount} MRU received via ${method}`, 'payment_received', 'order', orderId, { amount, method });
+    static async notifyManagersMorningReminder() {
+        const users = await User_1.User.find({ role: { $in: ['manager', 'owner'] }, isActive: true });
+        for (const user of users) {
+            try {
+                await this.createNotification(user._id.toString(), 'صباح الخير', 'افتح التطبيق وراجع الطلبات، الخيام، والمبيعات لبدء يوم عمل منظم.', 'manager_morning', 'dashboard', undefined, { target: '/dashboard/manager' });
+            }
+            catch (err) {
+                logger_1.logger.warn({ err, userId: user._id }, 'Failed to send manager morning reminder');
+            }
+        }
+    }
+    static async notifyManagersDailySummary(referenceDate = new Date()) {
+        const startOfDay = new Date(Date.UTC(referenceDate.getUTCFullYear(), referenceDate.getUTCMonth(), referenceDate.getUTCDate(), 0, 0, 0, 0));
+        const endOfDay = new Date(Date.UTC(referenceDate.getUTCFullYear(), referenceDate.getUTCMonth(), referenceDate.getUTCDate(), 23, 59, 59, 999));
+        const [ordersCount, completedOrdersCount, cancelledOrdersCount, revenueResult] = await Promise.all([
+            Order_1.Order.countDocuments({ createdAt: { $gte: startOfDay, $lte: endOfDay } }),
+            Order_1.Order.countDocuments({
+                status: { $in: ['served', 'completed'] },
+                createdAt: { $gte: startOfDay, $lte: endOfDay },
+            }),
+            Order_1.Order.countDocuments({ status: 'cancelled', createdAt: { $gte: startOfDay, $lte: endOfDay } }),
+            Payment_1.Payment.aggregate([
+                { $match: { status: 'completed', createdAt: { $gte: startOfDay, $lte: endOfDay } } },
+                { $group: { _id: null, revenue: { $sum: '$amount' } } },
+            ]),
+        ]);
+        const revenue = revenueResult[0]?.revenue || 0;
+        const users = await User_1.User.find({ role: { $in: ['manager', 'owner'] }, isActive: true });
+        const message = `تقرير اليوم: ${ordersCount} طلب، ${completedOrdersCount} مكتمل، ${cancelledOrdersCount} ملغي، والإيرادات ${revenue} MRU.`;
+        for (const user of users) {
+            try {
+                await this.createNotification(user._id.toString(), 'تقرير اليوم', message, 'daily_summary', 'dashboard', undefined, {
+                    target: '/dashboard/manager',
+                    ordersCount,
+                    completedOrdersCount,
+                    cancelledOrdersCount,
+                    revenue,
+                    date: startOfDay.toISOString().slice(0, 10),
+                });
+            }
+            catch (err) {
+                logger_1.logger.warn({ err, userId: user._id }, 'Failed to send manager daily summary');
+            }
+        }
     }
 }
 exports.NotificationService = NotificationService;

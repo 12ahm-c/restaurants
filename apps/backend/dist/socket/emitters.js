@@ -12,18 +12,24 @@ exports.emitNotificationNew = emitNotificationNew;
 const logger_1 = require("../utils/logger");
 function emitNewOrder(io, data) {
     io.to('kitchen').emit('order:new', data);
-    logger_1.logger.info({ orderId: data.orderId }, 'Emitted order:new to kitchen');
+    io.to('admin').emit('order:new', data);
+    io.to('servers').emit('order:new', data);
+    logger_1.logger.info({ orderId: data.orderId }, 'Emitted order:new to kitchen + admin + servers');
 }
 function emitOrderStatusUpdate(io, data, serverId) {
     if (serverId) {
         io.to(`user:${serverId}`).emit('order:status-update', data);
     }
     io.to('kitchen').emit('order:status-update', data);
+    io.to('admin').emit('order:status-update', data);
+    io.to('servers').emit('order:status-update', data);
     logger_1.logger.info({ orderId: data.orderId, status: data.status }, 'Emitted order:status-update');
 }
 function emitOrderCancelled(io, data) {
     io.to('kitchen').emit('order:cancelled', data);
-    logger_1.logger.info({ orderId: data.orderId }, 'Emitted order:cancelled to kitchen');
+    io.to('admin').emit('order:cancelled', data);
+    io.to('servers').emit('order:cancelled', data);
+    logger_1.logger.info({ orderId: data.orderId }, 'Emitted order:cancelled to kitchen + admin + servers');
 }
 function emitSaleNew(io, data) {
     io.to('admin').emit('sale:new', data);

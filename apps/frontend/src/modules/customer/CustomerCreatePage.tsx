@@ -32,7 +32,6 @@ export function CustomerCreatePage() {
     try {
       await createCustomer({
         firstName: formData.firstName,
-        lastName: '',
         phone: formData.phone,
       });
       navigate('/customers');

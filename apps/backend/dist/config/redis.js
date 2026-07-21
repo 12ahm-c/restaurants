@@ -13,31 +13,33 @@ let redisAvailable = false;
 exports.redis = new ioredis_1.default(env_1.env.REDIS_URL, {
     maxRetriesPerRequest: 3,
     retryStrategy(times) {
-        if (times > 10) {
-            logger_1.logger.warn('Redis: Max retries reached, running without cache');
-            return null; // Stop retrying
+        if (times > 3) {
+            return null; // Stop retrying silently
         }
-        const delay = Math.min(times * 50, 2000);
+        const delay = Math.min(times * 100, 2000);
         return delay;
     },
     enableOfflineQueue: false,
+    lazyConnect: true,
 });
 exports.redis.on('connect', () => {
     redisAvailable = true;
     logger_1.logger.info('Connected to Redis');
 });
-exports.redis.on('error', (error) => {
+exports.redis.on('error', () => {
     redisAvailable = false;
-    logger_1.logger.warn({ err: error.message }, 'Redis unavailable - running without cache');
 });
-exports.redis.on('reconnecting', () => {
-    logger_1.logger.warn('Redis reconnecting');
+exports.redis.on('close', () => {
+    redisAvailable = false;
+});
+// Try to connect, but don't crash if Redis is unavailable
+exports.redis.connect().catch(() => {
+    logger_1.logger.warn('Redis unavailable - running without cache');
 });
 function isRedisAvailable() {
     return redisAvailable && exports.redis.status === 'ready';
 }
 async function disconnectRedis() {
     await exports.redis.quit();
-    logger_1.logger.info('Disconnected from Redis');
 }
 //# sourceMappingURL=redis.js.map

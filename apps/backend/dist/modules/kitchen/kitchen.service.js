@@ -1,43 +1,14 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KitchenService = void 0;
 const KitchenQueue_1 = require("../../models/KitchenQueue");
-const Table_1 = require("../../models/Table");
-const Inventory_1 = require("../../models/Inventory");
+const Order_1 = require("../../models/Order");
+const OrderItem_1 = require("../../models/OrderItem");
 const response_1 = require("../../utils/response");
+const socket_server_1 = require("../../socket/socket.server");
+const emitters_1 = require("../../socket/emitters");
+const notification_service_1 = require("../notifications/notification.service");
+const logger_1 = require("../../utils/logger");
 class KitchenService {
     static async getQueue(filters) {
         const query = {};
@@ -50,47 +21,60 @@ class KitchenService {
         const queue = await KitchenQueue_1.KitchenQueue.find(query)
             .populate({
             path: 'orderId',
-            select: 'type status totalTTC notes createdAt',
+            select: 'orderNumber type status totalTTC notes createdAt',
             populate: {
-                path: 'tableId',
-                select: 'name zone',
+                path: 'tentId',
+                select: 'tentNumber size',
             },
         })
             .sort({ priority: -1, createdAt: 1 });
         const queueWithItems = await Promise.all(queue.map(async (entry) => {
             const orderData = entry.orderId;
-            const OrderItem = (await Promise.resolve().then(() => __importStar(require('../../models/OrderItem')))).OrderItem;
-            const orderItems = await OrderItem.find({ orderId: entry.orderId })
+            if (!orderData || !orderData._id) {
+                return {
+                    _id: entry._id.toString(),
+                    orderId: entry.orderId?.toString() || '',
+                    status: entry.status,
+                    priority: entry.priority,
+                    startTime: entry.startTime,
+                    endTime: entry.endTime,
+                    createdAt: entry.createdAt,
+                    updatedAt: entry.updatedAt,
+                    order: undefined,
+                    table: undefined,
+                    items: [],
+                };
+            }
+            const orderItems = await OrderItem_1.OrderItem.find({ orderId: orderData._id })
                 .populate('productId', 'name');
             return {
                 _id: entry._id.toString(),
-                orderId: entry.orderId.toString(),
+                orderId: orderData._id,
                 status: entry.status,
                 priority: entry.priority,
                 startTime: entry.startTime,
                 endTime: entry.endTime,
                 createdAt: entry.createdAt,
                 updatedAt: entry.updatedAt,
-                order: orderData
+                order: {
+                    _id: orderData._id,
+                    orderNumber: orderData.orderNumber || orderData._id,
+                    type: orderData.type,
+                    status: orderData.status,
+                    totalTTC: orderData.totalTTC,
+                    notes: orderData.notes,
+                    createdAt: orderData.createdAt,
+                },
+                table: orderData.tentId
                     ? {
-                        _id: orderData._id,
-                        type: orderData.type,
-                        status: orderData.status,
-                        totalTTC: orderData.totalTTC,
-                        notes: orderData.notes,
-                        createdAt: orderData.createdAt,
-                    }
-                    : undefined,
-                table: orderData?.tableId
-                    ? {
-                        _id: orderData.tableId._id,
-                        name: orderData.tableId.name,
-                        zone: orderData.tableId.zone,
+                        _id: orderData.tentId._id,
+                        tentNumber: orderData.tentId.tentNumber,
+                        size: orderData.tentId.size,
                     }
                     : undefined,
                 items: orderItems.map((item) => ({
-                    productId: item.productId._id,
-                    productName: item.productId.name,
+                    productId: item.productId?._id || '',
+                    productName: item.productId?.name || '',
                     quantity: item.quantity,
                     notes: item.notes,
                 })),
@@ -112,6 +96,24 @@ class KitchenService {
         entry.status = 'preparing';
         entry.startTime = new Date();
         await entry.save();
+        const order = await Order_1.Order.findByIdAndUpdate(entry.orderId, { status: 'preparing' }, { new: true }).populate('tentId', 'tentNumber size');
+        if (order) {
+            try {
+                const io = (0, socket_server_1.getIO)();
+                const tentData = order.tentId || {};
+                const sizeLabel = tentData.size === 'small' ? 'صغيرة' : tentData.size === 'large' ? 'كبيرة' : 'متوسطة';
+                const tentName = tentData.tentNumber ? `خيمة ${tentData.tentNumber} - ${sizeLabel}` : 'Unknown';
+                (0, emitters_1.emitOrderStatusUpdate)(io, {
+                    orderId: order._id.toString(),
+                    status: 'preparing',
+                    tentName,
+                    timestamp: new Date(),
+                });
+            }
+            catch (socketError) {
+                // ignore
+            }
+        }
         return entry;
     }
     static async markReady(id) {
@@ -125,50 +127,26 @@ class KitchenService {
         entry.status = 'ready';
         entry.endTime = new Date();
         await entry.save();
+        const order = await Order_1.Order.findByIdAndUpdate(entry.orderId, { status: 'ready' }, { new: true }).populate('tentId', 'tentNumber size');
+        if (order) {
+            try {
+                const io = (0, socket_server_1.getIO)();
+                const tentData = order.tentId || {};
+                const sizeLabel = tentData.size === 'small' ? 'صغيرة' : tentData.size === 'large' ? 'كبيرة' : 'متوسطة';
+                const tentName = tentData.tentNumber ? `خيمة ${tentData.tentNumber} - ${sizeLabel}` : 'Unknown';
+                (0, emitters_1.emitOrderStatusUpdate)(io, {
+                    orderId: order._id.toString(),
+                    status: 'ready',
+                    tentName,
+                    timestamp: new Date(),
+                });
+                await notification_service_1.NotificationService.notifyServersOrderReady(order._id.toString(), order.orderNumber || order._id.toString().slice(-6).toUpperCase(), tentName);
+            }
+            catch (socketError) {
+                logger_1.logger.warn({ err: socketError }, 'Failed to emit ready status or notify servers');
+            }
+        }
         return entry;
-    }
-    static async cancelOrder(orderId, reason) {
-        const session = await (await Promise.resolve().then(() => __importStar(require('mongoose')))).startSession();
-        session.startTransaction();
-        try {
-            const Order = (await Promise.resolve().then(() => __importStar(require('../../models/Order')))).Order;
-            const order = await Order.findById(orderId).session(session);
-            if (!order) {
-                throw new response_1.AppError(404, 'NOT_FOUND', 'Order not found');
-            }
-            const cancellableStatuses = ['new', 'preparing'];
-            if (!cancellableStatuses.includes(order.status)) {
-                throw new response_1.AppError(409, 'INVALID_STATE', `Cannot cancel order in ${order.status} status`);
-            }
-            const OrderItem = (await Promise.resolve().then(() => __importStar(require('../../models/OrderItem')))).OrderItem;
-            const orderItems = await OrderItem.find({ orderId }).session(session);
-            for (const item of orderItems) {
-                const Product = (await Promise.resolve().then(() => __importStar(require('../../models/Product')))).Product;
-                const product = await Product.findById(item.productId).session(session);
-                if (product?.recipe) {
-                    for (const recipeItem of product.recipe) {
-                        const inventory = await Inventory_1.Inventory.findById(recipeItem.inventoryId).session(session);
-                        if (inventory) {
-                            const restoration = recipeItem.quantity * item.quantity;
-                            inventory.quantity += restoration;
-                            await inventory.save({ session });
-                        }
-                    }
-                }
-            }
-            await Table_1.Table.findByIdAndUpdate(order.tableId, { status: 'free', currentOrderId: null }, { session });
-            await KitchenQueue_1.KitchenQueue.findOneAndUpdate({ orderId }, { status: 'ready', endTime: new Date() }, { session });
-            order.status = 'cancelled';
-            await order.save({ session });
-            await session.commitTransaction();
-        }
-        catch (error) {
-            await session.abortTransaction();
-            throw error;
-        }
-        finally {
-            session.endSession();
-        }
     }
 }
 exports.KitchenService = KitchenService;

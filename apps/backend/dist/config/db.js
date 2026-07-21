@@ -9,18 +9,29 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const env_1 = require("./env");
 const logger_1 = require("../utils/logger");
 async function connectMongoDB() {
-    try {
-        await mongoose_1.default.connect(env_1.env.MONGODB_URI, {
-            maxPoolSize: 10,
-            minPoolSize: 2,
-            serverSelectionTimeoutMS: 5000,
-            socketTimeoutMS: 45000,
-        });
-        logger_1.logger.info('Connected to MongoDB');
-    }
-    catch (error) {
-        logger_1.logger.error({ err: error }, 'Failed to connect to MongoDB');
-        process.exit(1);
+    const MAX_RETRIES = 5;
+    const RETRY_DELAY_MS = 5000;
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            await mongoose_1.default.connect(env_1.env.MONGODB_URI, {
+                maxPoolSize: 10,
+                minPoolSize: 2,
+                serverSelectionTimeoutMS: 10000,
+                socketTimeoutMS: 45000,
+            });
+            logger_1.logger.info('Connected to MongoDB');
+            return;
+        }
+        catch (error) {
+            if (attempt < MAX_RETRIES) {
+                logger_1.logger.warn(`MongoDB connection attempt ${attempt}/${MAX_RETRIES} failed, retrying in ${RETRY_DELAY_MS / 1000}s...`);
+                await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+            }
+            else {
+                logger_1.logger.error({ err: error }, 'Failed to connect to MongoDB after all retries');
+                process.exit(1);
+            }
+        }
     }
     mongoose_1.default.connection.on('error', (error) => {
         logger_1.logger.error('MongoDB connection error:', error);

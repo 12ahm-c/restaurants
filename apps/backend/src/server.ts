@@ -26,6 +26,7 @@ import adminRoutes from './modules/admin/admin.routes';
 import healthRoutes from './modules/health/health.routes';
 import financeRoutes from './modules/finance/finance.routes';
 import { healthService } from './modules/health/health.service';
+import { startNotificationScheduler } from './jobs/notification.scheduler';
 
 const app = express();
 const httpServer = createServer(app);
@@ -81,6 +82,7 @@ async function start() {
   try {
     await connectMongoDB();
     logger.info('MongoDB connected');
+    startNotificationScheduler();
 
     httpServer.listen(env.PORT, () => {
       logger.info(`Server running on port ${env.PORT}`);

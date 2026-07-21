@@ -41,13 +41,7 @@ const settingsSchema = new mongoose_1.Schema({
     taxRate: { type: Number, default: 0, min: 0, max: 100 },
     currency: { type: String, default: 'MRU' },
     company_name: { type: String, default: 'RestoManager' },
-    whatsapp_business_phone_id: { type: String },
-    whatsapp_token: { type: String },
-    smtp_host: { type: String },
-    smtp_port: { type: Number },
-    smtp_user: { type: String },
-    smtp_pass: { type: String },
-    fcm_server_key: { type: String },
+    logo: { type: String, default: '' },
 }, { timestamps: true });
 settingsSchema.statics.getSingleton = async function () {
     let settings = await this.findOne();

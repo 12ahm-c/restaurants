@@ -13,7 +13,7 @@ let io;
 function initSocketIO(httpServer) {
     io = new socket_io_1.Server(httpServer, {
         cors: {
-            origin: env_1.env.CORS_ORIGIN,
+            origin: env_1.env.CORS_ORIGINS,
             credentials: true,
         },
         path: '/socket.io',
@@ -47,6 +47,9 @@ function initSocketIO(httpServer) {
         }
         if (user.role === 'manager' || user.role === 'owner') {
             socket.join('admin');
+        }
+        if (user.role === 'server') {
+            socket.join('servers');
         }
         socket.on('kitchen_subscribe', () => {
             if (user.role === 'chef' || user.role === 'manager' || user.role === 'owner') {

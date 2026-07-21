@@ -11,6 +11,8 @@ export interface IOrderItem extends Document {
     quantity: number;
     unitPrice: number;
     options: IOrderOption[];
+    quantityTypeName?: string;
+    quantityTypeLabel?: string;
     notes?: string;
     total: number;
     createdAt: Date;

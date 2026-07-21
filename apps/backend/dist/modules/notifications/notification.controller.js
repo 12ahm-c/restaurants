@@ -5,7 +5,7 @@ const notification_service_1 = require("./notification.service");
 class NotificationController {
     static async getNotifications(req, res) {
         try {
-            const userId = req.user._id;
+            const userId = req.user.sub;
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 20;
             const unreadOnly = req.query.unreadOnly === 'true';
@@ -22,7 +22,7 @@ class NotificationController {
     }
     static async markAsRead(req, res) {
         try {
-            const userId = req.user._id;
+            const userId = req.user.sub;
             const { id } = req.params;
             const notification = await notification_service_1.NotificationService.markAsRead(userId, id);
             if (!notification) {
@@ -37,7 +37,7 @@ class NotificationController {
     }
     static async markAllAsRead(req, res) {
         try {
-            const userId = req.user._id;
+            const userId = req.user.sub;
             const updatedCount = await notification_service_1.NotificationService.markAllAsRead(userId);
             res.json({ success: true, data: { updatedCount } });
         }

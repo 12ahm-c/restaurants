@@ -3,11 +3,11 @@ export declare class ExportService {
         header: string;
         key: string;
         width?: number;
-    }[], title: string): Promise<Buffer>;
+    }[], title: string, restaurantName?: string): Promise<Buffer>;
     static generateExcel(data: any[], columns: {
         header: string;
         key: string;
-    }[], title: string): Promise<Buffer>;
+    }[], title: string, restaurantName?: string): Promise<Buffer>;
     static generateCSV(data: any[], columns: {
         header: string;
         key: string;

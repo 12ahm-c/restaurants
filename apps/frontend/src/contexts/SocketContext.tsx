@@ -28,6 +28,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!user) return;
 
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().catch(() => {});
+    }
+
     const accessToken = getAccessToken();
     if (!accessToken) return;
 
@@ -60,8 +64,18 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         message: data.message,
         type: data.type,
         isRead: false,
+        entity: data.entity,
+        entityId: data.entityId,
+        metadata: data.metadata,
         createdAt: data.createdAt,
       });
+
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(data.title, {
+          body: data.message,
+          icon: '/icons/icon-192.png',
+        });
+      }
     });
 
     socketRef.current = socket;

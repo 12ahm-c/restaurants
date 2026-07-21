@@ -147,6 +147,7 @@ class MenuService {
             throw new response_1.AppError(409, 'INVALID_STATE', 'Cannot change status of discontinued product');
         }
         product.status = status;
+        product.isActive = status === 'available';
         await product.save();
         return product;
     }
@@ -157,6 +158,27 @@ class MenuService {
         }
         product.status = 'discontinued';
         await product.save();
+    }
+    static async getProductsAvailability() {
+        const products = await Product_1.Product.find({
+            status: { $ne: 'discontinued' },
+            recipe: { $exists: true, $ne: [] },
+        }).populate('recipe.inventoryId', 'name quantity');
+        const availability = {};
+        for (const product of products) {
+            const missingItems = [];
+            for (const recipeItem of product.recipe) {
+                const inventory = recipeItem.inventoryId;
+                if (inventory && inventory.quantity < recipeItem.quantity) {
+                    missingItems.push(inventory.name);
+                }
+            }
+            availability[product._id.toString()] = {
+                inStock: missingItems.length === 0,
+                missingItems,
+            };
+        }
+        return availability;
     }
 }
 exports.MenuService = MenuService;

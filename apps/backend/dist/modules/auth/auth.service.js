@@ -12,8 +12,8 @@ const redis_1 = require("../../config/redis");
 const env_1 = require("../../config/env");
 const response_1 = require("../../utils/response");
 class AuthService {
-    static async login(email, password, ip, userAgent) {
-        const user = await User_1.User.findOne({ email, isActive: true }).select('+passwordHash');
+    static async login(phone, password, ip, userAgent) {
+        const user = await User_1.User.findOne({ phone, isActive: true }).select('+passwordHash');
         if (!user) {
             throw new response_1.AppError(401, 'AUTH_REQUIRED', 'Invalid credentials');
         }
@@ -29,7 +29,7 @@ class AuthService {
             action: 'login',
             entity: 'User',
             entityId: user._id,
-            details: { email: user.email },
+            details: { phone: user.phone },
             ipAddress: ip,
             userAgent,
         });
@@ -40,7 +40,6 @@ class AuthService {
     }
     static async refreshToken(refreshToken) {
         if (!(0, redis_1.isRedisAvailable)()) {
-            // Without Redis, validate JWT directly
             try {
                 const decoded = jsonwebtoken_1.default.verify(refreshToken, env_1.env.JWT_REFRESH_SECRET);
                 const user = await User_1.User.findById(decoded.sub);
@@ -102,7 +101,6 @@ class AuthService {
         const refreshTokenDecoded = jsonwebtoken_1.default.decode(refreshToken);
         const accessTokenExpiresAt = new Date(accessTokenDecoded.exp * 1000);
         const refreshTokenExpiresAt = new Date(refreshTokenDecoded.exp * 1000);
-        // Store refresh token in Redis if available
         if ((0, redis_1.isRedisAvailable)()) {
             const refreshTtl = Math.floor((refreshTokenExpiresAt.getTime() - Date.now()) / 1000);
             await redis_1.redis.set(`refresh_token:${refreshToken}`, user._id.toString(), 'EX', refreshTtl);
@@ -127,7 +125,7 @@ class AuthService {
         return {
             _id: user._id.toString(),
             name: user.name,
-            email: user.email,
+            phone: user.phone,
             role: user.role,
             isActive: user.isActive,
             branchId: user.branchId?.toString(),

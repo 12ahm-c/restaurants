@@ -1,5 +1,5 @@
 import mongoose, { Document } from 'mongoose';
-export type NotificationType = 'order_ready' | 'stock_critical' | 'loyalty_earned' | 'loyalty_redeemed' | 'system' | 'payment_received';
+export type NotificationType = 'new_order' | 'order_ready' | 'order_served' | 'payment_received' | 'stock_critical' | 'loyalty_earned' | 'manager_morning' | 'daily_summary' | 'system';
 export interface INotification extends Document {
     _id: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;

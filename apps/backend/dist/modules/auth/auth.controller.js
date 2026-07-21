@@ -5,7 +5,7 @@ const zod_1 = require("zod");
 const auth_service_1 = require("./auth.service");
 const response_1 = require("../../utils/response");
 const loginSchema = zod_1.z.object({
-    email: zod_1.z.string().email('Invalid email format'),
+    phone: zod_1.z.string().min(1, 'Phone number is required'),
     password: zod_1.z.string().min(1, 'Password is required'),
 });
 function handleError(res, error) {
@@ -27,11 +27,11 @@ class AuthController {
             (0, response_1.sendError)(res, 400, 'VALIDATION_ERROR', 'Validation failed', fields);
             return;
         }
-        const { email, password } = result.data;
+        const { phone, password } = result.data;
         const ip = req.ip || req.socket.remoteAddress;
         const userAgent = req.headers['user-agent'];
         try {
-            const { user, tokens } = await auth_service_1.AuthService.login(email, password, ip, userAgent);
+            const { user, tokens } = await auth_service_1.AuthService.login(phone, password, ip, userAgent);
             res.cookie('refreshToken', tokens.refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
