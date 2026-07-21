@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationController = void 0;
 const notification_service_1 = require("./notification.service");
+const fcm_service_1 = require("../../services/fcm.service");
 class NotificationController {
     static async getNotifications(req, res) {
         try {
@@ -43,6 +44,36 @@ class NotificationController {
         }
         catch (error) {
             res.status(500).json({ message: error.message || 'Failed to mark all notifications as read' });
+        }
+    }
+    static async registerFcmToken(req, res) {
+        try {
+            const userId = req.user.sub;
+            const token = req.body?.token;
+            if (!token || typeof token !== 'string') {
+                res.status(400).json({ success: false, error: { message: 'FCM token is required' } });
+                return;
+            }
+            await fcm_service_1.FcmService.registerToken(userId, token);
+            res.json({ success: true, data: { registered: true } });
+        }
+        catch (error) {
+            res.status(500).json({ message: error.message || 'Failed to register FCM token' });
+        }
+    }
+    static async unregisterFcmToken(req, res) {
+        try {
+            const userId = req.user.sub;
+            const token = req.body?.token;
+            if (!token || typeof token !== 'string') {
+                res.status(400).json({ success: false, error: { message: 'FCM token is required' } });
+                return;
+            }
+            await fcm_service_1.FcmService.unregisterToken(userId, token);
+            res.json({ success: true, data: { unregistered: true } });
+        }
+        catch (error) {
+            res.status(500).json({ message: error.message || 'Failed to unregister FCM token' });
         }
     }
 }

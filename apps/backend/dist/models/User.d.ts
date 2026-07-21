@@ -9,6 +9,7 @@ export interface IUser extends Document {
     isActive: boolean;
     branchId?: mongoose.Types.ObjectId;
     language: string;
+    fcmTokens: string[];
     lastLogin?: Date;
     createdAt: Date;
     updatedAt: Date;

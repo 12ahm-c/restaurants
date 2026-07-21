@@ -7,6 +7,7 @@ const Order_1 = require("../../models/Order");
 const Payment_1 = require("../../models/Payment");
 const emitters_1 = require("../../socket/emitters");
 const socket_server_1 = require("../../socket/socket.server");
+const fcm_service_1 = require("../../services/fcm.service");
 const logger_1 = require("../../utils/logger");
 class NotificationService {
     static async createNotification(userId, title, message, type, entity, entityId, metadata) {
@@ -36,6 +37,15 @@ class NotificationService {
         catch (err) {
             logger_1.logger.warn({ err: err }, 'Failed to emit notification:new');
         }
+        fcm_service_1.FcmService.sendToUser(userId, title, message, {
+            notificationId: notification._id.toString(),
+            type,
+            entity,
+            entityId,
+            ...(metadata || {}),
+        }).catch((err) => {
+            logger_1.logger.warn({ err, userId }, 'Failed to send FCM notification');
+        });
         return notification;
     }
     static async getNotifications(userId, page = 1, limit = 20, unreadOnly = false) {

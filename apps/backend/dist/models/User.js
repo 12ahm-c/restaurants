@@ -51,6 +51,7 @@ const userSchema = new mongoose_1.Schema({
     isActive: { type: Boolean, default: true },
     branchId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Branch' },
     language: { type: String, default: 'fr', enum: ['fr', 'en', 'ar'] },
+    fcmTokens: { type: [String], default: [] },
     lastLogin: { type: Date },
 }, {
     timestamps: true,
