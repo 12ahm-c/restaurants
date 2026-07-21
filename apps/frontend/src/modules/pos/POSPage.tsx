@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCartStore } from '../../stores/cartStore';
 import { useTentStore } from '../../stores/tentStore';
+import { useSettingsStore } from '../../stores/settingsStore';
 import { orderService } from '../../services/order.service';
 import { useUIStore } from '../../stores/uiStore';
 import { useI18n } from '../../i18n/I18nContext';
@@ -44,6 +45,7 @@ export function POSPage() {
     getItemCount,
   } = useCartStore();
   const { tents, fetchTents } = useTentStore();
+  const { getTentPrice } = useSettingsStore();
 
   const [products, setProducts] = useState<ProductDTO[]>([]);
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
@@ -83,6 +85,14 @@ export function POSPage() {
     loadCategories();
     loadAvailability();
   }, []);
+
+  // Auto-calculate rental price from settings when tent or duration changes
+  useEffect(() => {
+    if (rentalMode === 'rent-only' && selectedTent) {
+      const price = getTentPrice(selectedTent.size, rentalDuration);
+      setRentalPrice(price);
+    }
+  }, [rentalMode, selectedTent, rentalDuration, getTentPrice]);
 
   const loadProducts = async (categoryId?: string, search?: string) => {
     try {

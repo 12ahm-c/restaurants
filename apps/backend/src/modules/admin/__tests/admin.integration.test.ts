@@ -17,8 +17,6 @@ beforeAll(async () => {
 
   await Settings.create({
     loyalty_points_per_100_mru: 1,
-    loyalty_redeem_rate: 1,
-    taxRate: 0,
     currency: 'MRU',
     company_name: 'Test Company',
   });
@@ -52,8 +50,8 @@ describe('Admin Endpoints', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.data).toHaveProperty('loyalty_points_per_100_mru');
-      expect(res.body.data).toHaveProperty('taxRate');
       expect(res.body.data).toHaveProperty('currency');
+      expect(res.body.data).toHaveProperty('tent_pricing');
     });
   });
 
@@ -62,10 +60,9 @@ describe('Admin Endpoints', () => {
       const res = await request(app)
         .put('/v1/admin/settings')
         .set('Authorization', `Bearer ${authToken}`)
-        .send({ taxRate: 10, company_name: 'Updated Company' });
+        .send({ company_name: 'Updated Company' });
 
       expect(res.status).toBe(200);
-      expect(res.body.data.taxRate).toBe(10);
       expect(res.body.data.company_name).toBe('Updated Company');
     });
   });

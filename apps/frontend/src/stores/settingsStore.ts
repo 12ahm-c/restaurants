@@ -24,10 +24,9 @@ interface SettingsState {
 
   fetchSettings: () => Promise<void>;
   updateSettings: (data: Partial<Settings>) => Promise<void>;
-  getTaxRate: () => number;
-  getLoyaltyRate: () => number;
   getCompanyName: () => string;
   getLogo: () => string;
+  getTentPrice: (tentSize: 'small' | 'medium' | 'large', duration: string) => number;
 }
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
@@ -58,8 +57,24 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     }
   },
 
-  getTaxRate: () => get().settings?.taxRate || 0,
-  getLoyaltyRate: () => get().settings?.loyalty_points_per_100_mru || 1,
   getCompanyName: () => get().settings?.company_name || 'RestoManager',
   getLogo: () => get().settings?.logo || '',
+  getTentPrice: (tentSize, duration) => {
+    const settings = get().settings;
+    if (!settings?.tent_pricing) return 0;
+
+    const durationMap: Record<string, keyof typeof settings.tent_pricing> = {
+      '1h': 'per_hour',
+      '2h': 'per_2hours',
+      '3h': 'per_3hours',
+      '4h': 'per_4hours',
+      '5h': 'per_5hours',
+      '6h': 'per_6hours',
+      '8h': 'per_8hours',
+      '12h': 'per_12hours',
+    };
+
+    const period = durationMap[duration] || 'per_hour';
+    return settings.tent_pricing[period]?.[tentSize] || 0;
+  },
 }));

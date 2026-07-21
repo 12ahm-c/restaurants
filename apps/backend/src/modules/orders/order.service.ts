@@ -11,6 +11,7 @@ import { getIO } from '../../socket/socket.server';
 import { emitNewOrder, emitOrderStatusUpdate, emitOrderCancelled } from '../../socket/emitters';
 import { InventoryService } from '../inventory/inventory.service';
 import { NotificationService } from '../notifications/notification.service';
+import { SettingsService } from '../admin/settings.service';
 import { logger } from '../../utils/logger';
 
 export interface CreateOrderInput {
@@ -61,12 +62,18 @@ export class OrderService {
         }
       }
 
+      // Auto-calculate rental price from settings if not provided
+      let rentalPrice = input.rentalPrice;
+      if (input.type === 'rental' && tent && input.rentalDuration && !rentalPrice) {
+        rentalPrice = await SettingsService.getTentPrice(tent.size, input.rentalDuration);
+      }
+
       const orderItems: IOrderItem[] = [];
       let totalHT = 0;
 
       // For rental-only orders, totalHT is just the rental price
       if (input.type === 'rental') {
-        totalHT = input.rentalPrice || 0;
+        totalHT = rentalPrice || 0;
       }
 
       for (const item of (input.items || [])) {
@@ -131,7 +138,7 @@ export class OrderService {
         totalHT,
         totalTTC,
         rentalDuration: input.rentalDuration,
-        rentalPrice: input.rentalPrice,
+        rentalPrice,
         notes: input.notes,
       });
 
