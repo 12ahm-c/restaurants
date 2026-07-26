@@ -9,6 +9,7 @@ export interface ICustomer extends Document {
   address?: string;
   preferences?: string;
   loyaltyPoints: number;
+  debt: number;
   birthDate?: Date;
   branchId?: mongoose.Types.ObjectId;
   createdAt: Date;
@@ -24,6 +25,7 @@ const customerSchema = new Schema<ICustomer>(
     address: { type: String, trim: true },
     preferences: { type: String, trim: true },
     loyaltyPoints: { type: Number, default: 0, min: 0 },
+    debt: { type: Number, default: 0 },
     birthDate: { type: Date },
     branchId: { type: Schema.Types.ObjectId, ref: 'Branch' },
   },

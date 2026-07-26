@@ -94,7 +94,7 @@ export function CustomerDetailPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 mt-5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
           <div className="text-center p-3 bg-brand-50 rounded-xl">
             <Star size={18} className="text-brand-500 mx-auto mb-1" />
             <p className="text-lg font-bold text-brand-600">{selectedCustomer.loyaltyPoints}</p>
@@ -108,6 +108,10 @@ export function CustomerDetailPage() {
           <div className="text-center p-3 bg-emerald-50 rounded-xl">
             <p className="text-lg font-bold text-emerald-600 mt-1">{totalSpent.toFixed(0)}</p>
             <p className="text-[10px] text-surface-400 font-medium">{t('form.mruSpent')}</p>
+          </div>
+          <div className={`text-center p-3 rounded-xl ${selectedCustomer.debt > 0 ? 'bg-coral-50' : 'bg-surface-100'}`}>
+            <p className={`text-lg font-bold mt-1 ${selectedCustomer.debt > 0 ? 'text-coral-600' : 'text-surface-400'}`}>{selectedCustomer.debt || 0}</p>
+            <p className="text-[10px] text-surface-400 font-medium">{t('customers.debt')} (MRU)</p>
           </div>
         </div>
 

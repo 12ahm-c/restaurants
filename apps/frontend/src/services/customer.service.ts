@@ -9,6 +9,7 @@ export interface Customer {
   address?: string;
   preferences?: string;
   loyaltyPoints: number;
+  debt: number;
   birthDate?: string;
   branchId?: string;
   createdAt: string;
@@ -125,6 +126,7 @@ export const customerService = {
       address?: string;
       preferences?: string;
       birthDate?: string;
+      debt?: number;
     }
   ): Promise<Customer> {
     const response = await apiClient.patch(`/customers/${id}`, data);

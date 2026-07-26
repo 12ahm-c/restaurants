@@ -107,8 +107,8 @@ export class NotificationService {
       try {
         await this.createNotification(
           chef._id.toString(),
-          'New Order',
-          `${orderNumber} — Table ${tableName}: ${itemList}`,
+          'طلب جديد 🆕',
+          `${orderNumber} — خيمة ${tableName}: ${itemList}`,
           'new_order',
           'order',
           orderId,
@@ -131,8 +131,8 @@ export class NotificationService {
       try {
         await this.createNotification(
           server._id.toString(),
-          'Order Ready',
-          `${orderNumber} — Table ${tableName} is ready to serve`,
+          'الطلب جاهز ✅',
+          `${orderNumber} — خيمة ${tableName} جاهز للتقديم`,
           'order_ready',
           'order',
           orderId,
@@ -156,8 +156,8 @@ export class NotificationService {
       try {
         await this.createNotification(
           user._id.toString(),
-          'Payment Received',
-          `${orderNumber} — ${amount} MRU via ${method}`,
+          'تم استلام الدفع 💰',
+          `${orderNumber} — ${amount} MRU عبر ${method}`,
           'payment_received',
           'order',
           orderId,
@@ -180,8 +180,8 @@ export class NotificationService {
       try {
         await this.createNotification(
           user._id.toString(),
-          'Order Served',
-          `${orderNumber} — Table ${tableName} has been served`,
+          'تم تقديم الطلب 🍽️',
+          `${orderNumber} — خيمة ${tableName} تم تقديمها`,
           'order_served',
           'order',
           orderId,
@@ -205,8 +205,8 @@ export class NotificationService {
       try {
         await this.createNotification(
           user._id.toString(),
-          'Stock Critical',
-          `${productName} is critically low (${quantity}/${threshold})`,
+          'تنبيه مخزون ⚠️',
+          `${productName} منخفض جداً (${quantity}/${threshold})`,
           'stock_critical',
           'inventory',
           inventoryId,

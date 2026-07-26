@@ -5,7 +5,7 @@ import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
 import { useI18n } from '../../i18n/I18nContext';
 import { TentDTO, TentStatus, TentSize } from '../../types';
-import { Plus, X, Filter, Tent, Bell } from 'lucide-react';
+import { Plus, X, Filter, Tent, CheckCircle } from 'lucide-react';
 
 export function TentMapPage() {
   const { tents, statusSummary, fetchTents, fetchTentStatusSummary, isLoading, createTent, markTentEmpty } = useTentStore();
@@ -196,11 +196,10 @@ export function TentMapPage() {
               <button
                 key={tent._id}
                 onClick={() => handleTentClick(tent)}
-                disabled={tent.status !== 'free'}
                 className={`relative card p-4 text-center transition-all duration-300 ${
                   tent.status === 'free'
                     ? 'hover:shadow-card-hover hover:-translate-y-1 cursor-pointer border-2 border-transparent hover:border-emerald-300/50 hover:shadow-lg hover:' + status.glow
-                    : 'cursor-default opacity-80'
+                    : 'cursor-default'
                 }`}
               >
                 {/* Top gradient bar */}
@@ -247,10 +246,11 @@ export function TentMapPage() {
                 {tent.status !== 'free' && canMarkTentEmpty && (
                   <button
                     onClick={(e) => handleMarkEmpty(tent._id, e)}
-                    className="absolute top-3 right-3 p-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 hover:text-emerald-300 transition-all shadow-sm backdrop-blur-sm"
+                    className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 hover:text-emerald-300 transition-all text-xs font-semibold border border-emerald-500/20"
                     title={t('tents.markEmpty')}
                   >
-                    <Bell size={14} />
+                    <CheckCircle size={14} />
+                    {t('tents.markEmpty')}
                   </button>
                 )}
               </button>

@@ -23,6 +23,7 @@ const updateCustomerSchema = z.object({
   address: z.string().max(200).optional(),
   preferences: z.string().max(500).optional(),
   birthDate: z.string().optional(),
+  debt: z.number().optional(),
 });
 
 const redeemLoyaltySchema = z.object({

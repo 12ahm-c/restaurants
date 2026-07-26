@@ -31,6 +31,8 @@ const ReportsPage = lazy(() => import('./modules/reports/ReportsPage').then(m =>
 const NotificationsPage = lazy(() => import('./modules/notifications/NotificationsPage').then(m => ({ default: m.NotificationsPage })));
 const SettingsPage = lazy(() => import('./modules/admin/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
 const LogsPage = lazy(() => import('./modules/admin/logs/LogsPage').then(m => ({ default: m.LogsPage })));
+const InventoryPage = lazy(() => import('./modules/inventory/InventoryPage').then(m => ({ default: m.InventoryPage })));
+const SuppliersPage = lazy(() => import('./modules/suppliers/SuppliersPage').then(m => ({ default: m.SuppliersPage })));
 
 function App() {
   return (
@@ -86,7 +88,7 @@ function App() {
             <Route
               path="kitchen"
               element={
-                <ProtectedRoute allowedRoles={['chef', 'owner', 'manager', 'stock_manager']}>
+                <ProtectedRoute allowedRoles={['chef']}>
                   <KitchenPage />
                 </ProtectedRoute>
               }
@@ -162,7 +164,7 @@ function App() {
             <Route
               path="customers/:id/edit"
               element={
-                <ProtectedRoute allowedRoles={['owner', 'manager', 'cashier']}>
+                <ProtectedRoute allowedRoles={['owner', 'manager', 'cashier', 'server']}>
                   <CustomerEditPage />
                 </ProtectedRoute>
               }
@@ -208,6 +210,26 @@ function App() {
 
             {/* Notifications - all roles */}
             <Route path="notifications" element={<NotificationsPage />} />
+
+            {/* Inventory - owner, manager, stock_manager */}
+            <Route
+              path="inventory"
+              element={
+                <ProtectedRoute allowedRoles={['owner', 'manager', 'stock_manager']}>
+                  <InventoryPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Suppliers - owner, manager, stock_manager */}
+            <Route
+              path="suppliers"
+              element={
+                <ProtectedRoute allowedRoles={['owner', 'manager', 'stock_manager']}>
+                  <SuppliersPage />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Employees - owner, manager */}
             <Route

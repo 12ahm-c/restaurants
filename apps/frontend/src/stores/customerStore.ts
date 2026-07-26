@@ -40,6 +40,7 @@ interface CustomerState {
       address?: string;
       preferences?: string;
       birthDate?: string;
+      debt?: number;
     }
   ) => Promise<void>;
   redeemLoyaltyPoints: (

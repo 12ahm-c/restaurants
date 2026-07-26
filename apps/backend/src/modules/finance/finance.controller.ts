@@ -37,9 +37,15 @@ export class FinanceController {
     }
 
     try {
+      const userId = req.user?.sub;
+      if (!userId) {
+        sendError(res, 401, 'AUTH_REQUIRED', 'Authentication required');
+        return;
+      }
+
       const expense = await FinanceService.createExpense({
         ...result.data,
-        userId: (req as any).user._id,
+        userId,
       });
       sendSuccess(res, expense, 201);
     } catch (error) {

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../stores/authStore';
 import { useI18n } from '../../../i18n/I18nContext';
 import { getDefaultRouteForRole } from '../../../utils/defaultRoute';
-import { Utensils, Eye, EyeOff, ArrowRight, Shield, Zap, Clock } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, Shield, Zap, Clock } from 'lucide-react';
 
 export function LoginPage() {
   const [phone, setPhone] = useState('');
@@ -41,8 +41,8 @@ export function LoginPage() {
         
         <div className="relative z-10 flex flex-col justify-center px-16">
           {/* Logo */}
-          <div className="w-16 h-16 bg-gradient-to-br from-brand-500 to-accent-500 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-brand-500/20">
-            <Utensils size={32} className="text-white" />
+          <div className="w-16 h-16 rounded-2xl overflow-hidden mb-8 shadow-lg shadow-brand-500/20 border border-white/10 bg-surface-900 flex items-center justify-center">
+            <img src="/app-icon.jpg" alt="Logo" className="w-full h-full object-cover" />
           </div>
           
           <h1 className="text-5xl font-display font-bold mb-4 leading-tight text-white">
@@ -90,8 +90,8 @@ export function LoginPage() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/20">
-              <Utensils size={24} className="text-white" />
+            <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-lg shadow-brand-500/20 border border-white/10 shrink-0 bg-surface-900 flex items-center justify-center">
+              <img src="/app-icon.jpg" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <span className="text-2xl font-display font-bold dark:text-white text-surface-900">RestoManager</span>
           </div>

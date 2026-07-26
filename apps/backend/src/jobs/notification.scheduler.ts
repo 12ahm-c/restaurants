@@ -16,12 +16,14 @@ async function runDueNotificationJobs(now: Date = new Date()): Promise<void> {
   const hour = now.getUTCHours();
   const minute = now.getUTCMinutes();
 
-  if (hour === 10 && minute === 0 && lastMorningKey !== dateKey) {
+  // Manager evening reminder at 20:00 UTC
+  if (hour === 20 && minute === 0 && lastMorningKey !== dateKey) {
     lastMorningKey = dateKey;
     await NotificationService.notifyManagersMorningReminder();
   }
 
-  if (hour === 23 && minute === 59 && lastSummaryKey !== dateKey) {
+  // Daily summary at 00:00 UTC (midnight)
+  if (hour === 0 && minute === 0 && lastSummaryKey !== dateKey) {
     lastSummaryKey = dateKey;
     await NotificationService.notifyManagersDailySummary(now);
   }

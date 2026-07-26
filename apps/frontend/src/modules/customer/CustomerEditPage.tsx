@@ -11,6 +11,7 @@ export function CustomerEditPage() {
   const [formData, setFormData] = useState({
     firstName: '',
     phone: '',
+    debt: 0,
   });
   const [submitError, setSubmitError] = useState('');
 
@@ -26,6 +27,7 @@ export function CustomerEditPage() {
       setFormData({
         firstName: selectedCustomer.firstName,
         phone: selectedCustomer.phone,
+        debt: selectedCustomer.debt || 0,
       });
     }
   }, [selectedCustomer]);
@@ -51,6 +53,7 @@ export function CustomerEditPage() {
         firstName: formData.firstName,
         lastName: selectedCustomer?.lastName || '',
         phone: formData.phone,
+        debt: formData.debt,
       });
       navigate(`/customers/${id}`);
     } catch (err: any) {
@@ -102,6 +105,11 @@ export function CustomerEditPage() {
               <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('common.phone')}</label>
               <input type="tel" name="phone" value={formData.phone} onChange={handleChange}
                 className="input-field" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-surface-300 mb-1.5">{t('customers.debt')} (MRU)</label>
+              <input type="number" name="debt" value={formData.debt} onChange={(e) => setFormData({ ...formData, debt: parseFloat(e.target.value) || 0 })}
+                step="0.01" className="input-field" />
             </div>
           </div>
 

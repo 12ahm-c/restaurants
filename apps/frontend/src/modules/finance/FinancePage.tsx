@@ -386,7 +386,7 @@ export function FinancePage() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium dark:text-surface-300 text-surface-600 mb-1">{t('finance.category')}</label>
+                  <label className="block text-sm font-medium dark:text-surface-300 text-surface-600 mb-1">{t('finance.paymentMethod')}</label>
                   <select value={formData.paymentMethod} onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })} className="input-field w-full rounded-md">
                     <option value="cash">{t('finance.cash')}</option>
                     <option value="card">{t('finance.card')}</option>

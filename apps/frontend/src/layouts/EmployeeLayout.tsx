@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useSettingsStore } from '../stores/settingsStore';
@@ -8,8 +8,8 @@ import { useTheme } from '../contexts/ThemeContext';
 import {
   LogOut, User, X, LayoutDashboard, ShoppingCart, Tent,
   ChefHat, UtensilsCrossed, Users, DollarSign, FileText, Settings,
-  ClipboardList, Utensils, MoreHorizontal, Bell, CheckCheck, ChevronRight,
-  Search, Sun, Moon
+  ClipboardList, MoreHorizontal, Bell, CheckCheck, ChevronRight,
+  Search, Sun, Moon, Package, Truck
 } from 'lucide-react';
 import { UserRole } from '../types';
 
@@ -37,8 +37,9 @@ function getNavConfig(t: (key: string) => string): Record<UserRole, { path: stri
       { path: '/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard, section: 'main' },
       { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList, section: 'main' },
       { path: '/tents', label: t('nav.tents'), icon: Tent, section: 'main' },
-      { path: '/kitchen', label: t('nav.kitchen'), icon: ChefHat, section: 'operations' },
       { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed, section: 'operations' },
+      { path: '/inventory', label: t('nav.inventory'), icon: Package, section: 'operations' },
+      { path: '/suppliers', label: t('nav.suppliers'), icon: Truck, section: 'operations' },
       { path: '/customers', label: t('nav.customers'), icon: Users, section: 'operations' },
       { path: '/finance', label: t('nav.finance'), icon: DollarSign, section: 'management' },
       { path: '/admin/employees', label: t('nav.employees'), icon: User, section: 'management' },
@@ -49,8 +50,9 @@ function getNavConfig(t: (key: string) => string): Record<UserRole, { path: stri
       { path: '/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard, section: 'main' },
       { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList, section: 'main' },
       { path: '/tents', label: t('nav.tents'), icon: Tent, section: 'main' },
-      { path: '/kitchen', label: t('nav.kitchen'), icon: ChefHat, section: 'operations' },
       { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed, section: 'operations' },
+      { path: '/inventory', label: t('nav.inventory'), icon: Package, section: 'operations' },
+      { path: '/suppliers', label: t('nav.suppliers'), icon: Truck, section: 'operations' },
       { path: '/customers', label: t('nav.customers'), icon: Users, section: 'operations' },
       { path: '/finance', label: t('nav.finance'), icon: DollarSign, section: 'management' },
       { path: '/admin/employees', label: t('nav.employees'), icon: User, section: 'management' },
@@ -72,7 +74,9 @@ function getNavConfig(t: (key: string) => string): Record<UserRole, { path: stri
       { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed, section: 'operations' },
     ],
     stock_manager: [
-      { path: '/kitchen', label: t('nav.kitchen'), icon: ChefHat, section: 'main' },
+      { path: '/inventory', label: t('nav.inventory'), icon: Package, section: 'main' },
+      { path: '/suppliers', label: t('nav.suppliers'), icon: Truck, section: 'main' },
+      { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed, section: 'main' },
     ],
   };
 }
@@ -128,8 +132,8 @@ export function EmployeeLayout() {
         <div className="flex items-center justify-between h-16 px-4">
           {/* Left - Logo & Brand */}
           <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${roleGradient} flex items-center justify-center shadow-lg`}>
-              <Utensils size={20} className="text-white" />
+            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg border dark:border-white/10 border-black/10 shrink-0 bg-surface-900 flex items-center justify-center">
+              <img src={settings?.logo || '/app-icon.jpg'} alt="Logo" className="w-full h-full object-cover" />
             </div>
             <div className="hidden sm:block">
               <span className="text-lg font-display font-bold dark:text-white text-surface-900">{companyName}</span>
