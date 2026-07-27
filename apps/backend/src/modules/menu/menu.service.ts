@@ -258,8 +258,7 @@ export class MenuService {
       throw new AppError(404, 'NOT_FOUND', 'Product not found');
     }
 
-    product.status = 'discontinued';
-    await product.save();
+    await Product.findByIdAndDelete(id);
   }
 
   static async getProductsAvailability(): Promise<

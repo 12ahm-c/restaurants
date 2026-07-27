@@ -109,13 +109,18 @@ export const menuService = {
     imageUrl?: string;
     recipe?: Array<{ inventoryId: string; quantity: number }>;
   }): Promise<ProductDTO> {
-    const response = await apiClient.post<ApiResponse<ProductDTO>>('/menu/products', data);
+    try {
+      const response = await apiClient.post<ApiResponse<ProductDTO>>('/menu/products', data);
 
-    if (!response.data.success || !response.data.data) {
-      throw new Error(response.data.error?.message || 'Failed to create product');
+      if (!response.data.success || !response.data.data) {
+        throw new Error(response.data.error?.message || 'Failed to create product');
+      }
+
+      return response.data.data;
+    } catch (error: any) {
+      const msg = error.response?.data?.error?.message || error.message || 'Failed to create product';
+      throw new Error(msg);
     }
-
-    return response.data.data;
   },
 
   async updateProduct(
@@ -131,13 +136,18 @@ export const menuService = {
       recipe: Array<{ inventoryId: string; quantity: number }>;
     }>
   ): Promise<ProductDTO> {
-    const response = await apiClient.put<ApiResponse<ProductDTO>>(`/menu/products/${id}`, data);
+    try {
+      const response = await apiClient.put<ApiResponse<ProductDTO>>(`/menu/products/${id}`, data);
 
-    if (!response.data.success || !response.data.data) {
-      throw new Error(response.data.error?.message || 'Failed to update product');
+      if (!response.data.success || !response.data.data) {
+        throw new Error(response.data.error?.message || 'Failed to update product');
+      }
+
+      return response.data.data;
+    } catch (error: any) {
+      const msg = error.response?.data?.error?.message || error.message || 'Failed to update product';
+      throw new Error(msg);
     }
-
-    return response.data.data;
   },
 
   async updateProductStatus(id: string, status: string): Promise<ProductDTO> {
@@ -154,10 +164,19 @@ export const menuService = {
   },
 
   async deleteProduct(id: string): Promise<void> {
-    const response = await apiClient.delete(`/menu/products/${id}`);
+    try {
+      const response = await apiClient.delete(`/menu/products/${id}`);
 
-    if (!response.data.success) {
-      throw new Error(response.data.error?.message || 'Failed to delete product');
+      if (response.status === 204) {
+        return;
+      }
+
+      if (response.data && !response.data.success) {
+        throw new Error(response.data.error?.message || 'Failed to delete product');
+      }
+    } catch (error: any) {
+      const msg = error.response?.data?.error?.message || error.message || 'Failed to delete product';
+      throw new Error(msg);
     }
   },
 

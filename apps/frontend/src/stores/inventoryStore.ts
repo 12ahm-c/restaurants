@@ -60,7 +60,11 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
   filters: {},
 
   fetchInventory: async (filters?) => {
-    set({ loading: true, error: null });
+    if (get().items.length === 0) {
+      set({ loading: true, error: null });
+    } else {
+      set({ error: null });
+    }
     try {
       const result = await inventoryService.getInventory(filters || get().filters);
       set({

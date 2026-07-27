@@ -13,6 +13,7 @@ const createCustomerSchema = z.object({
   preferences: z.string().max(500).optional(),
   birthDate: z.string().optional(),
   branchId: z.string().optional(),
+  debt: z.number().optional(),
 });
 
 const updateCustomerSchema = z.object({

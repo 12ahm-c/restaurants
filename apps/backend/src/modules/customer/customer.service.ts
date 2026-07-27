@@ -65,7 +65,7 @@ export class CustomerService {
       {
         $group: {
           _id: null,
-          totalSpent: { $sum: '$totalAmount' },
+          totalSpent: { $sum: { $ifNull: ['$totalTTC', '$totalHT', 0] } },
           lastPurchaseAt: { $max: '$createdAt' },
           totalOrders: { $sum: 1 },
         },
@@ -89,6 +89,7 @@ export class CustomerService {
     preferences?: string;
     birthDate?: string;
     branchId?: string;
+    debt?: number;
   }): Promise<ICustomer> {
     const existing = await Customer.findOne({ phone: data.phone });
     if (existing) {
@@ -106,6 +107,7 @@ export class CustomerService {
     if (data.preferences) customerData.preferences = data.preferences;
     if (data.birthDate) customerData.birthDate = new Date(data.birthDate);
     if (data.branchId) customerData.branchId = data.branchId;
+    if (data.debt !== undefined) customerData.debt = data.debt;
 
     const customer = await Customer.create(customerData);
     return customer;
@@ -121,6 +123,7 @@ export class CustomerService {
       address?: string;
       preferences?: string;
       birthDate?: string;
+      debt?: number;
     }
   ): Promise<ICustomer> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -147,6 +150,7 @@ export class CustomerService {
     if (data.address !== undefined) updateData.address = data.address;
     if (data.preferences !== undefined) updateData.preferences = data.preferences;
     if (data.birthDate !== undefined) updateData.birthDate = new Date(data.birthDate);
+    if (data.debt !== undefined) updateData.debt = data.debt;
 
     const updated = await Customer.findByIdAndUpdate(id, updateData, { new: true });
     if (!updated) {

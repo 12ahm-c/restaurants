@@ -100,8 +100,9 @@ export const customerService = {
     preferences?: string;
     birthDate?: string;
     branchId?: string;
+    debt?: number;
   }): Promise<Customer> {
-    const payload: Record<string, string> = {
+    const payload: Record<string, any> = {
       firstName: data.firstName,
       phone: data.phone,
     };
@@ -111,6 +112,7 @@ export const customerService = {
     if (data.preferences) payload.preferences = data.preferences;
     if (data.birthDate) payload.birthDate = data.birthDate;
     if (data.branchId) payload.branchId = data.branchId;
+    if (data.debt !== undefined) payload.debt = data.debt;
 
     const response = await apiClient.post('/customers', payload);
     return response.data.data;
@@ -133,30 +135,6 @@ export const customerService = {
     return response.data.data;
   },
 
-  async redeemLoyaltyPoints(
-    customerId: string,
-    points: number,
-    orderId: string
-  ): Promise<{ transaction: LoyaltyTransaction; customer: Customer }> {
-    const response = await apiClient.post(`/customers/${customerId}/loyalty/redeem`, {
-      points,
-      orderId,
-    });
-    return response.data.data;
-  },
-
-  async getCustomerLoyaltyHistory(
-    customerId: string,
-    page?: number,
-    limit?: number
-  ): Promise<{ transactions: LoyaltyTransaction[]; total: number }> {
-    const params = new URLSearchParams();
-    if (page) params.append('page', String(page));
-    if (limit) params.append('limit', String(limit));
-    const response = await apiClient.get(`/customers/${customerId}/loyalty/history?${params.toString()}`);
-    return response.data.data;
-  },
-
   async getCustomerPurchaseHistory(
     customerId: string,
     page?: number,
@@ -166,12 +144,6 @@ export const customerService = {
     if (page) params.append('page', String(page));
     if (limit) params.append('limit', String(limit));
     const response = await apiClient.get(`/customers/${customerId}/purchase-history?${params.toString()}`);
-    return response.data.data;
-  },
-
-  async getLoyaltyRanking(limit?: number): Promise<Customer[]> {
-    const params = limit ? `?limit=${limit}` : '';
-    const response = await apiClient.get(`/customers/loyalty/ranking${params}`);
     return response.data.data;
   },
 };

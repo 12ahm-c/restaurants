@@ -56,7 +56,11 @@ export const useMenuStore = create<MenuState>((set, get) => ({
   },
 
   fetchProducts: async (filters) => {
-    set({ isLoading: true, error: null });
+    if (get().products.length === 0) {
+      set({ isLoading: true, error: null });
+    } else {
+      set({ error: null });
+    }
     try {
       const currentFilters = cleanFilters({ ...get().filters, ...filters });
       const { products, total } = await menuService.getProducts(currentFilters);
@@ -104,18 +108,33 @@ export const useMenuStore = create<MenuState>((set, get) => ({
   deleteProduct: async (id) => {
     await menuService.deleteProduct(id);
     set((state) => ({
-      products: state.products.map((p) =>
-        p._id === id ? { ...p, status: 'discontinued' as const } : p
-      ),
+      products: state.products.filter((p) => p._id !== id),
     }));
   },
 
   updateProductStatus: async (id, status) => {
-    const product = await menuService.updateProductStatus(id, status);
+    const targetStatus = status;
+    const targetIsActive = status === 'available';
+    const previousProducts = get().products;
+
+    // Optimistic update for instant UI feedback
     set((state) => ({
-      products: state.products.map((p) => (p._id === id ? product : p)),
+      products: state.products.map((p) =>
+        p._id === id ? { ...p, status: targetStatus as any, isActive: targetIsActive } : p
+      ),
     }));
-    return product;
+
+    try {
+      const product = await menuService.updateProductStatus(id, status);
+      set((state) => ({
+        products: state.products.map((p) => (p._id === id ? product : p)),
+      }));
+      return product;
+    } catch (error) {
+      // Revert optimistic update if API fails
+      set({ products: previousProducts });
+      throw error;
+    }
   },
 
   createCategory: async (data) => {

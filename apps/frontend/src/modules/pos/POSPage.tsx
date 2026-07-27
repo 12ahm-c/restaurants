@@ -654,14 +654,6 @@ export function POSPage() {
                 <span className="text-brand-400">{t('pos.customer')}:</span>
                 <span className="font-semibold text-brand-500">{selectedCustomer.firstName} {selectedCustomer.lastName}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-brand-400">Points:</span>
-                <span className="font-semibold text-brand-500">{selectedCustomer.loyaltyPoints} pts</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-brand-400">To Earn:</span>
-                <span className="font-semibold text-brand-400">+{Math.floor(getTotal() / 100)} pts</span>
-              </div>
             </div>
           )}
 

@@ -12,14 +12,18 @@ interface SupplierState {
   clearMovements: () => void;
 }
 
-export const useSupplierStore = create<SupplierState>((set) => ({
+export const useSupplierStore = create<SupplierState>((set, get) => ({
   suppliers: [],
   selectedSupplierMovements: [],
   loading: false,
   error: null,
 
   fetchSuppliers: async (search?) => {
-    set({ loading: true, error: null });
+    if (get().suppliers.length === 0) {
+      set({ loading: true, error: null });
+    } else {
+      set({ error: null });
+    }
     try {
       const suppliers = await supplierService.getSuppliers(search);
       set({ suppliers, loading: false });

@@ -16,7 +16,7 @@ interface TentState {
   createTent: (data: { tentNumber: number; size: TentSize; position: { x: number; y: number } }) => Promise<TentDTO>;
 }
 
-export const useTentStore = create<TentState>((set) => ({
+export const useTentStore = create<TentState>((set, get) => ({
   tents: [],
   selectedTent: null,
   statusSummary: null,
@@ -24,7 +24,11 @@ export const useTentStore = create<TentState>((set) => ({
   error: null,
 
   fetchTents: async (filters) => {
-    set({ isLoading: true, error: null });
+    if (get().tents.length === 0) {
+      set({ isLoading: true, error: null });
+    } else {
+      set({ error: null });
+    }
     try {
       const params = new URLSearchParams();
       if (filters?.status) params.append('status', filters.status);

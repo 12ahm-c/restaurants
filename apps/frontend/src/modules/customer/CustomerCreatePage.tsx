@@ -10,6 +10,7 @@ export function CustomerCreatePage() {
   const [formData, setFormData] = useState({
     firstName: '',
     phone: '',
+    debt: '',
   });
   const [error, setError] = useState('');
 
@@ -33,6 +34,7 @@ export function CustomerCreatePage() {
       await createCustomer({
         firstName: formData.firstName,
         phone: formData.phone,
+        debt: formData.debt ? parseFloat(formData.debt) || 0 : 0,
       });
       navigate('/customers');
     } catch (err: any) {
@@ -60,7 +62,7 @@ export function CustomerCreatePage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-surface-300 mb-1.5">
+              <label className="block text-sm font-semibold dark:text-surface-300 text-surface-700 mb-1.5">
                 {t('common.name')} <span className="text-coral-400">*</span>
               </label>
               <input
@@ -74,7 +76,7 @@ export function CustomerCreatePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-surface-300 mb-1.5">
+              <label className="block text-sm font-semibold dark:text-surface-300 text-surface-700 mb-1.5">
                 {t('common.phone')} <span className="text-coral-400">*</span>
               </label>
               <input
@@ -84,6 +86,22 @@ export function CustomerCreatePage() {
                 onChange={handleChange}
                 className="input-field"
                 placeholder={t('common.phone')}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold dark:text-surface-300 text-surface-700 mb-1.5">
+                {t('customers.debt')} (MRU)
+              </label>
+              <input
+                type="number"
+                name="debt"
+                value={formData.debt}
+                onChange={handleChange}
+                className="input-field"
+                placeholder="0"
+                min="0"
+                step="0.01"
               />
             </div>
           </div>

@@ -30,7 +30,7 @@ const createProductSchema = z.object({
   categoryId: z.string().min(1, 'Category is required'),
   price: z.number().min(0, 'Price must be positive'),
   prepTime: z.number().min(0).optional(),
-  imageUrl: z.string().url().optional(),
+  imageUrl: z.string().optional(),
   recipe: z
     .array(
       z.object({
@@ -49,7 +49,7 @@ const updateProductSchema = z.object({
   prepTime: z.number().min(0).optional(),
   status: z.enum(['available', 'unavailable', 'discontinued']).optional(),
   isActive: z.boolean().optional(),
-  imageUrl: z.string().url().optional(),
+  imageUrl: z.string().optional(),
   recipe: z
     .array(
       z.object({

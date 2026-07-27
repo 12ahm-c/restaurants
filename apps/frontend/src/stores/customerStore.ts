@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { customerService, Customer, LoyaltyTransaction, CustomerFilters } from '../services/customer.service';
+import { customerService, Customer, CustomerFilters } from '../services/customer.service';
 
 interface CustomerState {
   customers: Customer[];
@@ -11,9 +11,6 @@ interface CustomerState {
   lastPurchaseAt: string | null;
   totalOrders: number;
   searchResults: Customer[];
-  loyaltyHistory: LoyaltyTransaction[];
-  loyaltyHistoryTotal: number;
-  loyaltyRanking: Customer[];
   loading: boolean;
   error: string | null;
   filters: CustomerFilters;
@@ -29,6 +26,7 @@ interface CustomerState {
     preferences?: string;
     birthDate?: string;
     branchId?: string;
+    debt?: number;
   }) => Promise<Customer>;
   updateCustomer: (
     id: string,
@@ -43,19 +41,12 @@ interface CustomerState {
       debt?: number;
     }
   ) => Promise<void>;
-  redeemLoyaltyPoints: (
-    customerId: string,
-    points: number,
-    orderId: string
-  ) => Promise<void>;
-  fetchCustomerLoyaltyHistory: (customerId: string, page?: number, limit?: number) => Promise<void>;
-  fetchLoyaltyRanking: (limit?: number) => Promise<void>;
   setFilters: (filters: CustomerFilters) => void;
   clearSelectedItem: () => void;
   clearSearchResults: () => void;
 }
 
-export const useCustomerStore = create<CustomerState>((set) => ({
+export const useCustomerStore = create<CustomerState>((set, get) => ({
   customers: [],
   total: 0,
   page: 1,
@@ -65,15 +56,16 @@ export const useCustomerStore = create<CustomerState>((set) => ({
   lastPurchaseAt: null,
   totalOrders: 0,
   searchResults: [],
-  loyaltyHistory: [],
-  loyaltyHistoryTotal: 0,
-  loyaltyRanking: [],
   loading: false,
   error: null,
   filters: {},
 
   fetchCustomers: async (filters?) => {
-    set({ loading: true, error: null });
+    if (get().customers.length === 0) {
+      set({ loading: true, error: null });
+    } else {
+      set({ error: null });
+    }
     try {
       const result = await customerService.getCustomers(filters);
       set({
@@ -142,50 +134,6 @@ export const useCustomerStore = create<CustomerState>((set) => ({
     } catch (error: any) {
       set({ error: error.message || 'Failed to update customer', loading: false });
       throw error;
-    }
-  },
-
-  redeemLoyaltyPoints: async (customerId, points, orderId) => {
-    set({ loading: true, error: null });
-    try {
-      const result = await customerService.redeemLoyaltyPoints(customerId, points, orderId);
-      set((state) => ({
-        customers: state.customers.map((c) =>
-          c._id === customerId ? result.customer : c
-        ),
-        selectedCustomer:
-          state.selectedCustomer?._id === customerId
-            ? result.customer
-            : state.selectedCustomer,
-        loading: false,
-      }));
-    } catch (error: any) {
-      set({ error: error.message || 'Failed to redeem loyalty points', loading: false });
-      throw error;
-    }
-  },
-
-  fetchCustomerLoyaltyHistory: async (customerId, page?, limit?) => {
-    try {
-      const result = await customerService.getCustomerLoyaltyHistory(customerId, page, limit);
-      set({
-        loyaltyHistory: result?.transactions || [],
-        loyaltyHistoryTotal: result?.total || 0,
-        loading: false,
-      });
-    } catch (error: any) {
-      console.error('Loyalty history fetch failed:', error);
-      set({ loyaltyHistory: [], loyaltyHistoryTotal: 0, loading: false });
-    }
-  },
-
-  fetchLoyaltyRanking: async (limit?) => {
-    try {
-      const ranking = await customerService.getLoyaltyRanking(limit);
-      set({ loyaltyRanking: ranking || [], loading: false });
-    } catch (error: any) {
-      console.error('Loyalty ranking fetch failed:', error);
-      set({ loyaltyRanking: [], loading: false });
     }
   },
 

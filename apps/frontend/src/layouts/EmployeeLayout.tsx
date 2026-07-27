@@ -9,7 +9,7 @@ import {
   LogOut, User, X, LayoutDashboard, ShoppingCart, Tent,
   ChefHat, UtensilsCrossed, Users, DollarSign, FileText, Settings,
   ClipboardList, MoreHorizontal, Bell, CheckCheck, ChevronRight,
-  Search, Sun, Moon, Package, Truck
+  Search, Sun, Moon, Truck
 } from 'lucide-react';
 import { UserRole } from '../types';
 
@@ -38,7 +38,6 @@ function getNavConfig(t: (key: string) => string): Record<UserRole, { path: stri
       { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList, section: 'main' },
       { path: '/tents', label: t('nav.tents'), icon: Tent, section: 'main' },
       { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed, section: 'operations' },
-      { path: '/inventory', label: t('nav.inventory'), icon: Package, section: 'operations' },
       { path: '/suppliers', label: t('nav.suppliers'), icon: Truck, section: 'operations' },
       { path: '/customers', label: t('nav.customers'), icon: Users, section: 'operations' },
       { path: '/finance', label: t('nav.finance'), icon: DollarSign, section: 'management' },
@@ -51,7 +50,6 @@ function getNavConfig(t: (key: string) => string): Record<UserRole, { path: stri
       { path: '/orders/active', label: t('nav.orders'), icon: ClipboardList, section: 'main' },
       { path: '/tents', label: t('nav.tents'), icon: Tent, section: 'main' },
       { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed, section: 'operations' },
-      { path: '/inventory', label: t('nav.inventory'), icon: Package, section: 'operations' },
       { path: '/suppliers', label: t('nav.suppliers'), icon: Truck, section: 'operations' },
       { path: '/customers', label: t('nav.customers'), icon: Users, section: 'operations' },
       { path: '/finance', label: t('nav.finance'), icon: DollarSign, section: 'management' },
@@ -74,7 +72,6 @@ function getNavConfig(t: (key: string) => string): Record<UserRole, { path: stri
       { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed, section: 'operations' },
     ],
     stock_manager: [
-      { path: '/inventory', label: t('nav.inventory'), icon: Package, section: 'main' },
       { path: '/suppliers', label: t('nav.suppliers'), icon: Truck, section: 'main' },
       { path: '/menu/products', label: t('nav.menu'), icon: UtensilsCrossed, section: 'main' },
     ],

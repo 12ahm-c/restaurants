@@ -7,7 +7,7 @@ import { useI18n } from '../../../i18n/I18nContext';
 import { Plus, Search, Edit, Trash2, Eye, Package, Filter, ToggleLeft, ToggleRight } from 'lucide-react';
 
 export function ProductListPage() {
-  const { products, categories, isLoading, fetchProducts, fetchCategories, deleteProduct, setFilters } = useMenuStore();
+  const { products, categories, isLoading, fetchProducts, fetchCategories, deleteProduct, updateProductStatus, setFilters } = useMenuStore();
   const { addToast } = useUIStore();
   const { user } = useAuthStore();
   const { t } = useI18n();
@@ -46,9 +46,7 @@ export function ProductListPage() {
 
   const handleToggleActive = async (productId: string, currentIsActive: boolean) => {
     try {
-      const { menuService } = await import('../../../services/menu.service');
-      await menuService.updateProductStatus(productId, currentIsActive ? 'unavailable' : 'available');
-      fetchProducts();
+      await updateProductStatus(productId, currentIsActive ? 'unavailable' : 'available');
       addToast('success', t('common.success'));
     } catch (error) {
       addToast('error', error instanceof Error ? error.message : t('common.error'));

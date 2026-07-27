@@ -103,9 +103,6 @@ export function CustomerListPage() {
                     <p className="text-xs text-surface-400">{customer.phone}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-brand-600 bg-brand-50 px-2 py-1 rounded-full shrink-0">
-                      {customer.loyaltyPoints} pts
-                    </span>
                     {customer.debt > 0 && (
                       <span className="text-xs font-semibold text-coral-600 bg-coral-50 px-2 py-1 rounded-full shrink-0">
                         {customer.debt} MRU
@@ -124,7 +121,6 @@ export function CustomerListPage() {
                 <tr className="border-b dark:border-white/5 border-black/5">
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('common.name')}</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('common.phone')}</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('customers.loyaltyPoints')}</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('customers.debt')}</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-400 uppercase">{t('common.actions')}</th>
                 </tr>
@@ -138,11 +134,6 @@ export function CustomerListPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3 text-sm text-surface-400">{customer.phone}</td>
-                    <td className="px-5 py-3">
-                      <span className="text-xs font-semibold text-brand-600 bg-brand-50 px-2 py-1 rounded-full">
-                        {customer.loyaltyPoints} pts
-                      </span>
-                    </td>
                     <td className="px-5 py-3">
                       <span className={`text-sm font-semibold ${customer.debt > 0 ? 'text-coral-400' : 'text-emerald-400'}`}>
                         {customer.debt > 0 ? `${customer.debt} MRU` : '—'}

@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { EmployeeLayout } from './layouts/EmployeeLayout';
@@ -22,7 +22,6 @@ const CategoryListPage = lazy(() => import('./modules/menu/categories/CategoryLi
 const CustomerListPage = lazy(() => import('./modules/customer/CustomerListPage').then(m => ({ default: m.CustomerListPage })));
 const CustomerDetailPage = lazy(() => import('./modules/customer/CustomerDetailPage').then(m => ({ default: m.CustomerDetailPage })));
 const CustomerCreatePage = lazy(() => import('./modules/customer/CustomerCreatePage').then(m => ({ default: m.CustomerCreatePage })));
-const LoyaltyRankingPage = lazy(() => import('./modules/customer/LoyaltyRankingPage').then(m => ({ default: m.LoyaltyRankingPage })));
 const CustomerEditPage = lazy(() => import('./modules/customer/CustomerEditPage').then(m => ({ default: m.CustomerEditPage })));
 const FinancePage = lazy(() => import('./modules/finance/FinancePage').then(m => ({ default: m.FinancePage })));
 const EmployeeDashboard = lazy(() => import('./modules/dashboard/EmployeeDashboard').then(m => ({ default: m.EmployeeDashboard })));
@@ -31,10 +30,29 @@ const ReportsPage = lazy(() => import('./modules/reports/ReportsPage').then(m =>
 const NotificationsPage = lazy(() => import('./modules/notifications/NotificationsPage').then(m => ({ default: m.NotificationsPage })));
 const SettingsPage = lazy(() => import('./modules/admin/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
 const LogsPage = lazy(() => import('./modules/admin/logs/LogsPage').then(m => ({ default: m.LogsPage })));
-const InventoryPage = lazy(() => import('./modules/inventory/InventoryPage').then(m => ({ default: m.InventoryPage })));
 const SuppliersPage = lazy(() => import('./modules/suppliers/SuppliersPage').then(m => ({ default: m.SuppliersPage })));
 
 function App() {
+  useEffect(() => {
+    const preload = () => {
+      import('./modules/menu/products/ProductListPage');
+      import('./modules/tents/TentMapPage');
+      import('./modules/kitchen/KitchenPage');
+      import('./modules/pos/POSPage');
+      import('./modules/orders/ActiveOrdersPage');
+      import('./modules/customer/CustomerListPage');
+      import('./modules/suppliers/SuppliersPage');
+      import('./modules/finance/FinancePage');
+      import('./modules/dashboard/ManagerDashboard');
+      import('./modules/dashboard/EmployeeDashboard');
+    };
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(preload);
+    } else {
+      setTimeout(preload, 500);
+    }
+  }, []);
+
   return (
     <I18nProvider>
       <SocketProvider>
@@ -169,14 +187,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="customers/loyalty/ranking"
-              element={
-                <ProtectedRoute allowedRoles={['owner', 'manager']}>
-                  <LoyaltyRankingPage />
-                </ProtectedRoute>
-              }
-            />
 
             {/* Manager Dashboard - owner, manager */}
             <Route
@@ -210,16 +220,6 @@ function App() {
 
             {/* Notifications - all roles */}
             <Route path="notifications" element={<NotificationsPage />} />
-
-            {/* Inventory - owner, manager, stock_manager */}
-            <Route
-              path="inventory"
-              element={
-                <ProtectedRoute allowedRoles={['owner', 'manager', 'stock_manager']}>
-                  <InventoryPage />
-                </ProtectedRoute>
-              }
-            />
 
             {/* Suppliers - owner, manager, stock_manager */}
             <Route

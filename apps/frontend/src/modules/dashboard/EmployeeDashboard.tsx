@@ -9,12 +9,10 @@ import {
   Users,
   Table2,
   Flame,
-  ChefHat,
   CheckCircle,
   Truck,
   TrendingUp,
   TrendingDown,
-  AlertTriangle,
   Clock,
   ArrowUpRight,
   Activity,
@@ -177,7 +175,7 @@ export const EmployeeDashboard: React.FC = () => {
         <div className="card p-4 card-hover">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-gradient-to-br from-orange-400/20 to-coral-500/20 rounded-xl border border-orange-400/20">
-              <ChefHat size={20} className="text-orange-400" />
+              <Clock size={20} className="text-orange-400" />
             </div>
             <div>
               <p className="text-2xl font-bold dark:text-white text-surface-900">{employeeKPIs.preparingOrders}</p>
@@ -205,7 +203,7 @@ export const EmployeeDashboard: React.FC = () => {
             </div>
             <div>
               <p className="text-2xl font-bold dark:text-white text-surface-900">{employeeKPIs.deliveryOrders}</p>
-              <p className="text-xs text-surface-400 font-medium">{t('nav.orders')}</p>
+              <p className="text-xs text-surface-400 font-medium">{t('orders.delivery')}</p>
             </div>
           </div>
         </div>
@@ -213,7 +211,7 @@ export const EmployeeDashboard: React.FC = () => {
 
       {/* Bottom sections */}
       {!isCashier && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Daily Profit */}
           <div className="card p-6">
             <div className="flex items-center gap-3 mb-4">
@@ -252,33 +250,6 @@ export const EmployeeDashboard: React.FC = () => {
                     </span>
                     <span className="text-sm dark:text-surface-200 text-surface-700 flex-1 truncate">{product.name}</span>
                     <span className="text-sm font-semibold text-brand-400">{product.quantity}x</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Stock Alerts */}
-          <div className="card p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2.5 bg-amber-500/15 rounded-xl">
-                <AlertTriangle size={20} className="text-amber-400" />
-              </div>
-              <h3 className="font-semibold dark:text-white text-surface-900">{t('nav.kitchen')}</h3>
-            </div>
-            {employeeKPIs.stockAlerts.length === 0 ? (
-              <div className="text-center py-4">
-                <CheckCircle size={32} className="mx-auto text-brand-400 mb-2" />
-                <p className="text-sm text-surface-500">{t('common.noData')}</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {employeeKPIs.stockAlerts.map((alert, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-coral-500/5 rounded-xl border border-coral-500/10">
-                    <span className="text-sm dark:text-surface-200 text-surface-700 truncate">{alert.name}</span>
-                    <span className="text-sm font-semibold text-coral-400">
-                      {alert.quantity}/{alert.threshold}
-                    </span>
                   </div>
                 ))}
               </div>
